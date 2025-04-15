@@ -35,7 +35,7 @@
                     <label v-if="showVerifyCode || ifRegister" class="verify-code-group">
                         验证码：
                         <input type="text" v-model="verifyCode">
-                        <img :src="'/verify/getVerifyCode?' + timestamp" @click="refreshHorse" class="verify-code-img">
+                        <img :src="'/verify/getVerifyCode?' + timestamp" @click="refreshVerifyCode" class="verify-code-img">
                         <span class="error">{{ errors.verifyCode }}</span>
                     </label>
                 </form>
@@ -73,7 +73,7 @@
                     <label v-if="showVerifyCode" class="verify-code-group">
                         验证码：
                         <input type="text" v-model="verifyCode">
-                        <img :src="'/verify/getVerifyCode?' + timestamp" @click="refreshHorse" class="verify-code-img">
+                        <img :src="'/verify/getVerifyCode?' + timestamp" @click="refreshVerifyCode" class="verify-code-img">
                         <span class="error">{{ errors.verifyCode }}</span>
                     </label>
                     <h5 @click="turnForgetPassword" style="text-align: right;">忘记密码</h5>
@@ -127,7 +127,7 @@
         },
         methods: {
             // 公共方法
-            refreshHorse() {
+            refreshVerifyCode() {
                 this.timestamp = Date.now();
             },
             handleResponseError(error) {
@@ -136,7 +136,7 @@
                     this.errorCount++;
                     if (this.errorCount >= 3) {
                         this.showVerifyCode = true;
-                        this.refreshHorse();
+                        this.refreshVerifyCode();
                     }
                 }
             },
@@ -158,7 +158,7 @@
                 this.ifForgotPassword = false;
                 this.way = '登录';
                 this.turn = "还没有账号？点我注册";
-                this.refreshHorse();
+                this.refreshVerifyCode();
             },
 
             // 切换到注册表单
@@ -168,7 +168,7 @@
                 this.ifForgotPassword = false;
                 this.way = '注册';
                 this.turn = "回到登录";
-                this.refreshHorse();
+                this.refreshVerifyCode();
             },
 
             // 切换到忘记密码表单
@@ -213,7 +213,7 @@
                 if (ifSuccess) {
                     this.handleSubmit();
                 } else {
-                    this.refreshHorse();
+                    this.refreshVerifyCode();
                 }
             },
 
@@ -256,6 +256,13 @@
                             window.location.href = response.data.message === "admin"
                                 ? 'admin.html'
                                 : 'user.html';
+                        } else {
+                            this.errorCount++;
+                            alert(response.data.message + "，\n当前已输入错误" + this.errorCount + "次");
+                            if (this.errorCount >= 3) {
+                                this.showVerifyCode = true;
+                                this.refreshVerifyCode();
+                            }
                         }
                     }
                 } catch (error) {

@@ -18,8 +18,12 @@ public class VerifyCodeController extends BaseServlet {
         // 生成验证码
         CaptchaUtil.CaptchaResult result = CaptchaUtil.generateCaptcha(100, 40);
 
+        String verifyCode = result.getCode();
+
         // 将验证码文本存入Session
-        request.getSession().setAttribute("verifyCode", result.getCode());
+        request.getSession().setAttribute("verifyCode", verifyCode);
+
+        System.out.println("VerifyCodeController类，生成验证码：" + verifyCode);
 
         // 返回图片
         response.setContentType("image/jpeg");
@@ -30,10 +34,10 @@ public class VerifyCodeController extends BaseServlet {
 
     /*------------------------------------------- 验证用户输入的验证码 -------------------------------------------*/
     public void checkVerifyCode(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String inputHorse = request.getParameter("inputHorse");
+        String verifyCode = request.getParameter("verifyCode");
         String realCode = (String) request.getSession().getAttribute("verifyCode");
 
-        boolean isValid = CaptchaUtil.validate(inputHorse, realCode);
+        boolean isValid = CaptchaUtil.validate(verifyCode, realCode);
         if (isValid) {
             response.getWriter().write("{\"success\":true, \"message\":\"验证成功\"}");
         } else {
