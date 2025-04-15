@@ -20,7 +20,7 @@ public class MyPool {
             config.load(input);
 
             // 注册驱动
-            Class.forName(config.getProperty("driverClassName"));
+//            Class.forName(config.getProperty("driverClassName"));
 
             // 初始化连接池
             int initialSize = Integer.parseInt(config.getProperty("initialSize"));

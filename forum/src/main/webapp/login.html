@@ -29,10 +29,6 @@
                         <input type="text" v-model="setName" maxlength="11">
                         <span class="error">{{ errors.setName }}</span>
                     </label>
-                    <label>身份证号：
-                        <input type="text" v-model="setIdNumber">
-                        <span class="error">{{ errors.setIdNumber}}</span>
-                    </label>
                     <label>密码：
                         <input type="password" v-model="setPassword" maxlength="15">
                         <span class="error">{{ errors.setPassword }}</span>
@@ -113,7 +109,7 @@
             setPasswordAgain: '',
             setPhone: '',
             setEmail: '',
-            setIdNumber: '',
+
             setName: "",
             loginAccount: '',
             loginPassword: '',
@@ -130,7 +126,7 @@
             hadLogin: false
         }),
         mounted() {
-            axios.post('/other/exitLogin');
+            axios.post('/login/exitLogin');
         },
         methods: {
             // 公共方法
@@ -202,11 +198,7 @@
 
             validateRegistration(ifSuccess) {
                 if (!this.validateVerifyCode()) ifSuccess = false;
-                if (!this.setIdNumber) {
-                    this.errors.setIdNumber = '!!!请输入身份证号';
-                    ifSuccess = false;
-                }
-                // 其他字段验证...
+                // 其他字段验证
                 return ifSuccess;
             },
 
@@ -216,24 +208,33 @@
                     this.errors.loginAccount = '!!!请输入手机号/邮箱';
                     ifSuccess = false;
                 }
-                // 其他字段验证...
+                // 其他字段验证
                 return ifSuccess;
             },
 
             async handleSubmit() {
+                let that = this;
                 try {
                     if (this.isLogin) {
-                        const response = await axios.post('/other/register', new URLSearchParams({/* 参数 */}));
+                        const response = await axios.post('/other/register', new URLSearchParams({
+                            phone: that.phone,
+                            email: that.email,
+                            password: that.password,
+                            name: that.name,
+                        }));
                         if (response.data.success) {
                             alert('注册成功！');
                             this.turnWay();
                         }
                     } else {
-                        const response = await axios.post('/other/login', new URLSearchParams({/* 参数 */}));
+                        const response = await axios.post('/login/login', new URLSearchParams({
+                            account: that.loginAccount,
+                            password: that.loginPassword,
+                        }));
                         if (response.data.code === 200) {
                             window.location.href = response.data.message === "admin"
-                                ? 'adminLogin.html'
-                                : 'studentLogin.html';
+                                ? 'admin.html'
+                                : 'user.html';
                         }
                     }
                 } catch (error) {
@@ -245,16 +246,20 @@
             async submitChangePassword() {
                 this.errors = {};
                 let ifSuccess = true;
+                let that = this;
 
                 if (!this.forgotAccount) {
                     this.errors.forgotAccount = '!!!请输入手机号/邮箱';
                     ifSuccess = false;
                 }
-                // 其他验证...
+                // 其他验证
 
                 if (ifSuccess) {
                     try {
-                        const response = await axios.post('/other/forget', new URLSearchParams({/* 参数 */}));
+                        const response = await axios.post('/other/forget', new URLSearchParams({
+                            account: that.forgotAccount,
+                            password: that.newPassword,
+                        }));
                         if (response.data.success) {
                             alert('密码修改成功！');
                             this.showForgotPassword = false;

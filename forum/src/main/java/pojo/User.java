@@ -11,12 +11,13 @@ public class User {
     private Integer grade;              // 用户等级
     private String avatar;              // 用户头像
     private Boolean ifReceiveLike;      // 是否接收点赞通知
+    private String name;
 
 
     public User() {
     }
 
-    public User(Integer id, String phone, String password, Boolean isAdmin, String email, Integer userType, Integer grade, String avatar, Boolean ifReceiveLike) {
+    public User(Integer id, String phone, String password, Boolean isAdmin, String email, Integer userType, Integer grade, String avatar, Boolean ifReceiveLike, String name) {
         this.id = id;
         this.phone = phone;
         this.password = password;
@@ -26,6 +27,7 @@ public class User {
         this.grade = grade;
         this.avatar = avatar;
         this.ifReceiveLike = ifReceiveLike;
+        this.name = name;
     }
 
     /**
@@ -172,7 +174,23 @@ public class User {
         this.ifReceiveLike = ifReceiveLike;
     }
 
+    /**
+     * 获取
+     * @return name
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * 设置
+     * @param name
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public String toString() {
-        return "Users{id = " + id + ", phone = " + phone + ", password = " + password + ", isAdmin = " + isAdmin + ", email = " + email + ", userType = " + userType + ", grade = " + grade + ", avatar = " + avatar + ", ifReceiveLike = " + ifReceiveLike + "}";
+        return "User{id = " + id + ", phone = " + phone + ", password = " + password + ", isAdmin = " + isAdmin + ", email = " + email + ", userType = " + userType + ", grade = " + grade + ", avatar = " + avatar + ", ifReceiveLike = " + ifReceiveLike + ", name = " + name + "}";
     }
 }

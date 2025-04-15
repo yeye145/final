@@ -18,7 +18,7 @@ public class LoginFilter implements Filter {
 
 
         //判断访问资源路径是否和登录注册相关
-        String[] urls = {"/login.html", ".css", ".png", ".js", ".images", "/other", "/user", "/admin"};
+        String[] urls = {"/login.html", ".css", ".png", ".js", ".images", "/login", "/user", "/admin"};
         // 获取当前访问的资源路径
         String url = request.getRequestURL().toString();
 
@@ -37,9 +37,9 @@ public class LoginFilter implements Filter {
         if (user != null) {
             filterChain.doFilter(request, servletResponse);
         } else {
-            System.out.println("请先登录");
+            System.out.println("LoginFilter类,请先登录");
             request.setAttribute("login_msg", "请先登录！");
-            request.getRequestDispatcher("/vueLogin.html").forward(request, servletResponse);
+            request.getRequestDispatcher("/login.html").forward(request, servletResponse);
         }
     }
 
