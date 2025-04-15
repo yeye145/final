@@ -13,7 +13,6 @@ public class RegisterServiceImpl implements RegisterService {
 
     private UserDao userDao = new UserDaoImpl();
 
-
     @Override
     public Boolean register(String phone, String email, String password) throws Exception {
 
@@ -24,7 +23,6 @@ public class RegisterServiceImpl implements RegisterService {
                 return false;
             }
         }
-
         userDao.insertUser(phone, email, password);
 
         return true;

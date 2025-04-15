@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 
-@WebServlet("/other/*")
+@WebServlet("/forget/*")
 public class ForgetPasswordController extends BaseServlet {
 
     private ForgetPasswordServiceImpl forgetPasswordService = new ForgetPasswordServiceImpl();
@@ -20,7 +20,7 @@ public class ForgetPasswordController extends BaseServlet {
     public void forget(HttpServletRequest request, HttpServletResponse response) throws Exception {
         // 获取参数
         String account = request.getParameter("account");
-        String password = request.getParameter("newPassword");
+        String password = request.getParameter("password");
 
         if (forgetPasswordService.forgetPassword(account, password)){
             System.out.println("ForgetPasswordController.forget，修改密码成功");
