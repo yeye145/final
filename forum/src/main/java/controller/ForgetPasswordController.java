@@ -14,9 +14,12 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/forget/*")
 public class ForgetPasswordController extends BaseServlet {
 
+    /*--------------------------------------------    私有变量    --------------------------------------------*/
     private ForgetPasswordServiceImpl forgetPasswordService = new ForgetPasswordServiceImpl();
 
 
+
+    /*--------------------------------------------    修改密码    --------------------------------------------*/
     public void forget(HttpServletRequest request, HttpServletResponse response) throws Exception {
         // 获取参数
         String account = request.getParameter("account");

@@ -35,7 +35,8 @@
                     <label v-if="showVerifyCode || ifRegister" class="verify-code-group">
                         验证码：
                         <input type="text" v-model="verifyCode">
-                        <img :src="'/verify/getVerifyCode?' + timestamp" @click="refreshVerifyCode" class="verify-code-img">
+                        <img :src="'/verify/getVerifyCode?' + timestamp" @click="refreshVerifyCode"
+                             class="verify-code-img">
                         <span class="error">{{ errors.verifyCode }}</span>
                     </label>
                 </form>
@@ -73,7 +74,8 @@
                     <label v-if="showVerifyCode" class="verify-code-group">
                         验证码：
                         <input type="text" v-model="verifyCode">
-                        <img :src="'/verify/getVerifyCode?' + timestamp" @click="refreshVerifyCode" class="verify-code-img">
+                        <img :src="'/verify/getVerifyCode?' + timestamp" @click="refreshVerifyCode"
+                             class="verify-code-img">
                         <span class="error">{{ errors.verifyCode }}</span>
                     </label>
                     <h5 @click="turnForgetPassword" style="text-align: right;">忘记密码</h5>
@@ -202,9 +204,9 @@
                 this.errors = {};
                 let ifSuccess = true;
 
-                if (this.isLogin) {
+                if (this.ifRegister) {
                     // 注册验证
-                    ifSuccess = this.validateRegistration(ifSuccess);
+                    ifSuccess = this.validateRegistration(ifSuccess, this.setPhone, this.setEmail);
                 } else {
                     // 登录验证
                     ifSuccess = this.validateLogin(ifSuccess);
@@ -217,9 +219,20 @@
                 }
             },
 
-            validateRegistration(ifSuccess) {
+            validateRegistration(ifSuccess, phone, email) {
                 if (!this.validateVerifyCode()) ifSuccess = false;
-                // 其他字段验证
+                if (!this.validatePhone(phone)) {
+                    ifSuccess = false;
+                    this.errors.setPhone = "!!!不符合中国大陆手机号格式";
+                }
+                if (!this.validateEmail(email)) {
+                    ifSuccess = false;
+                    this.errors.setEmail = "!!!不符合邮箱格式";
+                }
+                if(this.setPasswordAgain !== this.setPassword){
+                    ifSuccess = false;
+                    this.errors.setPasswordAgain = "!!!两次输入密码不一致";
+                }
                 return ifSuccess;
             },
 
@@ -229,23 +242,23 @@
                     this.errors.loginAccount = '!!!请输入手机号/邮箱';
                     ifSuccess = false;
                 }
-                // 其他字段验证
                 return ifSuccess;
             },
 
             async handleSubmit() {
                 let that = this;
                 try {
-                    if (this.isLogin) {
+                    if (this.ifRegister) {
                         const response = await axios.post('/register/register', new URLSearchParams({
-                            phone: that.phone,
-                            email: that.email,
-                            password: that.password,
-                            name: that.name,
+                            phone: that.setPhone,
+                            email: that.setEmail,
+                            password: that.setPassword,
                         }));
-                        if (response.data.success) {
-                            alert('注册成功！');
+                        if (response.data.code === 200) {
+                            alert(response.data.data);
                             this.turnWay();
+                        } else {
+                            alert(response.data.message);
                         }
                     } else {
                         const response = await axios.post('/login/login', new URLSearchParams({

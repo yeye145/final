@@ -18,7 +18,6 @@ public class RegisterController extends BaseServlet {
     private RegisterServiceImpl registerService = new RegisterServiceImpl();
 
 
-
     /*--------------------------------------------    注册验证    --------------------------------------------*/
     public void register(HttpServletRequest request, HttpServletResponse response) throws Exception {
         // 获取参数
@@ -26,15 +25,15 @@ public class RegisterController extends BaseServlet {
         String email = request.getParameter("email");
         String password = request.getParameter("password");
 
-        if(registerService.register(phone, email, password)){
-            String json = JSON.toJSONString(ResponseResult.success( "手机号："+ phone +"，注册成功"));
+        if (registerService.register(phone, email, password)) {
+            System.out.println("RegisterController.register,注册成功！手机号：" + phone);
+            String json = JSON.toJSONString(ResponseResult.success("手机号：" + phone + "，注册成功"));
             response.getWriter().write(json);
-        }else {
+        } else {
             String json = JSON.toJSONString(ResponseResult.error(Constants.RESPONSE_CODE_UNAUTHORIZED, "注册失败"));
             response.getWriter().write(json);
         }
     }
-
 
 
 }

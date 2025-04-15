@@ -30,9 +30,8 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public void insertUser(String phone, String email, String password) throws Exception {
-//        MyUpdate.update("INSERT INTO `forum`.`User` (`phoneNumber`, `password`," +
-//                " `isAdmin`, `email`) VALUES (?, ?, 1, ?);", phone, password, email);
-
+        MyUpdate.update("INSERT INTO `forum`.`User` (`phone`, `password`," +
+                " `is_admin`, `email`, `name`) VALUES (?, ?, 1, ?, ?);", phone, password, email, "用户" + phone);
     }
 
     @Override
