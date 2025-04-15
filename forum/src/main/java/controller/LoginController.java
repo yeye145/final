@@ -1,11 +1,15 @@
 package controller;
 
+import com.alibaba.fastjson.JSON;
 import pojo.User;
+import pojo.ResponseResult;
 import service.LoginService;
 
 import service.impl.LoginServiceImpl;
 
 import service.utils.CaptchaUtil;
+import utils.Constants;
+
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -18,9 +22,12 @@ import java.sql.SQLException;
 @WebServlet("/login/*")
 public class LoginController extends BaseServlet {
 
+    /*--------------------------------------------    私有变量    --------------------------------------------*/
     private LoginService loginService = new LoginServiceImpl();
 
 
+
+    /*--------------------------------------------    登录验证    --------------------------------------------*/
     public void login(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
         // 获取参数
         String account = request.getParameter("account");
@@ -34,16 +41,20 @@ public class LoginController extends BaseServlet {
 
         if (user != null) {
             System.out.println("用户：" + user.getName() + ",登录成功！");
-            response.getWriter().write("{\"code\":200, \"message\":\"" +
-                    (user.getIsAdmin() ? "admin" : "student") + "\"}");
+            // 返回登录成功信息
+            String json = JSON.toJSONString(ResponseResult.success(user.getIsAdmin() ? "admin" : "user"));
+            response.getWriter().write(json);
         } else {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("{\"code\":401, \"error\":\"账号或密码错误\"}");
+            // 返回登录失败信息
+            String json = JSON.toJSONString(ResponseResult.error(Constants.RESPONSE_CODE_UNAUTHORIZED, "账号或密码错误"));
+            response.getWriter().write(json);
         }
 
     }
 
 
+
+    /*--------------------------------------------    退出登录    --------------------------------------------*/
     public void exitLogin(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
         session.setAttribute("user", null);
@@ -51,7 +62,7 @@ public class LoginController extends BaseServlet {
 
 
 
-    // 生成验证码图片
+    /*--------------------------------------------  生成验证码图片  --------------------------------------------*/
     public void getHorse(HttpServletRequest request, HttpServletResponse response) throws IOException {
         // 生成验证码
         CaptchaUtil.CaptchaResult result = CaptchaUtil.generateCaptcha(100, 40);
@@ -65,7 +76,8 @@ public class LoginController extends BaseServlet {
     }
 
 
-    // 验证用户输入的验证码
+
+    /*------------------------------------------- 验证用户输入的验证码 -------------------------------------------*/
     public void checkHorse(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String inputHorse = request.getParameter("inputHorse");
         String realCode = (String) request.getSession().getAttribute("verifyCode");
