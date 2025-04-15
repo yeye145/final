@@ -12,25 +12,25 @@ public class MyUpdate {
         int row = 0;
 
         Connection connection = MyPool.getConnection();
-        PreparedStatement pstmt = null;
+        PreparedStatement preparedStatement = null;
 
         try {
-            //获取pstmt对象
-            pstmt = connection.prepareStatement(sql);
+            //获取preparedStatement对象
+            preparedStatement = connection.prepareStatement(sql);
 
             //遍历，填充占位符
             for (int i = 0; i < args.length; i++) {
-                pstmt.setObject(i + 1, args[i]);
+                preparedStatement.setObject(i + 1, args[i]);
             }
 
-            row = pstmt.executeUpdate();
+            row = preparedStatement.executeUpdate();
 
 
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            if (pstmt != null) {
-                pstmt.close();
+            if (preparedStatement != null) {
+                preparedStatement.close();
             }
             connection.close();
         }

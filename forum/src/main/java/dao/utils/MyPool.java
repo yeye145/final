@@ -28,12 +28,12 @@ public class MyPool {
 
             // 创建初始连接
             for (int i = 0; i < initialSize; i++) {
-                Connection conn = DriverManager.getConnection(
+                Connection connection = DriverManager.getConnection(
                         config.getProperty("url"),
                         config.getProperty("username"),
                         config.getProperty("password")
                 );
-                pool.add(conn);
+                pool.add(connection);
             }
         } catch (Exception e) {
             throw new RuntimeException("连接池初始化失败", e);
