@@ -16,9 +16,9 @@ public class LoginServiceImpl implements LoginService {
     @Override
     public User loginCheck(String account, String password) throws SQLException {
 
-        Set<User> users = userDao.getUserSet();
+        Set<User> userSet = userDao.getUserSet();
         // 遍历集合，找到该用户
-        for (User user : users) {
+        for (User user : userSet) {
             if (user.getPhone().equals(account) || user.getEmail().equals(account)) {
                 if (user.getPassword().equals(password)) {
                     return user;

@@ -1,6 +1,9 @@
 package controller;
 
+import com.alibaba.fastjson.JSON;
+import pojo.ResponseResult;
 import service.impl.RegisterServiceImpl;
+import utils.Constants;
 
 
 import javax.servlet.annotation.WebServlet;
@@ -22,7 +25,14 @@ public class RegisterController extends BaseServlet {
         String phone = request.getParameter("phone");
         String email = request.getParameter("email");
         String password = request.getParameter("password");
-        response.getWriter().write(registerService.register(phone, email, password));
+
+        if(registerService.register(phone, email, password)){
+            String json = JSON.toJSONString(ResponseResult.success( "手机号："+ phone +"，注册成功"));
+            response.getWriter().write(json);
+        }else {
+            String json = JSON.toJSONString(ResponseResult.error(Constants.RESPONSE_CODE_UNAUTHORIZED, "注册失败"));
+            response.getWriter().write(json);
+        }
     }
 
 

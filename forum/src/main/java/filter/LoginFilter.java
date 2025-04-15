@@ -10,6 +10,8 @@ import java.io.IOException;
 public class LoginFilter implements Filter {
 
 
+
+    /*--------------------------------------------  非法请求拦截  --------------------------------------------*/
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
 

@@ -15,19 +15,19 @@ public class RegisterServiceImpl implements RegisterService {
 
 
     @Override
-    public String register(String phone, String email, String password) throws Exception {
+    public Boolean register(String phone, String email, String password) throws Exception {
 
-        Set<User> user = userDao.getUserSet();
+        Set<User> userSet = userDao.getUserSet();
 
-        for (User userSet : user) {
-            if (userSet.getPhone().equals(phone) || userSet.getEmail().equals(email)) {
-                return "{\"error\":\"用户已存在\"}";
+        for (User user : userSet) {
+            if (user.getPhone().equals(phone) || user.getEmail().equals(email)) {
+                return false;
             }
         }
 
         userDao.insertUser(phone, email, password);
 
-        return "{\"success\":true, \"message\":\"注册成功\"}";
+        return true;
 
     }
 
