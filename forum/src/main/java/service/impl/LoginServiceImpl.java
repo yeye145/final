@@ -28,9 +28,9 @@ public class LoginServiceImpl implements LoginService {
 
                 /*-------------------------------    如果sql中存储的是明文密码    -------------------------------*/
                 if (isPlainPassword(user.getPassword())) {
-                    if(!user.getPassword().equals(password)) return null;
                     String hashedPassword = HashSaltUtil.creatHashPassword(password);
                     user.setPassword(hashedPassword);
+                    // 把数据库中的明文密码加密
                     userDao.updatePassword(hashedPassword, user.getId());
                 }
 
