@@ -102,6 +102,9 @@
             ifLogin: true,
             ifRegister: false,
             ifForgotPassword: false,
+            showVerifyCode: false,
+            hadLogin: false,
+
             way: '登录',
             turn: "还没有账号？点我注册",
             setPassword: '',
@@ -117,12 +120,12 @@
             forgotAccount: '',
             newPassword: '',
             confirmNewPassword: '',
-            horse: '',
-            timestamp: Date.now(),
             verifyCode: '',
             errorCount: 0,
-            showVerifyCode: false,
-            hadLogin: false
+
+            timestamp: Date.now(),
+            lastSubmitTime: Date.now(),
+
         }),
         mounted() {
             axios.post('/login/exitLogin');
@@ -201,6 +204,13 @@
 
             // 提交处理
             async submitCheck() {
+
+                let bridgeSubmitTime = Date.now();
+                if (bridgeSubmitTime - this.lastSubmitTime < 3000) {
+                    alert("您点的太快了，歇息一下吧！");
+                    return;
+                }
+
                 this.errors = {};
                 let ifSuccess = true;
 
@@ -217,6 +227,7 @@
                 } else {
                     this.refreshVerifyCode();
                 }
+
             },
 
             validateRegistration(ifSuccess, phone, email) {
@@ -256,6 +267,8 @@
                         }));
                         if (response.data.code === 200) {
                             alert(response.data.data);
+                            // 避免一秒内多次提交
+                            this.lastSubmitTime = Date.now();
                             this.turnWay();
                         } else {
                             alert(response.data.message);
