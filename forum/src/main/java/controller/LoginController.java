@@ -27,7 +27,7 @@ public class LoginController extends BaseServlet {
 
 
     /*--------------------------------------------    登录验证    --------------------------------------------*/
-    public void login(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+    public void login(HttpServletRequest request, HttpServletResponse response) throws Exception {
         // 获取参数
         String account = request.getParameter("account");
         String password = request.getParameter("password");

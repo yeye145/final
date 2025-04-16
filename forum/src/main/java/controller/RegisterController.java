@@ -3,6 +3,7 @@ package controller;
 import com.alibaba.fastjson.JSON;
 import pojo.ResponseResult;
 import service.impl.RegisterServiceImpl;
+import service.utils.HashSaltUtil;
 import utils.Constants;
 
 
@@ -25,7 +26,10 @@ public class RegisterController extends BaseServlet {
         String email = request.getParameter("email");
         String password = request.getParameter("password");
 
-        if (registerService.register(phone, email, password)) {
+        String hashPassword = HashSaltUtil.creatHashPassword(password);
+
+
+        if (registerService.register(phone, email, hashPassword)) {
             System.out.println("RegisterController.register,注册成功！手机号：" + phone);
             String json = JSON.toJSONString(ResponseResult.success("手机号：" + phone + "，注册成功"));
             response.getWriter().write(json);

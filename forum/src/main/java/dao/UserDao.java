@@ -16,4 +16,5 @@ public interface UserDao {
     void insertUser(String phone, String email, String password) throws Exception;
 
     void updatePassword(String password, Integer id) throws Exception;
+
 }
