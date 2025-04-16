@@ -218,9 +218,11 @@
                     // 注册验证
                     ifSuccess = this.validateRegistration(ifSuccess, this.setPhone, this.setEmail);
                 } else {
-                    // 登录验证
                     ifSuccess = this.validateLogin(ifSuccess);
                 }
+
+                // 登录验证，输入密码非空
+                ifSuccess = this.loginPassword !== '';
 
                 if (ifSuccess) {
                     this.handleSubmit();

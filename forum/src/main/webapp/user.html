@@ -9,81 +9,34 @@
 </head>
 <body>
 <div id="app">
+    <!-- 顶部导航栏 -->
     <div class="top-bar">
-        <h2 class="top-bar-title">{{whatAreYouDo}}</h2>
+        <div class="current-location">
+            {{ currentPath.join(' > ') }}
+        </div>
+        <div class="avatar" @click="showProfileModal = true">
+            <img :src="avatarUrl" class="avatar-img" alt="头像">
+        </div>
     </div>
+
+    <!-- 左侧功能导航 -->
     <div class="left-column">
-
-        <!-- 功能区域 -->
-        <h2 style="text-align: center;" title="学生登录">——学生信息管理——</h2>
+        <h2 style="text-align: center;">——功能导航——</h2>
         <hr>
-        <br>
-        <div class="left-column-work" @dblclick="exitLogin">🚶‍♂️ 双击退出</div>
-        <br>
-        <div class="left-column-work" @click="turnEditPhone">🖊️ 修改号码</div>
-        <br>
-        <div class="left-column-work" @click="turnSelectCourse">🔎 可选课程</div>
-        <br>
-        <div class="left-column-work" @click="turnLookMyCourse">📖 我的课程</div>
-        <br>
+        <div class="nav-item" @click="switchTab('home')">🏠 主页</div>
         <hr>
-        <h3>📚个人信息</h3>
-        <div>👤姓名：{{myInformation.name}}</div>
-        <br>
-        <div>
-            📞号码：
-            <span v-if="!ifEditPhoneNumber">{{ myInformation.phoneNumber }}</span>
-            <input
-                    v-else
-                    type="number"
-                    v-model="newPhone"
-                    @keyup.enter="savePhone"
-                    @blur="savePhone"
-            >
-        </div>
-        <br>
-        <div>📮邮箱：{{myInformation.email}}</div>
-        <br>
-        <div>🎂生日：{{myInformation.birthday}}</div>
-        <br>
-        <div v-bind:title="myInformation.classHadSelected">📝已选课程数：{{myInformation.classNumber}}</div>
-        <br>
-        <div>📌最多只能选5门课程哦！</div>
-        <br>
-        <hr>
+        <div class="nav-item" @dblclick="exitLogin">🚪 双击退出登录</div>
     </div>
 
+    <!-- 右侧内容区域 -->
     <div class="right-column">
-        <div class="search-bar" v-if="ifSelectCourse && !ifLookMyCourse">
-            <input type="text" v-model="courseSearchQuery"
-                   placeholder="输入课程名称或信息搜索"
-                   @input="searchCourses">
+        <!-- 主页内容 -->
+        <div v-if="currentTab === 'home'" class="content-section">
+            <h3>📌 最新公告</h3>
+            <p>欢迎来到QG技术论坛！这里有最新技术动态和深度讨论。</p>
         </div>
-        <table v-if="ifSelectCourse">
-            <tr>
-                <th>课程序号</th>
-                <th>课程名称</th>
-                <th>课程信息</th>
-                <th>课程学分</th>
-                <th>课程操作</th>
-            </tr>
-            <!-- 情况1：显示可选课程 -->
-            <tr v-if="!ifLookMyCourse" v-for="c in coursesCanSelect">
-                <td>{{c.key}}</td>
-                <td>{{c.courseName}}</td>
-                <td>{{c.information}}</td>
-                <td>{{c.score}}</td>
-                <td class="left-column-work" @dblclick="selectThisCourse(c.key)">选课</td>
-            </tr>
-            <!-- 情况2：显示已选课程 -->
-            <tr v-if="ifLookMyCourse" v-for="c in myCourse">
-                <td>{{c.key}}</td>
-                <td>{{c.courseName}}</td>
-                <td>{{c.information}}</td>
-                <td>{{c.score}}</td>
-                <td class="left-column-work" @dblclick="dropThisCourse(c.key)">退课</td>
-            </tr>
-        </table>
+
+
     </div>
 </div>
 
@@ -91,163 +44,110 @@
 <script src="https://cdn.bootcdn.net/ajax/libs/vue/2.6.14/vue.min.js"></script>
 
 <script>
-
     new Vue({
-            el: '#app',
-            data: {
-                whatAreYouDo: "QG技术论坛",
-                ifSelectCourse: false,
-                ifEditPhoneNumber: false,
-                ifLookMyCourse: false,
-
-                myInformation: {},// 存储用户个人信息
-                coursesCanSelect: [],
-                courseSearchQuery: '', // 课程关键字搜索
-                originalCourses: [], // 用于存储原始课程数据
-                myCourse: [],
-                newPhone: '',
-            },
-            mounted() {
-                // 页面加载完成后，发送异步请求，查询数据
-                let that = this;
-                axios.post('/student/mLook')
+        el: '#app',
+        data: {
+            currentPath: ['QG技术论坛', '主页'],
+            currentTab: 'home',
+            showProfileModal: false,
+            
+            
+            
+            
+            avatarUrl: '',          // 还欠一个初始头像
+            
+            
+            
+            
+            userInfo: {username: '技术爱好者'},
+        },
+        created() {
+            // 页面加载时自动获取用户头像
+            this.fetchUserAvatar();
+        },
+        methods: {
+            fetchUserAvatar() {
+                axios.get('/user/avatar', {
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                })
                     .then(response => {
                         if (response.data.code === 200) {
-                            that.myInformation = response.data.data; // 个人信息
-                        } else if (response.data.code === 401) {
-                            alert(response.data.message);
-                            window.location.href = '/vueLogin.html';
+                            this.avatarUrl = response.data.data;
+                        } else {
+                            console.error('获取头像失败:', response.data.message);
                         }
                     })
                     .catch(error => {
                         console.error('请求错误:', error);
                     });
             },
+            switchTab(tab) {
+                this.currentTab = tab;
+                this.currentPath = ['QG技术论坛', tab === 'home' ? '主页' : '版块'];
+            },
+            exitLogin() {
+                axios.post('/login/exitLogin');
+                window.location.href = '/login.html';
+            },
+            saveProfile() {
+                this.showProfileModal = false;
+                alert('个人信息已保存！');
+            },
+            // 触发文件选择
+            triggerAvatarFileInput() {
+                this.$refs.fileInput.click();
+            },
 
-            methods: {
-                exitLogin() {
-                    axios.post('/other/exitLogin');
-                    window.location.href = 'vueLogin.html';
-                },
-                refresh() {
-                    let that = this;
-                    axios.get('/student/scLook').then(response => {
-                        that.originalCourses = response.data;
-                        that.coursesCanSelect = response.data;
-                    });
-                    axios.post('/student/lookMyCourse').then(response => {
-                        that.myCourse = response.data;
-                    });
-                    axios.post('/student/mLook').then(response => {
-                        if (response.data.code === 200) {
-                            that.myInformation = response.data.data; // 个人信息
-                        }
-                    })
-                },
-                // 学生 - 查看可选课程
-                turnSelectCourse() {
-                    this.whatAreYouDo = "可选课程——双击选课";
-                    this.ifSelectCourse = true;
-                    this.ifLookMyCourse = false;
-                    let that = this;
-                    axios.get('/student/scLook').then(response => {
-                        that.originalCourses = response.data;
-                        that.coursesCanSelect = response.data;
-                    });
-                },
-                turnEditPhone() {
-                    this.newPhone = this.myInformation.phoneNumber; // 将原手机号赋值给newPhone
-                    this.ifEditPhoneNumber = true;
-                    // 自动聚焦输入框
-                    this.$nextTick(() => {
-                        this.$el.querySelector('input').focus();
-                    });
-                },
-                turnLookMyCourse() {
-                    this.whatAreYouDo = "我的课程——“最多选5门课程”";
-                    this.ifSelectCourse = true;
-                    this.ifLookMyCourse = true;
-                    let that = this;
-                    axios.post('/student/lookMyCourse').then(response => {
-                        that.myCourse = response.data;
-                    })
-                },
-                savePhone() {
-                    let that = this;
-                    const phoneRegex = /^1[3-9]\d{9}$/;
-                    if (phoneRegex.test(that.newPhone)) {
-                        that.myInformation.phoneNumber = that.newPhone;
-                        axios.post('/admin/updatePhone', new URLSearchParams({
-                            email: that.myInformation.email,
-                            newPhone: that.newPhone
-                        }), {
-                            // 没设置的话，后端接收始终为null
-                            headers: {
-                                'Content-Type': 'application/x-www-form-urlencoded'
-                            }
-                        }).then(response => {
-                            if (response.data.code !== 200) {
-                                alert("更新手机号失败");
-                            }
-                        });
-                    }
-                    that.ifEditPhoneNumber = false;
-                },
-                // 课程搜索
-                searchCourses() {
-                    if (this.courseSearchQuery.trim() === '') {
-                        // 清空搜索时恢复原始数据
-                        this.coursesCanSelect = this.originalCourses
-                        return;
-                    }
+            handleAvatarUpload(event) {
+                const file = event.target.files[0];
+                if (!file) return;
 
-                    // 将查询的字符串转化为小写
-                    const query = this.courseSearchQuery.toLowerCase();
-                    this.coursesCanSelect = this.originalCourses.filter(course =>
-                        // 将课程名称转化为小写，如果包含这个课程名称，则储存
-                        course.courseName.toLowerCase().includes(query) ||
-                        course.information.toLowerCase().includes(query))
-                },
-                selectThisCourse(key) {
-                    let that = this;
-                    axios.post('/student/selectThisCourse', {
-                        key: key,
-                    }, {
-                        // 没设置的话，后端接收始终为null
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded'
-                        }
-                    }).then(response => {
-                        if (response.data.code === 200) {
-                            that.refresh();
-                            alert("选课成功");
-                        } else {
-                            alert(response.data.message);
-                        }
-                    })
-                },
-                dropThisCourse(key){
-                    let that = this;
-                    axios.post('/student/dropThisCourse', {
-                        key: key,
-                    }, {
-                        // 没设置的话，后端接收始终为null
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded'
-                        }
-                    }).then(response => {
-                        if (response.data.code === 200) {
-                            that.refresh();
-                            alert("退课成功");
-                        } else {
-                            alert(response.data.message);
-                        }
-                    })
-                },
+                // 验证文件
+                const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
+                if (!validTypes.includes(file.type)) {
+                    alert('请上传JPEG、PNG或GIF格式的图片');
+                    return;
+                }
+
+                if (file.size > 2 * 1024 * 1024) {
+                    alert('图片大小不能超过2MB');
+                    return;
+                }
+
+                // 创建预览并上传
+                this.avatarUrl = URL.createObjectURL(file);
+                this.uploadAvatarToServer(file);
+            },
+
+            // 上传到服务器
+            uploadAvatarToServer(file) {
+                const formData = new FormData();
+                formData.append('avatar', file);
+
+                axios.post('/avatar/upload', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                }).then(response => {
+                    // 上传成功
+                    if (response.data.code === 200) {
+                        alert('头像更新成功: ' + response.data.data);
+                        this.avatarUrl = response.data.data;
+                    } else {
+                        // 弹窗失败信息
+                        alert('上传失败: ' + response.data.message);
+                    }
+                }).catch(error => {
+                    console.error('上传错误:', error);
+                    const errorMessage = error.response?.data?.message || error.message;
+                    alert('上传失败: ' + errorMessage);
+                });
             }
-        },
-    )
+        }
 
+    })
 </script>
 </body>
 </html>

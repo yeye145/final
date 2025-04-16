@@ -10,7 +10,6 @@ import java.io.IOException;
 public class LoginFilter implements Filter {
 
 
-
     /*--------------------------------------------  非法请求拦截  --------------------------------------------*/
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
@@ -21,7 +20,8 @@ public class LoginFilter implements Filter {
 
         //判断访问资源路径是否和登录注册相关
         String[] urls = {"/login.html", ".css", ".png", ".js", ".images",
-                "/login", "/user", "/admin", "/verify", "/forget", "/register"};
+                "/login", "/user", "/admin", "/verify", "/forget", "/register",
+                "/avatar", "/user"};
         // 获取当前访问的资源路径
         String url = request.getRequestURL().toString();
 
