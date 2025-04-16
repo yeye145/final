@@ -3,6 +3,7 @@ package controller;
 import com.alibaba.fastjson.JSON;
 import pojo.ResponseResult;
 import service.impl.ForgetPasswordServiceImpl;
+import service.utils.HashSaltUtil;
 import utils.Constants;
 
 
@@ -23,7 +24,7 @@ public class ForgetPasswordController extends BaseServlet {
     public void forget(HttpServletRequest request, HttpServletResponse response) throws Exception {
         // 获取参数
         String account = request.getParameter("account");
-        String password = request.getParameter("password");
+        String password = HashSaltUtil.creatHashPassword(request.getParameter("password"));
 
         if (forgetPasswordService.forgetPassword(account, password)){
             System.out.println("ForgetPasswordController.forget，修改密码成功");

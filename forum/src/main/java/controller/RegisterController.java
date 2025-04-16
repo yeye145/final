@@ -24,7 +24,7 @@ public class RegisterController extends BaseServlet {
         // 获取参数
         String phone = request.getParameter("phone");
         String email = request.getParameter("email");
-        String password = request.getParameter("password");
+        String password = HashSaltUtil.creatHashPassword(request.getParameter("password"));
 
         String hashPassword = HashSaltUtil.creatHashPassword(password);
 

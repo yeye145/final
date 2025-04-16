@@ -31,11 +31,11 @@ public class LoginServiceImpl implements LoginService {
                     if(!user.getPassword().equals(password)) return null;
                     String hashedPassword = HashSaltUtil.creatHashPassword(password);
                     user.setPassword(hashedPassword);
+                    userDao.updatePassword(hashedPassword, user.getId());
                 }
 
                 /*--------------------------------------    验证密码    --------------------------------------*/
                 if (HashSaltUtil.verifyHashPassword(password, user.getPassword())) {
-                    userDao.updatePassword(user.getPassword(), user.getId());
                     return user;
                 } else {
                     break;
