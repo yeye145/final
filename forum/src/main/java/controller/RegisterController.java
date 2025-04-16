@@ -34,7 +34,7 @@ public class RegisterController extends BaseServlet {
             String json = JSON.toJSONString(ResponseResult.success("手机号：" + phone + "，注册成功"));
             response.getWriter().write(json);
         } else {
-            String json = JSON.toJSONString(ResponseResult.error(Constants.RESPONSE_CODE_UNAUTHORIZED, "该手机号或邮箱已被注册！"));
+            String json = JSON.toJSONString(ResponseResult.error(Constants.RESPONSE_CODE_UNAUTHORIZED, "注册失败"));
             response.getWriter().write(json);
         }
     }
