@@ -10,6 +10,13 @@
 </head>
 <body>
 <div id="app">
+    <input
+            type="file"
+            ref="fileInput"
+            @change="handleAvatarUpload"
+            accept="image/*"
+            style="display: none;"
+    >
     <!-- 顶部导航栏 -->
     <div class="top-bar">
         <div class="current-location">
@@ -42,10 +49,10 @@
             <!-- 基本信息卡片 -->
             <div class="profile-card">
                 <div class="profile-header">
-                    <img :src="avatar" class="profile-avatar" alt="头像">
+                    <img :src="avatar" class="profile-avatar" alt="头像" @click="triggerAvatarFileInput">
                     <div class="profile-meta">
-                        <h2>{{ userInformation.username }}</h2>
-                        <div class="user-level">等级：{{ userInformation.grade }} 🌟</div>
+                        <h2>昵称：{{ userInformation.name }}</h2>
+                        <div class="user-level">等级：Lv{{ userInformation.grade }}</div>
                     </div>
                 </div>
                 <div class="profile-contact">
@@ -120,14 +127,10 @@
             // 获取我的个人信息
             fetchUserInformation() {
                 let that = this;
-                axios.get('/user/information', {
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    }
-                })
+                axios.get('/user/information')
                     .then(response => {
                         if (response.data.code === 200) {
-                            that.userInfomation = response.data.data;
+                            this.userInformation = response.data.data;
                         } else {
                             console.error('获取个人信息失败:', response.data.message);
                         }

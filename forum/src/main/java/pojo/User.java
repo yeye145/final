@@ -12,12 +12,18 @@ public class User {
     private String avatar;              // 用户头像
     private Boolean ifReceiveLike;      // 是否接收点赞通知
     private String name;
+    private Integer receiveLikeCount;
+    private Integer receiveReadCount;
+    private Integer fansCount;
+    private Integer postCount;
+    private Integer mySubscribeCount;
+    private Integer myCollectCount;
 
 
     public User() {
     }
 
-    public User(Integer id, String phone, String password, Boolean isAdmin, String email, Integer userType, Integer grade, String avatar, Boolean ifReceiveLike, String name) {
+    public User(Integer id, String phone, String password, Boolean isAdmin, String email, Integer userType, Integer grade, String avatar, Boolean ifReceiveLike, String name, Integer receiveLikeCount, Integer receiveReadCount, Integer fansCount, Integer postCount, Integer mySubscribeCount, Integer myCollectCount) {
         this.id = id;
         this.phone = phone;
         this.password = password;
@@ -28,6 +34,12 @@ public class User {
         this.avatar = avatar;
         this.ifReceiveLike = ifReceiveLike;
         this.name = name;
+        this.receiveLikeCount = receiveLikeCount;
+        this.receiveReadCount = receiveReadCount;
+        this.fansCount = fansCount;
+        this.postCount = postCount;
+        this.mySubscribeCount = mySubscribeCount;
+        this.myCollectCount = myCollectCount;
     }
 
     /**
@@ -190,7 +202,103 @@ public class User {
         this.name = name;
     }
 
+    /**
+     * 获取
+     * @return receiveLikeCount
+     */
+    public Integer getReceiveLikeCount() {
+        return receiveLikeCount;
+    }
+
+    /**
+     * 设置
+     * @param receiveLikeCount
+     */
+    public void setReceiveLikeCount(Integer receiveLikeCount) {
+        this.receiveLikeCount = receiveLikeCount;
+    }
+
+    /**
+     * 获取
+     * @return receiveReadCount
+     */
+    public Integer getReceiveReadCount() {
+        return receiveReadCount;
+    }
+
+    /**
+     * 设置
+     * @param receiveReadCount
+     */
+    public void setReceiveReadCount(Integer receiveReadCount) {
+        this.receiveReadCount = receiveReadCount;
+    }
+
+    /**
+     * 获取
+     * @return fansCount
+     */
+    public Integer getFansCount() {
+        return fansCount;
+    }
+
+    /**
+     * 设置
+     * @param fansCount
+     */
+    public void setFansCount(Integer fansCount) {
+        this.fansCount = fansCount;
+    }
+
+    /**
+     * 获取
+     * @return postCount
+     */
+    public Integer getPostCount() {
+        return postCount;
+    }
+
+    /**
+     * 设置
+     * @param postCount
+     */
+    public void setPostCount(Integer postCount) {
+        this.postCount = postCount;
+    }
+
+    /**
+     * 获取
+     * @return mySubscribeCount
+     */
+    public Integer getMySubscribeCount() {
+        return mySubscribeCount;
+    }
+
+    /**
+     * 设置
+     * @param mySubscribeCount
+     */
+    public void setMySubscribeCount(Integer mySubscribeCount) {
+        this.mySubscribeCount = mySubscribeCount;
+    }
+
+    /**
+     * 获取
+     * @return myCollectCount
+     */
+    public Integer getMyCollectCount() {
+        return myCollectCount;
+    }
+
+    /**
+     * 设置
+     * @param myCollectCount
+     */
+    public void setMyCollectCount(Integer myCollectCount) {
+        this.myCollectCount = myCollectCount;
+    }
+
     public String toString() {
-        return "User{id = " + id + ", phone = " + phone + ", password = " + password + ", isAdmin = " + isAdmin + ", email = " + email + ", userType = " + userType + ", grade = " + grade + ", avatar = " + avatar + ", ifReceiveLike = " + ifReceiveLike + ", name = " + name + "}";
+        return "User{id = " + id + ", phone = " + phone + ", password = " + password + ", isAdmin = " + isAdmin + ", email = " + email + ", userType = " + userType + ", grade = " + grade + ", avatar = " + avatar + ", ifReceiveLike = " + ifReceiveLike + ", name = " + name + ", receiveLikeCount = " + receiveLikeCount + ", receiveReadCount = " + receiveReadCount + ", fansCount = " + fansCount + ", postCount = " + postCount + ", mySubscribeCount = " + mySubscribeCount + ", myCollectCount = " + myCollectCount + "}";
     }
 }
