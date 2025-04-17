@@ -106,3 +106,39 @@
     margin-top: 8px;
 }
 
+
+.name-edit-container {
+    position: relative;
+    margin-bottom: 5px;
+}
+
+.editable-name {
+    cursor: pointer;
+    display: inline-block;
+    padding: 2px 5px;
+    border-radius: 4px;
+}
+
+.editable-name:hover {
+    background-color: #f5f5f5;
+}
+
+.edit-icon {
+    margin-left: 5px;
+    font-size: 14px;
+    color: #999;
+}
+
+.name-input {
+    font-size: 24px;
+    font-weight: bold;
+    padding: 2px 5px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 200px;
+}
+
+.name-input:focus {
+    outline: none;
+    border-color: #409EFF;
+}

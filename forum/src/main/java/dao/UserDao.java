@@ -18,4 +18,6 @@ public interface UserDao {
     void updatePassword(String password, Integer id) throws Exception;
 
     void updateAvatar(Integer userId, String fileName) throws Exception;
+
+    void updateName(Integer userId, String newName) throws Exception;
 }

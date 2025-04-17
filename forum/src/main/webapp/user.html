@@ -50,7 +50,19 @@
             <div class="profile-header">
                 <img :src="avatar" class="profile-avatar" alt="头像" @click="triggerAvatarFileInput">
                 <div class="profile-meta">
-                    <h2>昵称：{{ userInformation.name }}</h2>
+                    <div class="name-edit-container">
+                         <span v-if="!ifEditName" class="editable-name" @click="turnEditName">
+                             昵称：{{ userInformation.name }}
+                            <span class="edit-icon">🖊</span>
+                         </span>
+                        <input v-if="ifEditName"
+                               type="text"
+                               v-model="newName"
+                               ref="nameInput"
+                               @blur="saveName"
+                               @keyup.enter="saveName"
+                               class="name-input">
+                    </div>
                     <div class="user-level">等级：Lv{{ userInformation.grade }}</div>
                     <div class="profile-stats">
                         <span>❤️ {{ userInformation.receiveLikeCount }} 收获点赞</span>
@@ -122,6 +134,7 @@
             ifMyInformation: false,     // 显示我的个人信息
             ifUploadMyAvatar: false,          // 是否上传我的头像
             ifHomePage: true,           // 显示主页
+            ifEditName: false,
 
 
             currentPath: ['QG技术论坛', '主页'],
@@ -131,6 +144,7 @@
             avatar: '/images/avatar/initAvatar.jpg',
 
             userInformation: {},
+            newName: '',
         },
         created() {
             // 页面加载时自动获取用户头像
@@ -138,6 +152,44 @@
             this.fetchUserInformation();
         },
         methods: {
+            turnEditName() {
+                this.ifEditName = true;
+                this.newName = this.userInformation.name;
+                // 自动聚焦到输入框
+                this.$nextTick(() => {
+                    this.$refs.nameInput.focus();
+                });
+            },
+            saveName() {
+                if (this.newName.trim() === '') {
+                    alert('昵称不能为空');
+                    this.newName = this.userInformation.name;
+                    return;
+                }
+                if (this.newName === this.userInformation.name) {
+                    this.ifEditName = false;
+                    return;
+                }
+                let that = this;
+                axios.post('/user/updateName', new URLSearchParams({
+                    id: that.userInformation.id,
+                    newName: that.newName
+                }), {
+                    // 没设置的话，后端接收始终为null
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                }).then(response => {
+                    if (response.data.code === 200) {
+                        that.userInformation.name = that.newName;
+                        alert("更新昵称成功");
+                    } else {
+                        alert(response.data.message);
+                    }
+                });
+                that.ifEditName = false;
+            },
+
             // 切换显示我的个人信息
             turnMyInformation() {
                 this.ifMyInformation = true;
@@ -147,7 +199,7 @@
             // 获取我的个人信息
             fetchUserInformation() {
                 let that = this;
-                axios.get('/user/information')
+                axios.post('/user/information')
                     .then(response => {
                         if (response.data.code === 200) {
                             this.userInformation = response.data.data;
@@ -161,7 +213,7 @@
             },
             // 获取我的头像
             fetchUserAvatar() {
-                axios.get('/user/avatar', {
+                axios.post('/user/avatar', {
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded'
                     }
@@ -187,11 +239,7 @@
                 axios.post('/login/exitLogin');
                 window.location.href = '/login.html';
             },
-            // 保存个人信息
-            saveProfile() {
-                this.showProfileModal = false;
-                alert('个人信息已保存！');
-            },
+
             // 触发文件选择
             triggerAvatarFileInput() {
                 this.$refs.fileInput.click();

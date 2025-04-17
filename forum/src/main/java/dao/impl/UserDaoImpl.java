@@ -52,6 +52,12 @@ public class UserDaoImpl implements UserDao {
         MyUpdate.update("UPDATE `forum`.`User` SET `avatar` = ? WHERE (`id` = ?);"
                 , fileName, userId);
     }
+
+    @Override
+    public void updateName(Integer userId, String newName) throws Exception {
+        MyUpdate.update("UPDATE `forum`.`User` SET `name` = ? WHERE (`id` = ?);"
+                , newName, userId);
+    }
 }
 
 

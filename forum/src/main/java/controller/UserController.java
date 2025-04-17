@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import pojo.ResponseResult;
 import pojo.User;
 
+import service.impl.UpdateServiceImpl;
 import service.impl.UserServiceImpl;
 import utils.Constants;
 
@@ -18,6 +19,7 @@ public class UserController extends BaseServlet {
 
     /*--------------------------------------------    私有变量    --------------------------------------------*/
     private UserServiceImpl userService = new UserServiceImpl();
+    private UpdateServiceImpl updateService = new UpdateServiceImpl();
 
 
     /*--------------------------------------------    获取头像    --------------------------------------------*/
@@ -60,6 +62,17 @@ public class UserController extends BaseServlet {
         }
     }
 
+    public void updateName(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        Integer id = Integer.parseInt(request.getParameter("id"));
+        String newName = request.getParameter("newName");
+        System.out.println("用户id：" + id + "，准备更换昵称：" + newName);
+        if (updateService.updateName(id, newName)) {
+            response.getWriter().write(JSON.toJSONString(ResponseResult.success("昵称更改成功！")));
+        } else {
+            String json = JSON.toJSONString(ResponseResult.error(Constants.RESPONSE_CODE_CONFLICT, "昵称已存在"));
+            response.getWriter().write(json);
+        }
+    }
 
 
 }
