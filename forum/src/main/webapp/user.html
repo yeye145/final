@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="homepage.css"/>
+    <link rel="stylesheet" href="myself.css"/>
 </head>
 <body>
 <div id="app">
@@ -14,8 +15,8 @@
         <div class="current-location">
             {{ currentPath.join(' > ') }}
         </div>
-        <div class="avatar" @click="showProfileModal = true">
-            <img :src="avatarUrl" class="avatar-img" alt="头像">
+        <div class="avatar" @click="turnMyInformation">
+            <img :src="avatar" class="avatar-img" alt="头像">
         </div>
     </div>
 
@@ -31,9 +32,52 @@
     <!-- 右侧内容区域 -->
     <div class="right-column">
         <!-- 主页内容 -->
-        <div v-if="currentTab === 'home'" class="content-section">
+        <div v-if="ifHomePage" class="content-section">
             <h3>📌 最新公告</h3>
             <p>欢迎来到QG技术论坛！这里有最新技术动态和深度讨论。</p>
+        </div>
+
+        <!-- 个人信息 -->
+        <div v-if="ifMyInformation" class="profile-section">
+            <!-- 基本信息卡片 -->
+            <div class="profile-card">
+                <div class="profile-header">
+                    <img :src="avatar" class="profile-avatar" alt="头像">
+                    <div class="profile-meta">
+                        <h2>{{ userInformation.username }}</h2>
+                        <div class="user-level">等级：{{ userInformation.grade }} 🌟</div>
+                    </div>
+                </div>
+                <div class="profile-contact">
+                    <div class="contact-item">
+                        <span class="icon">📱</span>
+                        <span>{{ userInformation.phone }}</span>
+                    </div>
+                    <div class="contact-item">
+                        <span class="icon">📧</span>
+                        <span>{{ userInformation.email }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 互动数据卡片 -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">❤️</div>
+                    <div class="stat-value">{{  }}</div>
+                    <div class="stat-label">我的关注</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">⭐</div>
+                    <div class="stat-value">{{  }}</div>
+                    <div class="stat-label">我的收藏</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">⏲️</div>
+                    <div class="stat-value">{{  }}</div>
+                    <div class="stat-label">历史记录</div>
+                </div>
+            </div>
         </div>
 
 
@@ -47,25 +91,52 @@
     new Vue({
         el: '#app',
         data: {
+
+            ifMyInformation: false,     // 显示我的个人信息
+            ifUploadMyAvatar: false,          // 是否上传我的头像
+            ifHomePage: true,           // 显示主页
+
+
             currentPath: ['QG技术论坛', '主页'],
             currentTab: 'home',
-            showProfileModal: false,
-            
-            
-            
-            
-            avatarUrl: '',          // 还欠一个初始头像
-            
-            
-            
-            
-            userInfo: {username: '技术爱好者'},
+
+
+            avatar: '/images/avatar/initAvatar.jpg',
+
+            userInformation: {},
         },
         created() {
             // 页面加载时自动获取用户头像
             this.fetchUserAvatar();
+            this.fetchUserInformation();
         },
         methods: {
+            // 切换显示我的个人信息
+            turnMyInformation() {
+                this.ifMyInformation = true;
+                this.ifHomePage = false;
+                this.ifUploadMyAvatar = false;
+            },
+            // 获取我的个人信息
+            fetchUserInformation() {
+                let that = this;
+                axios.get('/user/information', {
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                })
+                    .then(response => {
+                        if (response.data.code === 200) {
+                            that.userInfomation = response.data.data;
+                        } else {
+                            console.error('获取个人信息失败:', response.data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('请求错误:', error);
+                    });
+            },
+            // 获取我的头像
             fetchUserAvatar() {
                 axios.get('/user/avatar', {
                     headers: {
@@ -74,7 +145,7 @@
                 })
                     .then(response => {
                         if (response.data.code === 200) {
-                            this.avatarUrl = response.data.data;
+                            this.avatar = response.data.data;
                         } else {
                             console.error('获取头像失败:', response.data.message);
                         }
@@ -83,14 +154,17 @@
                         console.error('请求错误:', error);
                     });
             },
+            // 切换界面显示
             switchTab(tab) {
                 this.currentTab = tab;
                 this.currentPath = ['QG技术论坛', tab === 'home' ? '主页' : '版块'];
             },
+            // 退出登录
             exitLogin() {
                 axios.post('/login/exitLogin');
                 window.location.href = '/login.html';
             },
+            // 保存个人信息
             saveProfile() {
                 this.showProfileModal = false;
                 alert('个人信息已保存！');
@@ -99,7 +173,7 @@
             triggerAvatarFileInput() {
                 this.$refs.fileInput.click();
             },
-
+            // 提交头像上传
             handleAvatarUpload(event) {
                 const file = event.target.files[0];
                 if (!file) return;
@@ -117,11 +191,10 @@
                 }
 
                 // 创建预览并上传
-                this.avatarUrl = URL.createObjectURL(file);
+                this.avatar = URL.createObjectURL(file);
                 this.uploadAvatarToServer(file);
             },
-
-            // 上传到服务器
+            // 上传头像到服务器
             uploadAvatarToServer(file) {
                 const formData = new FormData();
                 formData.append('avatar', file);
@@ -134,7 +207,7 @@
                     // 上传成功
                     if (response.data.code === 200) {
                         alert('头像更新成功: ' + response.data.data);
-                        this.avatarUrl = response.data.data;
+                        this.avatar = response.data.data;
                     } else {
                         // 弹窗失败信息
                         alert('上传失败: ' + response.data.message);

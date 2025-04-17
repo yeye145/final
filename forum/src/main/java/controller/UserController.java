@@ -5,6 +5,7 @@ import pojo.ResponseResult;
 import pojo.User;
 
 import service.impl.UserServiceImpl;
+import utils.Constants;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -22,7 +23,7 @@ public class UserController extends BaseServlet {
     /*--------------------------------------------    获取头像    --------------------------------------------*/
     public void avatar(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
-        System.out.println("UserController.avatar,获取头像：");
+        System.out.println("UserController.avatar，获取头像：");
 
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
@@ -33,11 +34,29 @@ public class UserController extends BaseServlet {
             String avatarUrl = userService.getAvatar(user.getId());
             System.out.println("-avatarUrl: " + avatarUrl);
             // 返回 ResponseResult 对象
-            String json = JSON.toJSONString(ResponseResult.success(avatarUrl));
-            response.getWriter().write(json);
+            response.getWriter().write(JSON.toJSONString(ResponseResult.success(avatarUrl)));
         } else {
-            String json = JSON.toJSONString(ResponseResult.error(401, "未登录"));
+            String json = JSON.toJSONString(ResponseResult.error(Constants.RESPONSE_CODE_UNAUTHORIZED, "未登录"));
             response.getWriter().write(json);
         }
+    }
+
+    public void information(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        System.out.println("UserController.information，获取个人信息");
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
+        if (user != null) {
+            System.out.println("-用户id：" + user.getId());
+
+            // 获取个人信息
+            User targetUser = userService.getInformation(user.getId());
+
+            // 返回 ResponseResult 对象
+            response.getWriter().write(JSON.toJSONString(ResponseResult.success(targetUser)));
+        } else {
+            String json = JSON.toJSONString(ResponseResult.error(Constants.RESPONSE_CODE_UNAUTHORIZED, "未登录"));
+            response.getWriter().write(json);
+        }
+
     }
 }

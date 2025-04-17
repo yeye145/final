@@ -24,4 +24,14 @@ public class UserServiceImpl implements UserService {
         System.out.println("--UserService，获取头像，用户id：" + targetUser.getId());
         return "/images/avatar/" + targetUser.getAvatar();
     }
+
+    @Override
+    public User getInformation(Integer userId) throws SQLException {
+        return userDao
+                .getUserSet()
+                .stream()
+                .filter(user -> user.getId() == userId)
+                .findFirst()
+                .get();
+    }
 }
