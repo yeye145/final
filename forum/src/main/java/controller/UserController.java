@@ -1,6 +1,7 @@
 package controller;
 
 import com.alibaba.fastjson.JSON;
+import controller.utils.BaseServlet;
 import controller.utils.GetUserId;
 import pojo.ResponseResult;
 import pojo.User;
@@ -12,7 +13,6 @@ import utils.Constants;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 
 @WebServlet("/user/*")
@@ -61,6 +61,8 @@ public class UserController extends BaseServlet {
         }
     }
 
+
+    /*--------------------------------------------   更新个人昵称   --------------------------------------------*/
     public void updateName(HttpServletRequest request, HttpServletResponse response) throws Exception {
         Integer id = Integer.parseInt(request.getParameter("id"));
         String newName = request.getParameter("newName");

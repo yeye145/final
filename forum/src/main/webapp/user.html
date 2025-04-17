@@ -127,11 +127,11 @@
             </div>
 
             <div class="board-list">
-                <div v-for="board in myBoards" :key="board.id" class="board-item">
+                <div v-for="board in myBoard" :key="board.id" class="board-item">
                     <div class="board-info">
                         <h4>{{ board.title }}</h4>
                         <p>类型: {{ board.type }} | 帖子数: {{ board.postCount }}</p>
-                        <p class="board-notice">{{ board.notice }}</p>
+                        <p>创建时间：{{ board.time }}</p>
                     </div>
                     <div class="board-actions">
                         <button @click="showBanModal(board.id)" class="ban-btn">封禁用户</button>
@@ -203,7 +203,7 @@
             showBanModal: false,
             currentBoardId: null,
 
-            myBoards: [],
+            myBoard: [],
             newBoard: {
                 title: '',
                 type: '',
@@ -244,7 +244,7 @@
                 this.ifHomePage = false;
                 this.ifUploadMyAvatar = false;
                 this.ifMyBoard = true;
-                this.fetchMyBoards();
+                this.fetchmyBoard();
                 this.currentPath = ['QG技术论坛', '我的版块'];
             },
             // 切换编辑昵称
@@ -377,11 +377,11 @@
                 });
             },
             // 获取我的版块
-            fetchMyBoards() {
+            fetchmyBoard() {
                 axios.post('/board/getBoard')
                     .then(response => {
                         if (response.data.code === 200) {
-                            this.myBoards = response.data.data;
+                            this.myBoard = response.data.data;
                         }
                     })
                     .catch(error => {
@@ -414,7 +414,7 @@
                     if (response.data.code === 200) {
                         alert('版块申请已提交，等待审核');
                         this.showCreateBoardModal = false;
-                        this.fetchMyBoards();
+                        this.fetchmyBoard();
                         this.newBoard = {title: '', type: '技术', notice: ''};
                     } else {
                         alert(response.data.message);

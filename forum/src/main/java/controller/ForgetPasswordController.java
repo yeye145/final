@@ -1,6 +1,7 @@
 package controller;
 
 import com.alibaba.fastjson.JSON;
+import controller.utils.BaseServlet;
 import pojo.ResponseResult;
 import service.impl.ForgetPasswordServiceImpl;
 import service.utils.HashSaltUtil;

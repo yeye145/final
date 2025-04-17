@@ -1,6 +1,7 @@
 package controller;
 
 import com.alibaba.fastjson.JSON;
+import controller.utils.BaseServlet;
 import pojo.ResponseResult;
 import pojo.User;
 import service.impl.UploadAvatarServiceImpl;
