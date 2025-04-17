@@ -70,19 +70,24 @@
             <!-- 互动数据卡片 -->
             <div class="stats-grid">
                 <div class="stat-card">
-                    <div class="stat-icon">❤️</div>
-                    <div class="stat-value">{{  }}</div>
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-value">{{ userInformation.mySubscribeCount }}</div>
                     <div class="stat-label">我的关注</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-icon">⭐</div>
-                    <div class="stat-value">{{  }}</div>
-                    <div class="stat-label">我的收藏</div>
+                    <div class="stat-icon">📖</div>
+                    <div class="stat-value">{{ userInformation.receiveReadCount }}</div>
+                    <div class="stat-label">被阅读数</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-icon">⏲️</div>
-                    <div class="stat-value">{{  }}</div>
-                    <div class="stat-label">历史记录</div>
+                    <div class="stat-icon">❤️</div>
+                    <div class="stat-value">{{ userInformation.fansCount }}</div>
+                    <div class="stat-label">我的粉丝</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">⭐</div>
+                    <div class="stat-value">{{ userInformation.myCollectCount }}</div>
+                    <div class="stat-label">我的收藏</div>
                 </div>
             </div>
         </div>

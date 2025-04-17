@@ -23,15 +23,21 @@ public class UserDaoImpl implements UserDao {
                 "SELECT id, email, phone, password" +
                         ", is_admin AS isAdmin" +
                         ", name, grade, avatar" +
-                        ", if_receive_like AS ifReceiveLike " +
-                        "FROM user", User.class
+                        ", if_receive_like AS ifReceiveLike" +
+                        ", receive_like_count AS receiveLikeCount" +
+                        ", fans_count AS fansCount" +
+                        ", post_count AS postCount" +
+                        ", receive_read_count AS receiveReadCount" +
+                        ", my_subscribe_count AS mySubscribeCount" +
+                        ", my_collect_count AS myCollectCount" +
+                        " FROM `forum`.`User`", User.class
         );
     }
 
     @Override
     public void insertUser(String phone, String email, String password) throws Exception {
         MyUpdate.update("INSERT INTO `forum`.`User` (`phone`, `password`," +
-                " `is_admin`, `email`, `name`) VALUES (?, ?, 1, ?, ?);", phone, password, email, "用户" + phone);
+                " `is_admin`, `email`, `name`) VALUES (?, ?, 0, ?, ?);", phone, password, email, "用户" + phone);
     }
 
     @Override
