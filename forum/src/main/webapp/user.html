@@ -60,7 +60,6 @@
                                v-model="newName"
                                ref="nameInput"
                                @blur="saveName"
-                               @keyup.enter="saveName"
                                class="name-input">
                     </div>
                     <div class="user-level">等级：Lv{{ userInformation.grade }}</div>
@@ -86,7 +85,7 @@
                 </div>
                 <div class="stat-card">
                     <div class="stat-icon">🗺</div>
-                    <div class="stat-value">1</div>
+                    <div class="stat-value">{{userInformation.myBoardCount}}</div>
                     <div class="stat-label">我的版块</div>
                 </div>
                 <div class="stat-card">
@@ -98,7 +97,7 @@
                 <!-- 第二行 -->
                 <div class="stat-card">
                     <div class="stat-icon">🕒</div>
-                    <div class="stat-value">{{ userInformation.historyCount || 0 }}</div>
+                    <div class="stat-value">...</div>
                     <div class="stat-label">历史记录</div>
                 </div>
                 <div class="stat-card">
@@ -182,7 +181,7 @@
                 }).then(response => {
                     if (response.data.code === 200) {
                         that.userInformation.name = that.newName;
-                        alert("更新昵称成功");
+                        alert("更改昵称成功！")
                     } else {
                         alert(response.data.message);
                     }

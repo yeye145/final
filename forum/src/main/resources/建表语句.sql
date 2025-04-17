@@ -154,8 +154,8 @@ ADD COLUMN `fans_count` INT NULL DEFAULT '0' AFTER `receive_like_count`,
 ADD COLUMN `post_count` INT NULL DEFAULT '0' AFTER `fans_count`,
 ADD COLUMN `receive_read_count` INT NULL DEFAULT '0' AFTER `post_count`,
 ADD COLUMN `my_subscribe_count` INT NULL DEFAULT '0' AFTER `receive_read_count`,
-ADD COLUMN `my_collect_count` INT NULL DEFAULT '0' AFTER `my_subscribe_count`;
-
+ADD COLUMN `my_collect_count` INT NULL DEFAULT '0' AFTER `my_subscribe_count`,
+ADD COLUMN `my_board_count` INT NULL DEFAULT '0' AFTER `my_collect_count`;
 
 INSERT INTO `forum`.`user` (`id`, `email`, `phone`, `password`, `is_admin`, `name`, `grade`, `avatar`, `if_receive_like`) VALUES ('1', 'y@y.com', '18300000985', 'yyy111', '1', 'Yiiie.', '7', 'initAvatar.jpg', '0');
 INSERT INTO `forum`.`user` (`id`, `email`, `phone`, `password`, `is_admin`, `name`, `grade`, `avatar`, `if_receive_like`) VALUES ('2', '3@3.com', '18300003030', 'sss333', '0', '张三', '3', 'initAvatar.jpg', '1');

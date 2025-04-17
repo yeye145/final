@@ -30,6 +30,7 @@ public class UserDaoImpl implements UserDao {
                         ", receive_read_count AS receiveReadCount" +
                         ", my_subscribe_count AS mySubscribeCount" +
                         ", my_collect_count AS myCollectCount" +
+                        ", my_board_count AS myBoardCount" +
                         " FROM `forum`.`User`", User.class
         );
     }

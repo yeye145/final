@@ -18,12 +18,13 @@ public class User {
     private Integer postCount;
     private Integer mySubscribeCount;
     private Integer myCollectCount;
+    private Integer myBoardCount;
 
 
     public User() {
     }
 
-    public User(Integer id, String phone, String password, Boolean isAdmin, String email, Integer userType, Integer grade, String avatar, Boolean ifReceiveLike, String name, Integer receiveLikeCount, Integer receiveReadCount, Integer fansCount, Integer postCount, Integer mySubscribeCount, Integer myCollectCount) {
+    public User(Integer id, String phone, String password, Boolean isAdmin, String email, Integer userType, Integer grade, String avatar, Boolean ifReceiveLike, String name, Integer receiveLikeCount, Integer receiveReadCount, Integer fansCount, Integer postCount, Integer mySubscribeCount, Integer myCollectCount, Integer myBoardCount) {
         this.id = id;
         this.phone = phone;
         this.password = password;
@@ -40,6 +41,7 @@ public class User {
         this.postCount = postCount;
         this.mySubscribeCount = mySubscribeCount;
         this.myCollectCount = myCollectCount;
+        this.myBoardCount = myBoardCount;
     }
 
     /**
@@ -298,7 +300,23 @@ public class User {
         this.myCollectCount = myCollectCount;
     }
 
+    /**
+     * 获取
+     * @return myBoardCount
+     */
+    public Integer getMyBoardCount() {
+        return myBoardCount;
+    }
+
+    /**
+     * 设置
+     * @param myBoardCount
+     */
+    public void setMyBoardCount(Integer myBoardCount) {
+        this.myBoardCount = myBoardCount;
+    }
+
     public String toString() {
-        return "User{id = " + id + ", phone = " + phone + ", password = " + password + ", isAdmin = " + isAdmin + ", email = " + email + ", userType = " + userType + ", grade = " + grade + ", avatar = " + avatar + ", ifReceiveLike = " + ifReceiveLike + ", name = " + name + ", receiveLikeCount = " + receiveLikeCount + ", receiveReadCount = " + receiveReadCount + ", fansCount = " + fansCount + ", postCount = " + postCount + ", mySubscribeCount = " + mySubscribeCount + ", myCollectCount = " + myCollectCount + "}";
+        return "User{id = " + id + ", phone = " + phone + ", password = " + password + ", isAdmin = " + isAdmin + ", email = " + email + ", userType = " + userType + ", grade = " + grade + ", avatar = " + avatar + ", ifReceiveLike = " + ifReceiveLike + ", name = " + name + ", receiveLikeCount = " + receiveLikeCount + ", receiveReadCount = " + receiveReadCount + ", fansCount = " + fansCount + ", postCount = " + postCount + ", mySubscribeCount = " + mySubscribeCount + ", myCollectCount = " + myCollectCount + ", myBoardCount = " + myBoardCount + "}";
     }
 }
