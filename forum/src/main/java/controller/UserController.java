@@ -41,6 +41,7 @@ public class UserController extends BaseServlet {
         }
     }
 
+    /*--------------------------------------------   获取个人信息   --------------------------------------------*/
     public void information(HttpServletRequest request, HttpServletResponse response) throws Exception {
         System.out.println("UserController.information，获取个人信息");
         HttpSession session = request.getSession();
@@ -57,6 +58,8 @@ public class UserController extends BaseServlet {
             String json = JSON.toJSONString(ResponseResult.error(Constants.RESPONSE_CODE_UNAUTHORIZED, "未登录"));
             response.getWriter().write(json);
         }
-
     }
+
+
+
 }

@@ -47,47 +47,62 @@
         <!-- 个人信息 -->
         <div v-if="ifMyInformation" class="profile-section">
             <!-- 基本信息卡片 -->
-            <div class="profile-card">
-                <div class="profile-header">
-                    <img :src="avatar" class="profile-avatar" alt="头像" @click="triggerAvatarFileInput">
-                    <div class="profile-meta">
-                        <h2>昵称：{{ userInformation.name }}</h2>
-                        <div class="user-level">等级：Lv{{ userInformation.grade }}</div>
-                    </div>
-                </div>
-                <div class="profile-contact">
-                    <div class="contact-item">
-                        <span class="icon">📱</span>
-                        <span>{{ userInformation.phone }}</span>
-                    </div>
-                    <div class="contact-item">
-                        <span class="icon">📧</span>
-                        <span>{{ userInformation.email }}</span>
+            <div class="profile-header">
+                <img :src="avatar" class="profile-avatar" alt="头像" @click="triggerAvatarFileInput">
+                <div class="profile-meta">
+                    <h2>昵称：{{ userInformation.name }}</h2>
+                    <div class="user-level">等级：Lv{{ userInformation.grade }}</div>
+                    <div class="profile-stats">
+                        <span>❤️ {{ userInformation.receiveLikeCount }} 收获点赞</span>
+                        <span>👀 {{ userInformation.receiveReadCount }} 被阅读数</span>
                     </div>
                 </div>
             </div>
 
             <!-- 互动数据卡片 -->
             <div class="stats-grid">
+                <!-- 第一行 -->
+                <div class="stat-card">
+                    <div class="stat-icon">📱</div>
+                    <div class="stat-value">{{ userInformation.phone }}</div>
+                    <div class="stat-label">手机号</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📧</div>
+                    <div class="stat-value">{{ userInformation.email }}</div>
+                    <div class="stat-label">邮箱</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🗺</div>
+                    <div class="stat-value">1</div>
+                    <div class="stat-label">我的版块</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-value">{{ userInformation.fansCount }}</div>
+                    <div class="stat-label">我的粉丝</div>
+                </div>
+
+                <!-- 第二行 -->
+                <div class="stat-card">
+                    <div class="stat-icon">🕒</div>
+                    <div class="stat-value">{{ userInformation.historyCount || 0 }}</div>
+                    <div class="stat-label">历史记录</div>
+                </div>
                 <div class="stat-card">
                     <div class="stat-icon">👥</div>
                     <div class="stat-value">{{ userInformation.mySubscribeCount }}</div>
                     <div class="stat-label">我的关注</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-icon">📖</div>
-                    <div class="stat-value">{{ userInformation.receiveReadCount }}</div>
-                    <div class="stat-label">被阅读数</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">❤️</div>
-                    <div class="stat-value">{{ userInformation.fansCount }}</div>
-                    <div class="stat-label">我的粉丝</div>
-                </div>
-                <div class="stat-card">
                     <div class="stat-icon">⭐</div>
                     <div class="stat-value">{{ userInformation.myCollectCount }}</div>
                     <div class="stat-label">我的收藏</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📖</div>
+                    <div class="stat-value">{{ userInformation.postCount }}</div>
+                    <div class="stat-label">我的帖子</div>
                 </div>
             </div>
         </div>

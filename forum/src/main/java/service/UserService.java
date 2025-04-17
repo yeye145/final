@@ -8,4 +8,6 @@ public interface UserService {
     String getAvatar(Integer userId) throws SQLException;
 
     User getInformation(Integer userId) throws SQLException;
+
+
 }

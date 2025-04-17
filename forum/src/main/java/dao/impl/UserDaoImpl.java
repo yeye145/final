@@ -52,5 +52,7 @@ public class UserDaoImpl implements UserDao {
         MyUpdate.update("UPDATE `forum`.`User` SET `avatar` = ? WHERE (`id` = ?);"
                 , fileName, userId);
     }
-
 }
+
+
+    
