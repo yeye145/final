@@ -7,6 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="homepage.css"/>
     <link rel="stylesheet" href="myself.css"/>
+    <link rel="stylesheet" href="my-board.css"/>
 </head>
 <body>
 <div id="app">
@@ -31,7 +32,7 @@
     <div class="left-column">
         <h2 style="text-align: center;">——功能导航——</h2>
         <hr>
-        <div class="nav-item" @click="switchTab('home')">🏠 主页</div>
+        <div class="nav-item" @click="backHomePage">🏠 主页</div>
         <hr>
         <div class="nav-item" @dblclick="exitLogin">🚪 双击退出登录</div>
     </div>
@@ -83,7 +84,7 @@
                     <div class="stat-value">{{ userInformation.email }}</div>
                     <div class="stat-label">邮箱</div>
                 </div>
-                <div class="stat-card">
+                <div class="stat-card" @click="turnMyBoard">
                     <div class="stat-icon">🗺</div>
                     <div class="stat-value">{{userInformation.myBoardCount}}</div>
                     <div class="stat-label">我的版块</div>
@@ -118,6 +119,68 @@
             </div>
         </div>
 
+        <!-- 我的版块 -->
+        <div v-if="ifMyBoard" class="board-section">
+            <div class="board-header">
+                <h3>我的版块</h3>
+                <button @click="showCreateBoardModal = true" class="create-board-btn">+ 申请新增版块</button>
+            </div>
+
+            <div class="board-list">
+                <div v-for="board in myBoards" :key="board.id" class="board-item">
+                    <div class="board-info">
+                        <h4>{{ board.title }}</h4>
+                        <p>类型: {{ board.type }} | 帖子数: {{ board.postCount }}</p>
+                        <p class="board-notice">{{ board.notice }}</p>
+                    </div>
+                    <div class="board-actions">
+                        <button @click="showBanModal(board.id)" class="ban-btn">封禁用户</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 新增版块 -->
+        <div v-if="showCreateBoardModal" class="modal">
+            <div class="modal-content">
+                <h3>申请新增版块</h3>
+                <div class="form-group">
+                    <label>标题:</label>
+                    <input v-model="newBoard.title" type="text">
+                </div>
+                <div class="form-group">
+                    <label>类型:</label>
+                    <input v-model="newBoard.type" type="text">
+                </div>
+                <div class="form-group">
+                    <label>版块公告:</label>
+                    <textarea v-model="newBoard.notice"></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button @click="createBoard">提交申请</button>
+                    <button @click="showCreateBoardModal = false">取消</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 版块封禁用户 -->
+        <div v-if="showBanModal" class="modal">
+            <div class="modal-content">
+                <h3>封禁用户</h3>
+                <div class="form-group">
+                    <label>用户名:</label>
+                    <input v-model="banUser.username" type="text" placeholder="输入要封禁的用户名">
+                </div>
+                <div class="form-group">
+                    <label>封禁原因:</label>
+                    <textarea v-model="banUser.reason" placeholder="输入封禁原因"></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button @click="banUserFromBoard">确认封禁</button>
+                    <button @click="showBanModal = false">取消</button>
+                </div>
+            </div>
+        </div>
 
     </div>
 </div>
@@ -135,9 +198,24 @@
             ifHomePage: true,           // 显示主页
             ifEditName: false,
 
+            ifMyBoard: false,
+            showCreateBoardModal: false,
+            showBanModal: false,
+            currentBoardId: null,
+
+            myBoards: [],
+            newBoard: {
+                title: '',
+                type: '',
+                notice: ''
+            },
+            banUser: {
+                username: '',
+                reason: '',
+                boardId: '',
+            },
 
             currentPath: ['QG技术论坛', '主页'],
-            currentTab: 'home',
 
 
             avatar: '/images/avatar/initAvatar.jpg',
@@ -151,6 +229,25 @@
             this.fetchUserInformation();
         },
         methods: {
+            // 切换回主页
+            backHomePage() {
+                this.ifMyInformation = false;
+                this.ifHomePage = true;
+                this.ifUploadMyAvatar = false;
+                this.ifEditName = false;
+                this.ifMyBoard = false;
+                this.currentPath = ['QG技术论坛', '主页'];
+            },
+            // 切换我的版块
+            turnMyBoard() {
+                this.ifMyInformation = false;
+                this.ifHomePage = false;
+                this.ifUploadMyAvatar = false;
+                this.ifMyBoard = true;
+                this.fetchMyBoards();
+                this.currentPath = ['QG技术论坛', '我的版块'];
+            },
+            // 切换编辑昵称
             turnEditName() {
                 this.ifEditName = true;
                 this.newName = this.userInformation.name;
@@ -159,6 +256,7 @@
                     this.$refs.nameInput.focus();
                 });
             },
+            // 保存修改的昵称
             saveName() {
                 if (this.newName.trim() === '') {
                     alert('昵称不能为空');
@@ -188,12 +286,13 @@
                 });
                 that.ifEditName = false;
             },
-
             // 切换显示我的个人信息
             turnMyInformation() {
                 this.ifMyInformation = true;
                 this.ifHomePage = false;
                 this.ifUploadMyAvatar = false;
+                this.ifMyBoard = false;
+                this.currentPath = ['QG技术论坛', '我的信息'];
             },
             // 获取我的个人信息
             fetchUserInformation() {
@@ -228,17 +327,6 @@
                         console.error('请求错误:', error);
                     });
             },
-            // 切换界面显示
-            switchTab(tab) {
-                this.currentTab = tab;
-                this.currentPath = ['QG技术论坛', tab === 'home' ? '主页' : '版块'];
-            },
-            // 退出登录
-            exitLogin() {
-                axios.post('/login/exitLogin');
-                window.location.href = '/login.html';
-            },
-
             // 触发文件选择
             triggerAvatarFileInput() {
                 this.$refs.fileInput.click();
@@ -287,7 +375,88 @@
                     const errorMessage = error.response?.data?.message || error.message;
                     alert('上传失败: ' + errorMessage);
                 });
-            }
+            },
+            // 获取我的版块
+            fetchMyBoards() {
+                axios.post('/board/getBoard')
+                    .then(response => {
+                        if (response.data.code === 200) {
+                            this.myBoards = response.data.data;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('获取版块失败:', error);
+                    });
+            },
+
+            // 显示封禁用户模态框
+            showBanModal(boardId) {
+                this.banUser.boardId = boardId;
+                this.showBanModal = true;
+            },
+
+            // 创建新版块
+            createBoard() {
+                if (!this.newBoard.title.trim()) {
+                    alert('版块标题不能为空');
+                    return;
+                }
+
+                axios.post('/board/applyBoard', new URLSearchParams({
+                    title: this.newBoard.title,
+                    type: this.newBoard.type,
+                    notice: this.newBoard.notice,
+                }), {
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                }).then(response => {
+                    if (response.data.code === 200) {
+                        alert('版块申请已提交，等待审核');
+                        this.showCreateBoardModal = false;
+                        this.fetchMyBoards();
+                        this.newBoard = {title: '', type: '技术', notice: ''};
+                    } else {
+                        alert(response.data.message);
+                    }
+                })
+                    .catch(error => {
+                        console.error('申请创建版块失败:', error);
+                        alert('申请创建版块失败');
+                    });
+            },
+
+            // 封禁用户
+            banUserFromBoard() {
+                if (!this.banUser.username.trim()) {
+                    alert('请输入用户名');
+                    return;
+                }
+
+                axios.post('/board/banUser', {
+                    boardId: this.banUser.boardId,
+                    username: this.banUser.username,
+                    reason: this.banUser.reason
+                })
+                    .then(response => {
+                        if (response.data.code === 200) {
+                            alert('用户已封禁');
+                            this.showBanModal = false;
+                            this.banUser = {username: '', reason: '', boardId: null};
+                        } else {
+                            alert(response.data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('封禁用户失败:', error);
+                        alert('封禁用户失败');
+                    });
+            },
+            // 退出登录
+            exitLogin() {
+                axios.post('/login/exitLogin');
+                window.location.href = '/login.html';
+            },
         }
 
     })

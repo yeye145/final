@@ -31,6 +31,16 @@ CREATE TABLE board (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
+-- 申请板块表
+CREATE TABLE board_apply (
+                             id INT PRIMARY KEY AUTO_INCREMENT,
+                             host_id INT NOT NULL COMMENT '版主ID',
+                             time DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '申请时间',
+                             title VARCHAR(255) NOT NULL COMMENT '标题',
+                             type VARCHAR(255) NOT NULL COMMENT '类型',
+                             FOREIGN KEY (host_id) REFERENCES user(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 -- 帖子表
 CREATE TABLE post (
                       id INT PRIMARY KEY AUTO_INCREMENT,
@@ -163,3 +173,4 @@ INSERT INTO `forum`.`user` (`id`, `email`, `phone`, `password`, `is_admin`, `nam
 INSERT INTO `forum`.`board` (`id`, `host_id`, `title`, `type`, `post_count`, `time`) VALUES ('1', '2', '张三学java', 'java', '0', '2025-04-14 15:14:50');
 INSERT INTO `forum`.`log` (`id`, `user_id`, `user_name`, `action`, `ip`, `time`) VALUES ('1', '2', '张三', '新建版块', '127.0.0.1', '2025-04-14 15:14:50');
 
+UPDATE `forum`.`user` SET `my_board_count` = '1' WHERE (`id` = '2');

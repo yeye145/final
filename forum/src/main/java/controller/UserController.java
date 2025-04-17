@@ -1,6 +1,7 @@
 package controller;
 
 import com.alibaba.fastjson.JSON;
+import controller.utils.GetUserId;
 import pojo.ResponseResult;
 import pojo.User;
 
@@ -27,13 +28,12 @@ public class UserController extends BaseServlet {
 
         System.out.println("UserController.avatar，获取头像：");
 
-        HttpSession session = request.getSession();
-        User user = (User) session.getAttribute("user");
+        Integer userId = GetUserId.getUserId(request);
 
-        if (user != null) {
-            System.out.println("-用户id：" + user.getId());
+        if (userId != null) {
+            System.out.println("-用户id：" + userId);
             // 获取头像的url
-            String avatarUrl = userService.getAvatar(user.getId());
+            String avatarUrl = userService.getAvatar(userId);
             System.out.println("-avatarUrl: " + avatarUrl);
             // 返回 ResponseResult 对象
             response.getWriter().write(JSON.toJSONString(ResponseResult.success(avatarUrl)));
@@ -46,13 +46,12 @@ public class UserController extends BaseServlet {
     /*--------------------------------------------   获取个人信息   --------------------------------------------*/
     public void information(HttpServletRequest request, HttpServletResponse response) throws Exception {
         System.out.println("UserController.information，获取个人信息");
-        HttpSession session = request.getSession();
-        User user = (User) session.getAttribute("user");
-        if (user != null) {
-            System.out.println("-用户id：" + user.getId());
+        Integer userId = GetUserId.getUserId(request);
+        if (userId != null) {
+            System.out.println("-用户id：" + userId);
 
             // 获取个人信息
-            User targetUser = userService.getInformation(user.getId());
+            User targetUser = userService.getInformation(userId);
 
             // 返回 ResponseResult 对象
             response.getWriter().write(JSON.toJSONString(ResponseResult.success(targetUser)));
