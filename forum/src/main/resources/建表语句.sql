@@ -182,6 +182,10 @@ ADD COLUMN `my_subscribe_count` INT NULL DEFAULT '0' AFTER `receive_read_count`,
 ADD COLUMN `my_collect_count` INT NULL DEFAULT '0' AFTER `my_subscribe_count`,
 ADD COLUMN `my_board_count` INT NULL DEFAULT '0' AFTER `my_collect_count`;
 
+ALTER TABLE `forum`.`board`
+    ADD COLUMN `host_name` VARCHAR(255) NULL AFTER `post_count`;
+
+
 -- 关注与粉丝 -- 触发器
 DELIMITER //
 
@@ -246,6 +250,20 @@ END //
 
 DELIMITER ;
 
+-- 插入帖子后更新版块帖子数 -- 触发器
+DELIMITER //
+
+CREATE TRIGGER after_insert_post_update_board
+    AFTER INSERT ON post
+    FOR EACH ROW
+BEGIN
+    UPDATE board
+    SET post_count = post_count + 1
+    WHERE id = NEW.board_id;
+END //
+
+DELIMITER ;
+
 INSERT INTO `forum`.`user` (`id`, `email`, `phone`, `password`, `is_admin`, `name`, `grade`, `avatar`,
                             `if_receive_like`)
 VALUES ('1', 'y@y.com', '18300000985', 'yyy111', '1', 'Yiiie.', '7', 'initAvatar.jpg', '0');
@@ -272,8 +290,8 @@ VALUES ('3@3.com', '18300003030', 'sss333', '张三', '3', 'initAvatar.jpg'),
        ('user19@test.com', '18511110016', 'password123', '程二十', 5, 'initAvatar.jpg'),
        ('user20@test.com', '18511110017', 'password123', '黄二一', 2, 'initAvatar.jpg');
 
-INSERT INTO `forum`.`board` (`id`, `host_id`, `title`, `type`, `post_count`, `time`)
-VALUES ('1', '2', '张三学java', 'java', '0', '2025-04-14 15:14:50');
+INSERT INTO `forum`.`board` (`id`, `host_id`, `title`, `type`, `post_count`, `time`, `host_name`)
+VALUES ('1', '2', '张三学java', 'java', '0', '2025-04-14 15:14:50', '张三');
 INSERT INTO `forum`.`log` (`id`, `user_id`, `user_name`, `action`, `ip`, `time`)
 VALUES ('1', '2', '张三', '新建版块', '127.0.0.1', '2025-04-14 15:14:50');
 
@@ -282,9 +300,12 @@ SET `my_board_count` = '1'
 WHERE (`id` = '2');
 
 -- 新增版块
-INSERT INTO `forum`.`board` (`host_id`, `title`, `type`)
-VALUES (3, 'Python学习交流', 'Python'),
-       (4, 'Web开发讨论区', 'Web');
+INSERT INTO `forum`.`board` (`host_id`, `title`, `type`, `host_name`)
+VALUES (3, 'Python学习交流', 'Python', "李四"),
+       (4, 'Web开发讨论区', 'Web', "王五"),
+       (3, '人工智能与机器学习', 'AI', "李四"),
+       (5, '移动开发', 'Mobile', "赵六"),
+       (6, '数据库技术', 'Database', "陈七");
 
 -- 生成帖子
 INSERT INTO `forum`.`post` (`title`, `content`, `author_id`, `board_id`)
@@ -292,33 +313,23 @@ VALUES
 -- 版块1（Java）
 ('Java入门指南', 'Java基础语法和开发环境配置...', 2, 1),
 ('Spring框架实战', 'Spring Boot快速入门教程...', 3, 1),
+('MySQL索引优化', 'B+树原理与索引设计...', 8, 1),
+('Redis缓存设计', 'Redis持久化策略...', 11, 1),
+('微服务架构', 'Spring Cloud实战...', 12, 1),
 -- 版块2（Python）
 ('Python数据分析', '迭代方法...', 4, 2),
+('机器学习入门', '线性回归模型原理...', 10, 2),
 ('Django项目实战', '从零搭建一个博客系统...', 5, 2),
+('Flask快速开发', '轻量级Web框架实践...', 13, 2),
+('Linux系统管理', '常用命令与Shell脚本...', 16, 2),
 -- 版块3（Web）
 ('React最佳实践', 'React Hooks深度解析...', 6, 3),
 ('Node.js性能优化', 'Node.js高并发解决方案...', 7, 3),
--- 其他帖子
-('MySQL索引优化', 'B+树原理与索引设计...', 8, 1),
 ('Vue3新特性', 'Composition API详解...', 2, 3),
-('机器学习入门', '线性回归模型原理...', 10, 2),
-('Redis缓存设计', 'Redis持久化策略...', 11, 1),
-('微服务架构', 'Spring Cloud实战...', 12, 1),
-('Flask快速开发', '轻量级Web框架实践...', 13, 2),
 ('前端工程化', 'Webpack配置指南...', 14, 3),
-('Git高级技巧', 'Rebase与Cherry-pick...', 15, 3),
-('Linux系统管理', '常用命令与Shell脚本...', 16, 2);
+('Git高级技巧', 'Rebase与Cherry-pick...', 15, 3);
 
--- 更新版块帖子数量
-UPDATE `forum`.`board`
-SET post_count = 5
-WHERE id = 1;
-UPDATE `forum`.`board`
-SET post_count = 5
-WHERE id = 2;
-UPDATE `forum`.`board`
-SET post_count = 5
-WHERE id = 3;
+
 
 -- 生成评论
 INSERT INTO `forum`.`comment` (`post_id`, `user_id`, `content`, `parent_id`)
@@ -338,4 +349,4 @@ VALUES (2, 3, NULL),
        (3, NULL, 1),
        (4, 5, NULL),
        (5, NULL, 2);
--- 用户5关注版块2
+

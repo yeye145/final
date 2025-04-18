@@ -66,7 +66,7 @@
                     <div class="board-info">
                         <h4>{{ board.title }}</h4>
                         <p>类型: {{ board.type }} | 帖子数: {{ board.postCount }}</p>
-                        <p>创建时间：{{ board.time }}</p>
+                        <p>版主: {{board.hostName}} | 创建时间：{{ board.time }}</p>
                     </div>
                 </div>
             </div>
@@ -338,6 +338,7 @@
                 this.ifUploadMyAvatar = false;
                 this.ifMyBoard = false;
                 this.ifShowDropdown = false;
+                this.ifAllBoard = false;
                 this.currentPath = ['QG技术论坛', '我的信息'];
             },
             // 获取我的个人信息

@@ -9,18 +9,20 @@ public class Board {
     private LocalDateTime time;
     private Integer hostId;
     private Integer postCount;
+    private String hostName;
 
 
     public Board() {
     }
 
-    public Board(Integer id, String title, String type, LocalDateTime time, Integer hostId, Integer postCount) {
+    public Board(Integer id, String title, String type, LocalDateTime time, Integer hostId, Integer postCount, String hostName) {
         this.id = id;
         this.title = title;
         this.type = type;
         this.time = time;
         this.hostId = hostId;
         this.postCount = postCount;
+        this.hostName = hostName;
     }
 
     /**
@@ -119,7 +121,23 @@ public class Board {
         this.postCount = postCount;
     }
 
+    /**
+     * 获取
+     * @return hostName
+     */
+    public String getHostName() {
+        return hostName;
+    }
+
+    /**
+     * 设置
+     * @param hostName
+     */
+    public void setHostName(String hostName) {
+        this.hostName = hostName;
+    }
+
     public String toString() {
-        return "Board{id = " + id + ", title = " + title + ", type = " + type + ", time = " + time + ", hostId = " + hostId + ", postCount = " + postCount + "}";
+        return "Board{id = " + id + ", title = " + title + ", type = " + type + ", time = " + time + ", hostId = " + hostId + ", postCount = " + postCount + ", hostName = " + hostName + "}";
     }
 }
