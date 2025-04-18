@@ -74,7 +74,7 @@
             <div class="post-list" v-if="ifAllPostInThisBoard">
                 <div v-for="post in allPostInThisBoard" :key="post.id" class="post-card">
                     <div class="post-meta">
-                        <span class="author">👤作者id {{ post.authorId }}</span>
+                        <span class="author">👤 {{ post.authorName }}</span>
                         <span class="time">📅 {{ post.time }}</span>
                     </div>
                     <h4 class="post-title">{{ post.title }}</h4>

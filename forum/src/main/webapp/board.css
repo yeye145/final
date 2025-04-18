@@ -1,15 +1,18 @@
-/* 我的版块样式 */
+/* 新版块列表样式 */
 .board-section {
     background: white;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-top: 20px;
 }
 
 .board-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
     margin-bottom: 20px;
 }
 
@@ -20,6 +23,11 @@
     padding: 8px 16px;
     border-radius: 4px;
     cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.create-board-btn:hover {
+    transform: translateY(-2px);
 }
 
 .board-list {
@@ -29,23 +37,37 @@
 }
 
 .board-item {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+    cursor: pointer;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px;
-    border: 1px solid #eee;
-    border-radius: 8px;
+}
+
+.board-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 3px 6px rgba(0,0,0,0.1);
 }
 
 .board-info h4 {
     margin: 0 0 5px 0;
     color: #333;
+    font-size: 18px;
 }
 
-.board-notice {
+.board-info p {
     color: #666;
     font-size: 14px;
-    margin: 5px 0 0 0;
+    margin: 3px 0;
+}
+
+.board-actions {
+    display: flex;
+    gap: 10px;
 }
 
 .ban-btn {
@@ -55,6 +77,11 @@
     padding: 6px 12px;
     border-radius: 4px;
     cursor: pointer;
+    transition: opacity 0.3s ease;
+}
+
+.ban-btn:hover {
+    opacity: 0.9;
 }
 
 /* 模态框样式 */
@@ -90,7 +117,6 @@
 }
 
 .form-group input,
-.form-group select,
 .form-group textarea {
     width: 100%;
     padding: 8px;
@@ -124,4 +150,13 @@
 
 .modal-actions button:last-child {
     background: #f5f5f5;
+}
+
+/* 新增hover状态细节 */
+.board-item:hover .board-info h4 {
+    color: #2196F3;
+}
+
+.board-item:hover .board-info p {
+    color: #444;
 }
