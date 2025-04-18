@@ -23,8 +23,22 @@
         <div class="current-location">
             {{ currentPath.join(' > ') }}
         </div>
-        <div class="avatar" @click="turnMyInformation">
+        <div class="avatar"
+             @click="turnMyInformation"
+             @mouseenter="ifShowDropdown = true"
+             @mouseleave="ifShowDropdown = false"
+        >
             <img :src="avatar" class="avatar-img" alt="头像">
+            <div class="avatar-dropdown"
+                 v-if="ifShowDropdown"
+                 @mouseenter="ifShowDropdown = true"
+                 @mouseleave="ifShowDropdown = false"
+            >
+                <div class="dropdown-item" @click="turnMyInformation">个人信息</div>
+                <div class="dropdown-item" @click="">举报用户</div>
+                <div class="dropdown-item" @click="">举报帖子</div>
+                <div class="dropdown-item" @click="exitLogin">退出登录</div>
+            </div>
         </div>
     </div>
 
@@ -33,8 +47,8 @@
         <h2 style="text-align: center;">——功能导航——</h2>
         <hr>
         <div class="nav-item" @click="backHomePage">🏠 主页</div>
+        <div class="nav-item" @click="">🧩 版块</div>
         <hr>
-        <div class="nav-item" @dblclick="exitLogin">🚪 双击退出登录</div>
     </div>
 
     <!-- 右侧内容区域 -->
@@ -85,7 +99,7 @@
                     <div class="stat-label">邮箱</div>
                 </div>
                 <div class="stat-card" @click="turnMyBoard">
-                    <div class="stat-icon">🗺</div>
+                    <div class="stat-icon">🧩</div>
                     <div class="stat-value">{{userInformation.myBoardCount}}</div>
                     <div class="stat-label">我的版块</div>
                 </div>
@@ -118,6 +132,7 @@
                 </div>
             </div>
         </div>
+
 
         <!-- 我的版块 -->
         <div v-if="ifMyBoard" class="board-section">
@@ -197,6 +212,7 @@
             ifUploadMyAvatar: false,          // 是否上传我的头像
             ifHomePage: true,           // 显示主页
             ifEditName: false,
+            ifShowDropdown: false,
 
             ifMyBoard: false,
             showCreateBoardModal: false,
@@ -236,6 +252,7 @@
                 this.ifUploadMyAvatar = false;
                 this.ifEditName = false;
                 this.ifMyBoard = false;
+                this.ifShowDropdown = false;
                 this.currentPath = ['QG技术论坛', '主页'];
             },
             // 切换我的版块
@@ -244,6 +261,7 @@
                 this.ifHomePage = false;
                 this.ifUploadMyAvatar = false;
                 this.ifMyBoard = true;
+                this.ifShowDropdown = false;
                 this.fetchmyBoard();
                 this.currentPath = ['QG技术论坛', '我的版块'];
             },
@@ -292,6 +310,7 @@
                 this.ifHomePage = false;
                 this.ifUploadMyAvatar = false;
                 this.ifMyBoard = false;
+                this.ifShowDropdown = false;
                 this.currentPath = ['QG技术论坛', '我的信息'];
             },
             // 获取我的个人信息

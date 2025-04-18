@@ -304,3 +304,40 @@ input[type="file"] {
     font-size: 14px;
     color: #666;
 }
+
+
+/*----------------------------------------------- 头像下拉显示 -----------------------------------------------*/
+
+
+/* 下拉菜单 */
+.avatar-dropdown {
+    display: none;
+    position: absolute;
+    right: -35px; /* 与头像对齐 */
+    top: 100%; /* 紧接头像底部 */
+    min-width: 105px;
+    background: #fff; /* 背景颜色 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 阴影 */
+    border-radius: 8px; /* 圆角 */
+    padding: 8px 0;
+    z-index: 1000;
+}
+
+.avatar-dropdown .dropdown-item {
+    padding: 10px 16px;
+    cursor: pointer;
+    text-align: left;
+    color: #333; /* 文字颜色 */
+    font-size: 14px; /* 字体大小 */
+    transition: background-color 0.3s;
+}
+
+.avatar-dropdown .dropdown-item:hover {
+    background-color: #f1f1f1; /* 悬停背景颜色 */
+    color: #000; /* 悬停文字颜色 */
+}
+
+/* 鼠标悬停时显示下拉菜单 */
+.avatar:hover .avatar-dropdown {
+    display: block;
+}
