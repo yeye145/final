@@ -160,3 +160,43 @@
 .board-item:hover .board-info p {
     color: #444;
 }
+
+/* 公告样式 */
+.notice-content {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #333;
+}
+
+.notice-time {
+    font-size: 12px;
+    color: #666;
+    margin-top: 8px;
+}
+
+.history-btn {
+    background: #f0f0f0;
+    border: 1px solid #ddd;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+/* 历史公告弹窗 */
+.history-notice-list {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.history-notice-item {
+    padding: 10px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+}
+
+.history-notice-item:hover {
+    background: #f8f8f8;
+}

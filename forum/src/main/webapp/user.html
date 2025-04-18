@@ -60,6 +60,14 @@
             <p>欢迎来到QG技术论坛！这里有最新技术动态和深度讨论。</p>
         </div>
 
+        <div class="content-section" v-if="ifAllPostInThisBoard && ifAllPostInThisBoard && !ifHomePage">
+            <h3>📌 公告
+                <button @click="showHistoryModal = true" class="history-btn">查看历史公告</button>
+            </h3>
+            <p class="notice-content">{{ currentNotice.content }}</p>
+            <p class="notice-time">📅 发布时间：{{ currentNotice.time }}</p>
+        </div>
+
         <!-- 全部版块 -->
         <div v-if="ifAllBoard" class="profile-section">
             <div class="board-list" v-if="!ifAllPostInThisBoard">
@@ -101,8 +109,10 @@
         <div v-if="ifMyInformation" class="profile-section">
             <!-- 基本信息卡片 -->
             <div class="profile-header">
+                <!--头像显示-->
                 <img :src="avatar" class="profile-avatar" alt="头像" @click="triggerAvatarFileInput">
                 <div class="profile-meta">
+                    <!--编辑昵称-->
                     <div class="name-edit-container">
                          <span v-if="!ifEditName" class="editable-name" @click="turnEditName">
                              昵称：{{ userInformation.name }}
@@ -115,6 +125,7 @@
                                @blur="saveName"
                                class="name-input">
                     </div>
+                    <!--其他信息展示-->
                     <div class="user-level">等级：Lv{{ userInformation.grade }}</div>
                     <div class="profile-stats">
                         <span>❤️ {{ userInformation.receiveLikeCount }} 收获点赞</span>
@@ -179,23 +190,27 @@
             </div>
 
             <div class="board-list" v-if="!ifAllPostInMyBoard">
+                <!--展示我管理的全部版块-->
                 <div v-for="board in myBoard" :key="board.id" class="board-item">
                     <div class="board-info" @click="turnAllPostInMyBoard(board.id, board.title)">
                         <h4>{{ board.title }}</h4>
                         <p>类型: {{ board.type }} | 帖子数: {{ board.postCount }}</p>
                         <p>创建时间：{{ board.time }}</p>
                     </div>
+                    <!--封禁用户-->
                     <div class="board-actions">
                         <button @click="showBanModal(board.id)" class="ban-btn">封禁用户</button>
                     </div>
                 </div>
             </div>
             <div class="post-list" v-if="ifAllPostInMyBoard">
+                <!--帖子搜索框-->
                 <div class="search-bar">
                     <input type="text" v-model="postSearchQuery"
                            placeholder="输入发帖用户昵称或帖子名称以搜索"
                            @input="searchPostInMyBoard">
                 </div>
+                <!--渲染帖子信息-->
                 <div v-for="post in allPostInMyBoard" :key="post.id" class="post-card">
                     <div class="post-meta">
                         <span class="author">👤 {{ post.authorName }}</span>
@@ -211,7 +226,7 @@
             </div>
         </div>
 
-        <!-- 新增版块 -->
+        <!-- 新增版块功能 -->
         <div v-if="showCreateBoardModal" class="modal">
             <div class="modal-content">
                 <h3>申请新增版块</h3>
@@ -234,7 +249,7 @@
             </div>
         </div>
 
-        <!-- 版块封禁用户 -->
+        <!-- 版块封禁用户功能 -->
         <div v-if="showBanModal" class="modal">
             <div class="modal-content">
                 <h3>封禁用户</h3>
@@ -289,6 +304,13 @@
             originalAllPostInThisBoard: [],
             originalAllPostInMyBoard: [],
 
+            notice: [],               // 存储所有公告
+            currentNotice: {          // 当前展示的公告
+                time: '',
+                content: '当前暂无公告',
+            },
+            showHistoryModal: false,   // 是否显示历史公告弹窗
+
             newBoard: {
                 title: '',
                 type: '',
@@ -302,7 +324,6 @@
 
             currentPath: ['QG技术论坛', '主页'],
 
-
             avatar: '/images/avatar/initAvatar.jpg',
 
             userInformation: {},
@@ -314,6 +335,33 @@
             this.fetchUserInformation();
         },
         methods: {
+            // 获取公告
+            fetchNotice(board_id) {
+                axios.post('/board/notice', new URLSearchParams({
+                    boardId: board_id,
+                }), {
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                }).then(response => {
+                        if (response.data.code === 200) {
+                            this.notice = response.data.data;
+                            // 默认显示最新公告
+                            if (this.notice.length > 0) {
+                                this.currentNotice = this.notice[0];
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        console.error('获取公告失败:', error);
+                    });
+            },
+            // 切换公告
+            switchNotice(index) {
+                this.currentNotice = this.notice[index];
+                this.showHistoryModal = false; // 点击后关闭弹窗
+            },
+
             // 帖子关键字搜索版块
             searchPostInMyBoard() {
                 if (this.postSearchQuery.trim() === '') {
@@ -381,6 +429,7 @@
                 this.ifMyBoard = false;
                 this.ifShowDropdown = false;
                 this.fetchAllPostInThisBoard(board_id, board_title);
+                this.fetchNotice(board_id);
             },
             // 切换我的版块下所有帖子
             turnAllPostInMyBoard(board_id, board_title) {
