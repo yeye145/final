@@ -47,8 +47,8 @@
     <div class="left-column">
         <h2 style="text-align: center;">——功能导航——</h2>
         <hr>
-        <div class="nav-item" @click="backHomePage">🏠 主页</div>
-        <div class="nav-item" @click="turnAllBoard">🧩 版块</div>
+        <div class="nav-item" @click="backHomePage">🏠 回到主页</div>
+        <div class="nav-item" @click="turnAllBoard">🧩 全部版块</div>
         <hr>
     </div>
 
@@ -178,15 +178,34 @@
                 <button @click="showCreateBoardModal = true" class="create-board-btn">+ 申请新增版块</button>
             </div>
 
-            <div class="board-list">
+            <div class="board-list" v-if="!ifAllPostInMyBoard">
                 <div v-for="board in myBoard" :key="board.id" class="board-item">
-                    <div class="board-info" @click="turnAllPostInThisBoard(board.id)">
+                    <div class="board-info" @click="turnAllPostInMyBoard(board.id, board.title)">
                         <h4>{{ board.title }}</h4>
                         <p>类型: {{ board.type }} | 帖子数: {{ board.postCount }}</p>
                         <p>创建时间：{{ board.time }}</p>
                     </div>
                     <div class="board-actions">
                         <button @click="showBanModal(board.id)" class="ban-btn">封禁用户</button>
+                    </div>
+                </div>
+            </div>
+            <div class="post-list" v-if="ifAllPostInMyBoard">
+                <div class="search-bar">
+                    <input type="text" v-model="postSearchQuery"
+                           placeholder="输入发帖用户昵称或帖子名称以搜索"
+                           @input="searchPostInMyBoard">
+                </div>
+                <div v-for="post in allPostInMyBoard" :key="post.id" class="post-card">
+                    <div class="post-meta">
+                        <span class="author">👤 {{ post.authorName }}</span>
+                        <span class="time">📅 {{ post.time }}</span>
+                    </div>
+                    <h4 class="post-title">{{ post.title }}</h4>
+                    <div class="post-stats">
+                        <span>❤️ {{ post.likeCount }}</span>
+                        <span>💬 {{ post.commentCount }}</span>
+                        <span>👀 {{ post.viewCount }}</span>
                     </div>
                 </div>
             </div>
@@ -252,6 +271,7 @@
             ifShowDropdown: false,          // 显示头像下拉选项
             ifAllBoard: false,              // 显示所有版块
             ifAllPostInThisBoard: false,    // 显示该版块所有帖子
+            ifAllPostInMyBoard: false,      // 显示我的版块的所有帖子
 
             ifMyBoard: false,
             showCreateBoardModal: false,
@@ -261,11 +281,13 @@
             myBoard: [],
             allBoard: [],
             allPostInThisBoard: [],
+            allPostInMyBoard: [],
 
             boardSearchQuery: '', // 版块关键字搜索
             originalAllBoard: [],
             postSearchQuery: '', // 帖子关键字搜索
             originalAllPostInThisBoard: [],
+            originalAllPostInMyBoard: [],
 
             newBoard: {
                 title: '',
@@ -292,6 +314,21 @@
             this.fetchUserInformation();
         },
         methods: {
+            // 帖子关键字搜索版块
+            searchPostInMyBoard() {
+                if (this.postSearchQuery.trim() === '') {
+                    // 清空搜索时恢复原始数据
+                    this.allPostInMyBoard = this.originalAllPostInMyBoard;
+                    return;
+                }
+
+                // 将查询的字符串转化为小写
+                const query = this.postSearchQuery.toLowerCase();
+                this.allPostInMyBoard = this.originalAllPostInMyBoard.filter(post =>
+                    // 将课程名称转化为小写，如果包含这个课程名称，则储存
+                    post.authorName.toLowerCase().includes(query) ||
+                    post.title.toLowerCase().includes(query))
+            },
             // 帖子关键字搜索版块
             searchPost() {
                 if (this.postSearchQuery.trim() === '') {
@@ -331,9 +368,12 @@
                 this.ifMyBoard = false;
                 this.ifShowDropdown = false;
                 this.ifAllBoard = false;
+                this.ifAllPostInMyBoard = false;
                 this.currentPath = ['QG技术论坛', '主页'];
             },
+            // 切换该版块下所有帖子
             turnAllPostInThisBoard(board_id, board_title) {
+                this.ifAllPostInMyBoard = false;
                 this.ifAllPostInThisBoard = true;
                 this.ifMyInformation = false;
                 this.ifHomePage = false;
@@ -341,6 +381,16 @@
                 this.ifMyBoard = false;
                 this.ifShowDropdown = false;
                 this.fetchAllPostInThisBoard(board_id, board_title);
+            },
+            // 切换我的版块下所有帖子
+            turnAllPostInMyBoard(board_id, board_title) {
+                this.ifAllPostInMyBoard = true;
+                this.ifAllPostInThisBoard = false;
+                this.ifMyInformation = false;
+                this.ifHomePage = false;
+                this.ifUploadMyAvatar = false;
+                this.ifShowDropdown = false;
+                this.fetchAllPostInMyBoard(board_id, board_title);
             },
             // 切换所有版块
             turnAllBoard() {
@@ -352,18 +402,20 @@
                 this.ifShowDropdown = false;
                 this.ifAllBoard = true;
                 this.ifAllPostInThisBoard = false;
+                this.ifAllPostInMyBoard = false;
                 this.fetchAllBoard();
                 this.currentPath = ['QG技术论坛', '所有版块'];
             },
             // 切换我的版块
             turnMyBoard() {
+                this.ifAllPostInMyBoard = false;
                 this.ifMyInformation = false;
                 this.ifHomePage = false;
                 this.ifUploadMyAvatar = false;
                 this.ifMyBoard = true;
                 this.ifShowDropdown = false;
                 this.fetchMyBoard();
-                this.currentPath = ['QG技术论坛', '我的版块'];
+                this.currentPath = ['QG技术论坛', '我的信息', '我的版块'];
             },
             // 切换编辑昵称
             turnEditName() {
@@ -536,6 +588,28 @@
                         this.allPostInThisBoard = response.data.data;
                         this.originalAllPostInThisBoard = this.allPostInThisBoard;
                         this.currentPath = ['QG技术论坛', '版块：' + board_title, '所有帖子'];
+                        console.log("获取版块：" + board_title + "的所有帖子成功");
+                    }
+                })
+                    .catch(error => {
+                        console.error("获取版块：" + board_title + "的所有帖子失败", error);
+                    });
+            },
+            // 获取我的版块下的所有帖子
+            fetchAllPostInMyBoard(board_id, board_title) {
+                axios.post('/post/getAllPostInThisBoard', new URLSearchParams({
+                    boardId: board_id,
+                }), {
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                }).then(response => {
+                    if (response.data.code !== 200) {
+                        alert(response.data.message);
+                    } else {
+                        this.allPostInMyBoard = response.data.data;
+                        this.originalAllPostInMyBoard = this.allPostInMyBoard;
+                        this.currentPath = ['QG技术论坛', '我的信息', '我的版块：' + board_title, '所有帖子'];
                         console.log("获取版块：" + board_title + "的所有帖子成功");
                     }
                 })
