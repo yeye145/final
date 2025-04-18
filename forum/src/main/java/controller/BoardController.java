@@ -22,7 +22,9 @@ public class BoardController extends BaseServlet {
     /*--------------------------------------------    私有变量    --------------------------------------------*/
     private BoardService boardService = new BoardServiceImpl();
 
-    public void getBoard(HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {
+
+    /*-------------------------------------------    获取我的版块    ------------------------------------------*/
+    public void getMyBoard(HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {
         Integer userId = GetUserId.getUserId(request);
         System.out.println("BoardController，获取我的版块，用户id" + userId);
 
@@ -35,9 +37,29 @@ public class BoardController extends BaseServlet {
                 )
         );
 
-        System.out.println("-获取版块成功！--"+targetBoard);
+        System.out.println("-获取版块成功！--" + targetBoard);
     }
 
+
+    /*------------------------------------    获取全部版块，优先渲染他喜欢的   -----------------------------------*/
+    public void getAllBoard(HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {
+        Integer userId = GetUserId.getUserId(request);
+        System.out.println("BoardController，获取全部版块，用户id" + userId);
+
+        List<Board> allBoard = boardService.getAllBoardPrioritizeUserLike(userId);
+
+        // 获取版块信息
+        response.getWriter().write(
+                JSON.toJSONString(
+                        ResponseResult.success(allBoard)
+                )
+        );
+
+        System.out.println("-获取全部版块成功！");
+    }
+
+
+    /*-------------------------------------------    申请新的版块    ------------------------------------------*/
     public void applyBoard(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         System.out.println("BoardController，申请版块，用户id" + GetUserId.getUserId(request));
         String title = request.getParameter("title");

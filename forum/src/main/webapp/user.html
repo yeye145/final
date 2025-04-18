@@ -47,7 +47,7 @@
         <h2 style="text-align: center;">——功能导航——</h2>
         <hr>
         <div class="nav-item" @click="backHomePage">🏠 主页</div>
-        <div class="nav-item" @click="">🧩 版块</div>
+        <div class="nav-item" @click="turnAllBoard">🧩 版块</div>
         <hr>
     </div>
 
@@ -57,6 +57,22 @@
         <div v-if="ifHomePage" class="content-section">
             <h3>📌 最新公告</h3>
             <p>欢迎来到QG技术论坛！这里有最新技术动态和深度讨论。</p>
+        </div>
+
+        <!-- 全部版块 -->
+        <div v-if="ifAllBoard" class="profile-section">
+            <div class="board-list">
+                <div v-for="board in allBoard" :key="board.id" class="board-item">
+                    <div class="board-info">
+                        <h4>{{ board.title }}</h4>
+                        <p>类型: {{ board.type }} | 帖子数: {{ board.postCount }}</p>
+                        <p>创建时间：{{ board.time }}</p>
+                    </div>
+                    <div class="board-actions">
+                        <button @click="showBanModal(board.id)" class="ban-btn">封禁用户</button>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- 个人信息 -->
@@ -132,7 +148,6 @@
                 </div>
             </div>
         </div>
-
 
         <!-- 我的版块 -->
         <div v-if="ifMyBoard" class="board-section">
@@ -213,6 +228,7 @@
             ifHomePage: true,           // 显示主页
             ifEditName: false,
             ifShowDropdown: false,
+            ifAllBoard: false,
 
             ifMyBoard: false,
             showCreateBoardModal: false,
@@ -220,6 +236,7 @@
             currentBoardId: null,
 
             myBoard: [],
+            allBoard: [],
             newBoard: {
                 title: '',
                 type: '',
@@ -253,7 +270,20 @@
                 this.ifEditName = false;
                 this.ifMyBoard = false;
                 this.ifShowDropdown = false;
+                this.ifAllBoard = false;
                 this.currentPath = ['QG技术论坛', '主页'];
+            },
+            // 切换所有版块
+            turnAllBoard() {
+                this.ifMyInformation = false;
+                this.ifHomePage = false;
+                this.ifUploadMyAvatar = false;
+                this.ifEditName = false;
+                this.ifMyBoard = false;
+                this.ifShowDropdown = false;
+                this.ifAllBoard = true;
+                this.fetchAllBoard();
+                this.currentPath = ['QG技术论坛', '所有版块'];
             },
             // 切换我的版块
             turnMyBoard() {
@@ -262,7 +292,7 @@
                 this.ifUploadMyAvatar = false;
                 this.ifMyBoard = true;
                 this.ifShowDropdown = false;
-                this.fetchmyBoard();
+                this.fetchMyBoard();
                 this.currentPath = ['QG技术论坛', '我的版块'];
             },
             // 切换编辑昵称
@@ -396,11 +426,23 @@
                 });
             },
             // 获取我的版块
-            fetchmyBoard() {
-                axios.post('/board/getBoard')
+            fetchMyBoard() {
+                axios.post('/board/getMyBoard')
                     .then(response => {
                         if (response.data.code === 200) {
                             this.myBoard = response.data.data;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('获取版块失败:', error);
+                    });
+            },
+            // 获取全部版块
+            fetchAllBoard() {
+                axios.post('/board/getAllBoard')
+                    .then(response => {
+                        if (response.data.code === 200) {
+                            this.allBoard = response.data.data;
                         }
                     })
                     .catch(error => {
@@ -433,7 +475,7 @@
                     if (response.data.code === 200) {
                         alert('版块申请已提交，等待审核');
                         this.showCreateBoardModal = false;
-                        this.fetchmyBoard();
+                        this.fetchMyBoard();
                         this.newBoard = {title: '', type: '技术', notice: ''};
                     } else {
                         alert(response.data.message);

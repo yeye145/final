@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface BoardService {
     List<Board> getMyBoard(Integer useId) throws SQLException;
+
+    List<Board> getAllBoardPrioritizeUserLike(Integer useId) throws SQLException;
 }
