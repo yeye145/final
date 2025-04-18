@@ -7,7 +7,8 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="homepage.css"/>
     <link rel="stylesheet" href="myself.css"/>
-    <link rel="stylesheet" href="my-board.css"/>
+    <link rel="stylesheet" href="board.css"/>
+    <link rel="stylesheet" href="post.css"/>
 </head>
 <body>
 <div id="app">
@@ -61,12 +62,26 @@
 
         <!-- 全部版块 -->
         <div v-if="ifAllBoard" class="profile-section">
-            <div class="board-list">
+            <div class="board-list" v-if="!ifAllPostInThisBoard">
                 <div v-for="board in allBoard" :key="board.id" class="board-item">
-                    <div class="board-info">
+                    <div class="board-info" @click="turnAllPostInThisBoard(board.id, board.title)">
                         <h4>{{ board.title }}</h4>
                         <p>类型: {{ board.type }} | 帖子数: {{ board.postCount }}</p>
                         <p>版主: {{board.hostName}} | 创建时间：{{ board.time }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="post-list" v-if="ifAllPostInThisBoard">
+                <div v-for="post in allPostInThisBoard" :key="post.id" class="post-card">
+                    <div class="post-meta">
+                        <span class="author">👤作者id {{ post.authorId }}</span>
+                        <span class="time">📅 {{ post.time }}</span>
+                    </div>
+                    <h4 class="post-title">{{ post.title }}</h4>
+                    <div class="post-stats">
+                        <span>❤️ {{ post.likeCount }}</span>
+                        <span>💬 {{ post.commentCount }}</span>
+                        <span>👀 {{ post.viewCount }}</span>
                     </div>
                 </div>
             </div>
@@ -155,7 +170,7 @@
 
             <div class="board-list">
                 <div v-for="board in myBoard" :key="board.id" class="board-item">
-                    <div class="board-info">
+                    <div class="board-info" @click="turnAllPostInThisBoard(board.id)">
                         <h4>{{ board.title }}</h4>
                         <p>类型: {{ board.type }} | 帖子数: {{ board.postCount }}</p>
                         <p>创建时间：{{ board.time }}</p>
@@ -223,9 +238,10 @@
             ifMyInformation: false,     // 显示我的个人信息
             ifUploadMyAvatar: false,          // 是否上传我的头像
             ifHomePage: true,           // 显示主页
-            ifEditName: false,
-            ifShowDropdown: false,
-            ifAllBoard: false,
+            ifEditName: false,              // 是否编辑我的昵称
+            ifShowDropdown: false,          // 显示头像下拉选项
+            ifAllBoard: false,              // 显示所有版块
+            ifAllPostInThisBoard: false,    // 显示该版块所有帖子
 
             ifMyBoard: false,
             showCreateBoardModal: false,
@@ -234,6 +250,7 @@
 
             myBoard: [],
             allBoard: [],
+            allPostInThisBoard: [],
             newBoard: {
                 title: '',
                 type: '',
@@ -270,6 +287,15 @@
                 this.ifAllBoard = false;
                 this.currentPath = ['QG技术论坛', '主页'];
             },
+            turnAllPostInThisBoard(board_id, board_title) {
+                this.ifAllPostInThisBoard = true;
+                this.ifMyInformation = false;
+                this.ifHomePage = false;
+                this.ifUploadMyAvatar = false;
+                this.ifMyBoard = false;
+                this.ifShowDropdown = false;
+                this.fetchAllPostInThisBoard(board_id, board_title);
+            },
             // 切换所有版块
             turnAllBoard() {
                 this.ifMyInformation = false;
@@ -279,6 +305,7 @@
                 this.ifMyBoard = false;
                 this.ifShowDropdown = false;
                 this.ifAllBoard = true;
+                this.ifAllPostInThisBoard = false;
                 this.fetchAllBoard();
                 this.currentPath = ['QG技术论坛', '所有版块'];
             },
@@ -447,7 +474,27 @@
                         console.error('获取版块失败:', error);
                     });
             },
-
+            // 获取该版块下的所有帖子
+            fetchAllPostInThisBoard(board_id, board_title) {
+                axios.post('/post/getAllPostInThisBoard', new URLSearchParams({
+                    boardId: board_id,
+                }), {
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                }).then(response => {
+                    if (response.data.code !== 200) {
+                        alert(response.data.message);
+                    } else {
+                        this.allPostInThisBoard = response.data.data;
+                        this.currentPath = ['QG技术论坛', '版块：' + board_id, '所有帖子'];
+                        console.log("获取版块：" + board_title + "的所有帖子成功");
+                    }
+                })
+                    .catch(error => {
+                        console.error("获取版块：" + board_title + "的所有帖子失败", error);
+                    });
+            },
             // 显示封禁用户模态框
             showBanModal(boardId) {
                 this.banUser.boardId = boardId;
@@ -474,7 +521,6 @@
                         alert('版块申请已提交，等待审核');
                         this.showCreateBoardModal = false;
                         this.fetchMyBoard();
-                        this.newBoard = {title: '', type: '技术', notice: ''};
                     } else {
                         alert(response.data.message);
                     }

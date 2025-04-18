@@ -67,4 +67,6 @@ public class BoardController extends BaseServlet {
         String notice = request.getParameter("notice");
         System.out.println("-版块标题：" + title + "，版块类型：" + type + "\n-版块公告：" + notice);
     }
+
+
 }

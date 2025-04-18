@@ -15,17 +15,18 @@ import java.util.Set;
 
 public class BoardServiceImpl implements BoardService {
 
-
+    /*--------------------------------------------    私有变量    --------------------------------------------*/
     private BoardDao boardDao = new BoardDaoImpl();
-    private SubscriptionDao subsriptionDao = new SubscriptionDaoImpl();
+    private SubscriptionDao subscriptionDao = new SubscriptionDaoImpl();
+
 
     @Override
-    public List<Board> getMyBoard(Integer useId) throws SQLException {
-        return boardDao.getOneBoardList(useId);
+    public List<Board> getMyBoard(Integer userId) throws SQLException {
+        return boardDao.getOneBoardList(userId);
     }
 
     @Override
-    public List<Board> getAllBoardPrioritizeUserLike(Integer useId) throws SQLException {
+    public List<Board> getAllBoardPrioritizeUserLike(Integer userId) throws SQLException {
 
         // 获取所有版块的Set集合，因为推送是随机的，用Set来模拟随机
         Set<Board> originBoardSet = boardDao.getAllBoardSet();
@@ -33,7 +34,7 @@ public class BoardServiceImpl implements BoardService {
         Set<Board> originBoardSetForCopy = originBoardSet;
 
         // 获取所有用户喜欢的版块List集合
-        List<Subscription> userSubscriptionList = subsriptionDao.getOneSubscriptionList(useId);
+        List<Subscription> userSubscriptionList = subscriptionDao.getOneSubscriptionList(userId);
 
         // 定义本方法的返回结果集合
         List<Board> resultBoardList = new ArrayList<Board>();

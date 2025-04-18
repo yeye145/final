@@ -10,4 +10,9 @@ public class Constants {
 
     public static final Integer RESPONSE_CODE_SERVER_ERROR = 500;
 
+
+    // 过滤器白名单
+    public static final String[] FREE_URLS = {"/login.html", ".css", ".png", ".js", ".images",
+            "/login", "/user", "/admin", "/verify", "/forget", "/register",
+            "/avatar", "/user", "/board", "/post"};
 }

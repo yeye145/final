@@ -1,5 +1,7 @@
 package filter;
 
+import utils.Constants;
+
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
@@ -17,11 +19,9 @@ public class LoginFilter implements Filter {
         // 强转成Http
         HttpServletRequest request = (HttpServletRequest) servletRequest;
 
-
         //判断访问资源路径是否和登录注册相关
-        String[] urls = {"/login.html", ".css", ".png", ".js", ".images",
-                "/login", "/user", "/admin", "/verify", "/forget", "/register",
-                "/avatar", "/user", "/board"};
+        String[] urls = Constants.FREE_URLS;
+
         // 获取当前访问的资源路径
         String url = request.getRequestURL().toString();
 
