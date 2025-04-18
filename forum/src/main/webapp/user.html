@@ -63,6 +63,11 @@
         <!-- 全部版块 -->
         <div v-if="ifAllBoard" class="profile-section">
             <div class="board-list" v-if="!ifAllPostInThisBoard">
+                <div class="search-bar">
+                    <input type="text" v-model="boardSearchQuery"
+                           placeholder="输入版主昵称或版块名称以搜索"
+                           @input="searchBoard">
+                </div>
                 <div v-for="board in allBoard" :key="board.id" class="board-item">
                     <div class="board-info" @click="turnAllPostInThisBoard(board.id, board.title)">
                         <h4>{{ board.title }}</h4>
@@ -72,6 +77,11 @@
                 </div>
             </div>
             <div class="post-list" v-if="ifAllPostInThisBoard">
+                <div class="search-bar">
+                    <input type="text" v-model="postSearchQuery"
+                           placeholder="输入发帖用户昵称或帖子名称以搜索"
+                           @input="searchPost">
+                </div>
                 <div v-for="post in allPostInThisBoard" :key="post.id" class="post-card">
                     <div class="post-meta">
                         <span class="author">👤 {{ post.authorName }}</span>
@@ -251,6 +261,12 @@
             myBoard: [],
             allBoard: [],
             allPostInThisBoard: [],
+
+            boardSearchQuery: '', // 版块关键字搜索
+            originalAllBoard: [],
+            postSearchQuery: '', // 帖子关键字搜索
+            originalAllPostInThisBoard: [],
+
             newBoard: {
                 title: '',
                 type: '',
@@ -276,6 +292,36 @@
             this.fetchUserInformation();
         },
         methods: {
+            // 帖子关键字搜索版块
+            searchPost() {
+                if (this.postSearchQuery.trim() === '') {
+                    // 清空搜索时恢复原始数据
+                    this.allPostInThisBoard = this.originalAllPostInThisBoard;
+                    return;
+                }
+
+                // 将查询的字符串转化为小写
+                const query = this.postSearchQuery.toLowerCase();
+                this.allPostInThisBoard = this.originalAllPostInThisBoard.filter(post =>
+                    // 将课程名称转化为小写，如果包含这个课程名称，则储存
+                    post.authorName.toLowerCase().includes(query) ||
+                    post.title.toLowerCase().includes(query))
+            },
+            // 版块关键字搜索版块
+            searchBoard() {
+                if (this.boardSearchQuery.trim() === '') {
+                    // 清空搜索时恢复原始数据
+                    this.allBoard = this.originalAllBoard;
+                    return;
+                }
+
+                // 将查询的字符串转化为小写
+                const query = this.boardSearchQuery.toLowerCase();
+                this.allBoard = this.originalAllBoard.filter(board =>
+                    // 将课程名称转化为小写，如果包含这个课程名称，则储存
+                    board.hostName.toLowerCase().includes(query) ||
+                    board.title.toLowerCase().includes(query))
+            },
             // 切换回主页
             backHomePage() {
                 this.ifMyInformation = false;
@@ -468,6 +514,7 @@
                     .then(response => {
                         if (response.data.code === 200) {
                             this.allBoard = response.data.data;
+                            this.originalAllBoard = this.allBoard;
                         }
                     })
                     .catch(error => {
@@ -487,7 +534,8 @@
                         alert(response.data.message);
                     } else {
                         this.allPostInThisBoard = response.data.data;
-                        this.currentPath = ['QG技术论坛', '版块：' + board_id, '所有帖子'];
+                        this.originalAllPostInThisBoard = this.allPostInThisBoard;
+                        this.currentPath = ['QG技术论坛', '版块：' + board_title, '所有帖子'];
                         console.log("获取版块：" + board_title + "的所有帖子成功");
                     }
                 })
