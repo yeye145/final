@@ -29,6 +29,8 @@ public class BoardServiceImpl implements BoardService {
 
         // 获取所有版块的Set集合，因为推送是随机的，用Set来模拟随机
         Set<Board> originBoardSet = boardDao.getAllBoardSet();
+        // 复制一份数据，用于移除重复元素
+        Set<Board> originBoardSetForCopy = originBoardSet;
 
         // 获取所有用户喜欢的版块List集合
         List<Subscription> userSubscriptionList = subsriptionDao.getOneSubscriptionList(useId);
@@ -42,13 +44,15 @@ public class BoardServiceImpl implements BoardService {
 
                 // 如果与用户关注的版块id相同
                 if (Objects.equals(board.getId(), userLike.getSubscribeToBoardId())){
-                    resultBoardList.add(board);     // 增加到结果集合
+                    resultBoardList.add(board);                // 增加到结果集合
+                    originBoardSetForCopy.remove(board);       // 移除相同元素
                     break;
                 }
             }
         }
 
-        resultBoardList.addAll(originBoardSet);
+        // 把剩余数据拷贝
+        resultBoardList.addAll(originBoardSetForCopy);
 
         return resultBoardList;
     }
