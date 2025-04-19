@@ -60,12 +60,28 @@
             <p>欢迎来到QG技术论坛！这里有最新技术动态和深度讨论。</p>
         </div>
 
-        <div class="content-section" v-if="ifAllPostInThisBoard && ifAllPostInThisBoard && !ifHomePage">
+        <div class="content-section" v-if="(ifAllPostInThisBoard || ifAllPostInMyBoard) && !ifHomePage">
             <h3>📌 公告
                 <button @click="showHistoryModal = true" class="history-btn">查看历史公告</button>
             </h3>
             <p class="notice-content">{{ currentNotice.content }}</p>
             <p class="notice-time">📅 发布时间：{{ currentNotice.time }}</p>
+            <!-- 历史公告弹窗 -->
+            <div v-if="showHistoryModal" class="modal">
+                <!--点击外侧区域关闭弹窗-->
+                <div v-if="showHistoryModal" class="modal" @click.self="showHistoryModal = false">
+                    <div class="modal-content">
+                        <h3>历史公告（点击弹窗外区域以关闭）</h3>
+                        <div class="history-notice-list">
+                            <div v-for="(eachNotice, index) in notice"
+                                 @click="switchNotice(index)"> <!-- 点击切换 -->
+                                <span>📅 {{ eachNotice.time }}</span>
+                                <p>{{ eachNotice.content }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- 全部版块 -->
@@ -337,21 +353,21 @@
         methods: {
             // 获取公告
             fetchNotice(board_id) {
-                axios.post('/board/notice', new URLSearchParams({
+                axios.post('/board/getNotice', new URLSearchParams({
                     boardId: board_id,
                 }), {
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded'
                     }
                 }).then(response => {
-                        if (response.data.code === 200) {
-                            this.notice = response.data.data;
-                            // 默认显示最新公告
-                            if (this.notice.length > 0) {
-                                this.currentNotice = this.notice[0];
-                            }
+                    if (response.data.code === 200) {
+                        this.notice = response.data.data;
+                        // 默认显示最新公告
+                        if (this.notice.length > 0) {
+                            this.currentNotice = this.notice[0];
                         }
-                    })
+                    }
+                })
                     .catch(error => {
                         console.error('获取公告失败:', error);
                     });
@@ -440,6 +456,7 @@
                 this.ifUploadMyAvatar = false;
                 this.ifShowDropdown = false;
                 this.fetchAllPostInMyBoard(board_id, board_title);
+                this.fetchNotice(board_id);
             },
             // 切换所有版块
             turnAllBoard() {

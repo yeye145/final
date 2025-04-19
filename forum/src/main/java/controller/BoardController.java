@@ -4,9 +4,12 @@ import com.alibaba.fastjson.JSON;
 import controller.utils.BaseServlet;
 import controller.utils.GetUserId;
 import pojo.Board;
+import pojo.Notice;
 import pojo.ResponseResult;
 import service.BoardService;
+import service.NoticeService;
 import service.impl.BoardServiceImpl;
+import service.impl.NoticeServiceImpl;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -21,6 +24,7 @@ public class BoardController extends BaseServlet {
 
     /*--------------------------------------------    私有变量    --------------------------------------------*/
     private BoardService boardService = new BoardServiceImpl();
+    private NoticeService noticeService = new NoticeServiceImpl();
 
 
     /*-------------------------------------------    获取我的版块    ------------------------------------------*/
@@ -56,6 +60,23 @@ public class BoardController extends BaseServlet {
         );
 
         System.out.println("-获取全部版块成功！");
+    }
+
+
+    /*-------------------------------------------    获取全部公告    ------------------------------------------*/
+    public void getNotice(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        Integer boardId = Integer.parseInt(request.getParameter("boardId"));
+        System.out.println("BoardController，获取全部公告版块，版块id" + boardId);
+
+        List<Notice> allNoticeInThisBoard = noticeService.getAllNoticeInThisBoard(boardId);
+        // 获取版块信息
+        response.getWriter().write(
+                JSON.toJSONString(
+                        ResponseResult.success(allNoticeInThisBoard)
+                )
+        );
+
+        System.out.println("-获取全部公告成功！");
     }
 
 

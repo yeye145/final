@@ -39,7 +39,8 @@ public class LoginController extends BaseServlet {
         session.setAttribute("user", user);
 
         if (user != null) {
-            System.out.println("用户：" + user.getName() + ",登录成功！");
+            System.out.println("用户：" + user.getName() + ",登录成功！" +
+                    "\n_____________________________________________________________");
             // 返回登录成功信息
             String json = JSON.toJSONString(ResponseResult.success(user.getIsAdmin() ? "admin" : "user"));
             response.getWriter().write(json);

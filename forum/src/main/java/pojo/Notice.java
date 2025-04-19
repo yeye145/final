@@ -6,14 +6,14 @@ public class Notice {
 
     private Integer id;
     private String content;
-    private String boardId;
+    private Integer boardId;
     private LocalDateTime time;
 
 
     public Notice() {
     }
 
-    public Notice(Integer id, String content, String boardId, LocalDateTime time) {
+    public Notice(Integer id, String content, Integer boardId, LocalDateTime time) {
         this.id = id;
         this.content = content;
         this.boardId = boardId;
@@ -56,7 +56,7 @@ public class Notice {
      * 获取
      * @return boardId
      */
-    public String getBoardId() {
+    public Integer getBoardId() {
         return boardId;
     }
 
@@ -64,7 +64,7 @@ public class Notice {
      * 设置
      * @param boardId
      */
-    public void setBoardId(String boardId) {
+    public void setBoardId(Integer boardId) {
         this.boardId = boardId;
     }
 

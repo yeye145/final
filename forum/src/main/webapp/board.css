@@ -200,3 +200,19 @@
 .history-notice-item:hover {
     background: #f8f8f8;
 }
+
+.history-btn {
+    background: #2196F3;  /* 更改为蓝色 */
+    color: white;         /* 文字白色 */
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    margin-left: 10px;
+}
+
+.history-btn:hover {
+    background: #1976D2;  /* 悬停时颜色加深 */
+}
