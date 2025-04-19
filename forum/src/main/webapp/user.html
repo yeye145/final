@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="myself.css"/>
     <link rel="stylesheet" href="board.css"/>
     <link rel="stylesheet" href="post.css"/>
+    <!-- 引入代码高亮库 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.7.0/styles/github.min.css">
 </head>
 <body>
 <div id="app">
@@ -132,7 +134,32 @@
             </div>
         </div>
 
-        <div v-if="ifThisPost" class="">
+        <div v-if="ifThisPost" class="post-detail-section">
+            <!-- 帖子标题和元信息 -->
+            <div class="post-header">
+                <h2 class="post-title">{{ thisPost.title }}</h2>
+                <div class="post-meta">
+                    <img :src="thisPost.authorAvatar" class="author-avatar">
+                    <span class="author">👤 {{ thisPost.authorName }}</span>
+                    <span class="time">📅 {{ thisPost.time }}</span>
+                    <span class="views">👀 {{ thisPost.viewCount }} 浏览</span>
+                    <span class="likes">❤️ {{ thisPost.likeCount }} 点赞</span>
+                </div>
+            </div>
+
+            <!-- 水平分割线 -->
+            <hr class="post-divider">
+
+            <!-- 帖子内容(Markdown渲染区域) -->
+            <div class="post-content markdown-body" v-html="compiledMarkdown"></div>
+
+            <!-- 水平分割线 -->
+            <hr class="post-divider">
+
+            <!-- 评论区域 -->
+            <div class="comment-section">
+                <h3>评论 ({{ thisPost.commentCount }})</h3>
+            </div>
         </div>
 
         <!-- 个人信息 -->
@@ -304,6 +331,16 @@
 <script src="https://cdn.bootcdn.net/ajax/libs/axios/1.6.7/axios.min.js"></script>
 <script src="https://cdn.bootcdn.net/ajax/libs/vue/2.6.14/vue.min.js"></script>
 
+<!-- 加载核心库 -->
+<script src="https://unpkg.com/marked/marked.min.js"></script>
+
+<!-- 加载语言文件 -->
+<script src="https://cdn.jsdelivr.net/npm/highlight.js@11.7.0/dist/languages/c.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/highlight.js@11.7.0/dist/languages/java.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/highlight.js@11.7.0/dist/languages/javascript.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/highlight.js@11.7.0/dist/languages/python.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/highlight.js@11.7.0/dist/languages/cpp.min.js"></script>
+
 <script>
     new Vue({
         el: '#app',
@@ -362,11 +399,33 @@
 
             thisPost: {},                   // 访问某个帖子
             allCommentInThisPost: {},       // 该帖子下的所有评论
+            compiledMarkdown: '',           // 帖子内容
         },
         created() {
             // 页面加载时自动获取用户头像
             this.fetchUserAvatar();
             this.fetchUserInformation();
+        },
+        mounted() {
+            // 配置 marked.js 支持代码高亮
+            marked.setOptions({
+                breaks: true,  // 换行符转 <br>
+                highlight(code, lang) {
+                    // 检查语言是否支持，否则回退到纯文本
+                    if (lang && hljs.getLanguage(lang)) {
+                        return hljs.highlight(lang, code).value;
+                    }
+                    // 默认高亮（如未指定语言）
+                    return hljs.highlightAuto(code).value;
+                }
+            });
+
+            // 初始化高亮（适用于动态加载的内容）
+            this.$nextTick(() => {
+                document.querySelectorAll('pre code').forEach((block) => {
+                    hljs.highlightElement(block);
+                });
+            });
         },
         methods: {
             // 显示某个具体帖子
