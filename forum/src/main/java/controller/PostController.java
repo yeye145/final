@@ -41,7 +41,25 @@ public class PostController extends BaseServlet {
                 )
         );
 
-        System.out.println("-获取全部版块成功！");
+        System.out.println("-获取该版块下的全部帖子成功！");
+    }
+
+    /*--------------------------------------    获取某条具体的帖子内容   ----------------------------------------*/
+    public void getThisPost(HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+        Integer postId = Integer.parseInt(request.getParameter("postId"));
+        System.out.println("PostController，获取该帖子的所有内容，帖子id" + postId);
+
+        Post post = postService.getThisPostById(postId);
+
+        // 获取版块信息
+        response.getWriter().write(
+                JSON.toJSONString(
+                        ResponseResult.success(post)
+                )
+        );
+
+        System.out.println("=获取该帖子成功！");
     }
 
 }

@@ -152,6 +152,7 @@
 
             <!-- 帖子内容(Markdown渲染区域) -->
             <div class="post-content markdown-body" v-html="compiledMarkdown"></div>
+            <div>{{ thisPost.content }}</div>
 
             <!-- 水平分割线 -->
             <hr class="post-divider">
@@ -430,7 +431,6 @@
         methods: {
             // 显示某个具体帖子
             turnThisPost(post_id, post_title) {
-                alert(post_title);
                 this.ifMyInformation = false;
                 this.ifHomePage = false;
                 this.ifUploadMyAvatar = false;

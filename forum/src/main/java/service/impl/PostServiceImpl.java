@@ -77,5 +77,12 @@ public class PostServiceImpl implements PostService {
 
 
     }
+    /*--------------------------------------------    获取帖子    --------------------------------------------*/
+    @Override
+    public Post getThisPostById(Integer postId) throws Exception {
+        // 增加一个浏览数，并获取该帖子内容
+        postDao.plusOneViewCount(postId);
+        return postDao.getThisPostById(postId);
+    }
 
 }
