@@ -23,6 +23,9 @@ public class CommentServiceImpl implements CommentService {
     public List<Comment> getAllCommentInThisPost(Integer postId) throws SQLException {
         List<Comment> allCommentInThisPost = commentDao.getAllCommentInThisPost(postId);
 
+        System.out.println("CommentServiceImpl.getAllCommentInThisPost，帖子id：" + postId);
+        allCommentInThisPost.forEach(System.out::println);
+
         Map<Integer, Comment> commentMap = new HashMap<>();
         // 根评论集合
         List<Comment> rootComment = new ArrayList<>();
@@ -38,7 +41,7 @@ public class CommentServiceImpl implements CommentService {
                 // 如果有父评论，获得父评论的Comment，并在父评论的子评论List集合中添加当前正在遍历循环的元素
                 Comment parentComment = commentMap.get(comment.getParentId());
                 if (parentComment != null) {
-                    parentComment.getChildComment().add(comment);
+                    parentComment.addChildComment(comment);
                 }
             }
         }

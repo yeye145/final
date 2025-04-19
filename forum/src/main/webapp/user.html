@@ -181,16 +181,12 @@
                             <button @click="showReplyBox(comment.id)">回复</button>
                         </div>
 
-                        <!-- 子评论 -->
+                        <!-- 子评论区域：使用递归组件 -->
                         <div v-if="comment.childComment && comment.childComment.length" class="child-comments">
-                            <div v-for="reply in comment.childComment" :key="reply.id" class="child-comment">
-                                <div class="comment-header">
-                                    <img :src="reply.userAvatar" class="comment-avatar">
-                                    <span class="comment-author">{{ reply.userName }}</span>
-                                    <span class="comment-time">{{ formatTime(reply.time) }}</span>
-                                </div>
-                                <div class="comment-content" v-html="renderMarkdown(reply.content)"></div>
-                            </div>
+                            <CommentTree
+                                    :comments="comment.childComment"
+                                    :parent-name="comment.userName"
+                            />
                         </div>
                     </div>
                 </div>
@@ -384,6 +380,34 @@
     hljs.highlightAll();
 </script>
 <script>
+    // 定义递归组件 CommentTree
+    Vue.component('CommentTree', {
+        props: ['comments', 'parentName'],
+        template: `
+          <div>
+            <div v-for="child in comments" :key="child.id" class="child-comment">
+              <div class="comment-header">
+                <img :src="child.userAvatar" class="comment-avatar">
+                <span class="comment-author">{{ child.userName }}</span>
+                <span class="comment-time">{{ formatTime(child.time) }}</span>
+              </div>
+              <div class="comment-content" v-html="renderMarkdown('回复 @' + parentName + '：' + child.content)"></div>
+              <!-- 递归渲染深层子评论 -->
+              <CommentTree
+                  v-if="child.childComment && child.childComment.length"
+                  :comments="child.childComment"
+                  :parent-name="child.userName"
+              />
+            </div>
+          </div>
+        `,
+        // 混入父级方法
+        methods: {
+            formatTime: Vue.prototype.formatTime,  // 继承时间格式化方法
+            renderMarkdown: Vue.prototype.renderMarkdown  // 继承 Markdown 渲染方法
+        }
+    });
+
     new Vue({
         el: '#app',
         data: {

@@ -436,6 +436,9 @@ print(f"Jacobi解：{x_jacobi if x_jacobi is not None else \'发散\'}")
 INSERT INTO `forum`.`comment` (`post_id`, `user_id`, `content`, `parent_id`)
 VALUES (1, 3, '非常实用的入门教程！', NULL),
        (1, 4, '期待更新更多内容！', 1),
+       (1, 4, '我是李四的子评论2号', 1),
+       (1, 4, '我是李四的子评论3号', 1),
+       (1, 6, '我是王五的子评论1号', 2),
        (2, 5, 'Spring Boot真方便！', NULL),
        (2, 6, '有没有项目源码？', 1),
        (3, 7, '这个办法处理数据确实高效', 2),

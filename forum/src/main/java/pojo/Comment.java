@@ -33,6 +33,10 @@ public class Comment {
         this.childComment = childComment;
     }
 
+    public void addChildComment(Comment comment) {
+        this.childComment.add(comment);
+    }
+
     /**
      * 获取
      * @return id
