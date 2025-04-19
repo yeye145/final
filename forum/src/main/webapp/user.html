@@ -60,7 +60,7 @@
             <p>欢迎来到QG技术论坛！这里有最新技术动态和深度讨论。</p>
         </div>
 
-        <div class="content-section" v-if="(ifAllPostInThisBoard || ifAllPostInMyBoard) && !ifHomePage">
+        <div class="content-section" v-if="(ifAllPostInThisBoard || ifAllPostInMyBoard) && !ifHomePage && !ifThisPost">
             <h3>📌 公告
                 <button @click="showHistoryModal = true" class="history-btn">查看历史公告</button>
             </h3>
@@ -111,7 +111,12 @@
                            placeholder="输入发帖用户昵称或帖子名称以搜索"
                            @input="searchPost">
                 </div>
-                <div v-for="post in allPostInThisBoard" :key="post.id" class="post-card">
+                <!--渲染全部帖子信息，点击帖子切换到对应帖子内容-->
+                <div v-for="post in allPostInThisBoard"
+                     :key="post.id"
+                     class="post-card"
+                     @click="turnThisPost(post.id, post.title)">
+                    <!--显示帖子信息-->
                     <div class="post-meta">
                         <img :src="post.authorAvatar" class="author-avatar">
                         <span class="author">👤 {{ post.authorName }}</span>
@@ -125,6 +130,9 @@
                     </div>
                 </div>
             </div>
+        </div>
+
+        <div v-if="ifThisPost" class="">
         </div>
 
         <!-- 个人信息 -->
@@ -301,14 +309,15 @@
         el: '#app',
         data: {
 
-            ifMyInformation: false,     // 显示我的个人信息
-            ifUploadMyAvatar: false,          // 是否上传我的头像
-            ifHomePage: true,           // 显示主页
+            ifMyInformation: false,         // 显示我的个人信息
+            ifUploadMyAvatar: false,        // 是否上传我的头像
+            ifHomePage: true,               // 显示主页
             ifEditName: false,              // 是否编辑我的昵称
             ifShowDropdown: false,          // 显示头像下拉选项
             ifAllBoard: false,              // 显示所有版块
             ifAllPostInThisBoard: false,    // 显示该版块所有帖子
             ifAllPostInMyBoard: false,      // 显示我的版块的所有帖子
+            ifThisPost: false,              // 显示该帖子
 
             ifMyBoard: false,
             showCreateBoardModal: false,
@@ -320,18 +329,18 @@
             allPostInThisBoard: [],
             allPostInMyBoard: [],
 
-            boardSearchQuery: '', // 版块关键字搜索
+            boardSearchQuery: '',           // 版块关键字搜索
             originalAllBoard: [],
-            postSearchQuery: '', // 帖子关键字搜索
+            postSearchQuery: '',            // 帖子关键字搜索
             originalAllPostInThisBoard: [],
             originalAllPostInMyBoard: [],
 
-            notice: [],               // 存储所有公告
-            currentNotice: {          // 当前展示的公告
+            notice: [],                     // 存储所有公告
+            currentNotice: {                // 当前展示的公告
                 time: '',
                 content: '当前暂无公告',
             },
-            showHistoryModal: false,   // 是否显示历史公告弹窗
+            showHistoryModal: false,        // 是否显示历史公告弹窗
 
             newBoard: {
                 title: '',
@@ -350,6 +359,9 @@
 
             userInformation: {},
             newName: '',
+
+            thisPost: {},                   // 访问某个帖子
+            allCommentInThisPost: {},       // 该帖子下的所有评论
         },
         created() {
             // 页面加载时自动获取用户头像
@@ -357,6 +369,20 @@
             this.fetchUserInformation();
         },
         methods: {
+            // 显示某个具体帖子
+            turnThisPost(post_id, post_title) {
+                alert(post_title);
+                this.ifMyInformation = false;
+                this.ifHomePage = false;
+                this.ifUploadMyAvatar = false;
+                this.ifEditName = false;
+                this.ifMyBoard = false;
+                this.ifShowDropdown = false;
+                this.ifAllBoard = false;
+                this.ifAllPostInMyBoard = false;
+                this.ifThisPost = true;
+                this.fetchThisPost(post_id, post_title);
+            },
             // 获取公告
             fetchNotice(board_id) {
                 axios.post('/board/getNotice', new URLSearchParams({
@@ -438,6 +464,7 @@
                 this.ifShowDropdown = false;
                 this.ifAllBoard = false;
                 this.ifAllPostInMyBoard = false;
+                this.ifThisPost = false;
                 this.currentPath = ['QG技术论坛', '主页'];
             },
             // 切换该版块下所有帖子
@@ -449,6 +476,7 @@
                 this.ifUploadMyAvatar = false;
                 this.ifMyBoard = false;
                 this.ifShowDropdown = false;
+                this.ifThisPost = false;
                 this.fetchAllPostInThisBoard(board_id, board_title);
                 this.fetchNotice(board_id);
             },
@@ -460,6 +488,7 @@
                 this.ifHomePage = false;
                 this.ifUploadMyAvatar = false;
                 this.ifShowDropdown = false;
+                this.ifThisPost = false;
                 this.fetchAllPostInMyBoard(board_id, board_title);
                 this.fetchNotice(board_id);
             },
@@ -474,6 +503,7 @@
                 this.ifAllBoard = true;
                 this.ifAllPostInThisBoard = false;
                 this.ifAllPostInMyBoard = false;
+                this.ifThisPost = false;
                 this.fetchAllBoard();
                 this.currentPath = ['QG技术论坛', '所有版块'];
             },
@@ -485,6 +515,7 @@
                 this.ifUploadMyAvatar = false;
                 this.ifMyBoard = true;
                 this.ifShowDropdown = false;
+                this.ifThisPost = false;
                 this.fetchMyBoard();
                 this.currentPath = ['QG技术论坛', '我的信息', '我的版块'];
             },
@@ -535,6 +566,7 @@
                 this.ifMyBoard = false;
                 this.ifShowDropdown = false;
                 this.ifAllBoard = false;
+                this.ifThisPost = false;
                 this.currentPath = ['QG技术论坛', '我的信息'];
             },
             // 获取我的个人信息
@@ -712,6 +744,28 @@
                 })
                     .catch(error => {
                         console.error("获取版块：" + board_title + "的所有帖子失败", error);
+                    });
+            },
+            // 获取该帖子的所有内容
+            fetchThisPost(post_id, post_title) {
+                axios.post('/post/getThisPost', new URLSearchParams({
+                    postId: post_id,
+                }), {
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                }).then(response => {
+                    if (response.data.code !== 200) {
+                        alert(response.data.message);
+                    } else {
+                        this.thisPost = response.data.data;
+                        // 把当前帖子加入路径中显示在左上角
+                        this.currentPath.push(post_title);
+                        console.log("获取帖子：" + post_title + "成功");
+                    }
+                })
+                    .catch(error => {
+                        console.error("获取帖子：" + post_title + "失败", error);
                     });
             },
             // 显示封禁用户模态框
