@@ -371,19 +371,19 @@ VALUES (3, 'Python学习交流', 'Python', "李四"),
 INSERT INTO `forum`.`post` (`title`, `content`, `author_id`, `board_id`, `author_name`)
 VALUES
 -- 版块1（Java）
-('Java入门指南', 'Java基础语法和开发环境配置...', 2, 1, '张三'),
-('Spring框架实战', 'Spring Boot快速入门教程...', 3, 1, '李四'),
-('MySQL索引优化', 'B+树原理与索引设计...', 8, 1, '周九'),
-('Redis缓存设计', 'Redis持久化策略...', 11, 1, '孙十二'),
-('微服务架构', 'Spring Cloud实战...', 12, 1, '朱十三'),
+('Java入门指南', '**Java**基础语法和开发环境配置,System.out.println("Hello! Highlight and markdown!")', 2, 1, '张三'),
+('Spring框架实战', '*Spring Boot*快速入门教程...', 3, 1, '李四'),
+('MySQL索引优化', '`B+`树原理与索引设计...', 8, 1, '周九'),
+('Redis缓存设计', '`Redis`持久化策略...', 11, 1, '孙十二'),
+('微服务架构', '`Spring Cloud`实战...', 12, 1, '朱十三'),
 -- 版块2（Python）
 ('Python数据分析', '迭代方法...', 4, 2, '王五'),
 ('机器学习入门', '线性回归模型原理...', 10, 2, '郑十一'),
 ('Django项目实战', '从零搭建一个博客系统...', 5, 2, '赵六'),
-('Flask快速开发', '轻量级Web框架实践...', 13, 2, '秦十四'),
-('Linux系统管理', '常用命令与Shell脚本...', 16, 2, '吕十七'),
+('Flask快速开发', '轻量级`Web`框架实践...', 13, 2, '秦十四'),
+('Linux系统管理', '常用命令与`Shell`脚本...', 16, 2, '吕十七'),
 -- 版块3（Web）
-('React最佳实践', 'React Hooks深度解析...', 6, 3, '陈七'),
+('React最佳实践', '`React Hooks`深度解析...', 6, 3, '陈七'),
 ('Node.js性能优化', 'Node.js高并发解决方案...', 7, 3, '林八'),
 ('Vue3新特性', 'Composition API详解...', 2, 3, '张三'),
 ('前端工程化', 'Webpack配置指南...', 14, 3, '许十五'),

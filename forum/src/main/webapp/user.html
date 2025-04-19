@@ -331,17 +331,16 @@
 <script src="https://cdn.bootcdn.net/ajax/libs/axios/1.6.7/axios.min.js"></script>
 <!--加载vue-->
 <script src="https://cdn.bootcdn.net/ajax/libs/vue/2.6.14/vue.min.js"></script>
-<!-- 加载 highlight.js 核心 -->
-<script src="https://unpkg.com/highlight.js@11.7.0/lib/core.min.js"></script>
-<!-- 加载语言文件 -->
-<script src="https://unpkg.com/highlight.js@11.7.0/dist/languages/c.min.js"></script>
-<script src="https://unpkg.com/highlight.js@11.7.0/dist/languages/java.min.js"></script>
-<script src="https://unpkg.com/highlight.js@11.7.0/dist/languages/javascript.min.js"></script>
-<script src="https://unpkg.com/highlight.js@11.7.0/dist/languages/python.min.js"></script>
-<script src="https://unpkg.com/highlight.js@11.7.0/dist/languages/cpp.min.js"></script>
 
-<!-- 加载核心库 -->
-<script src="https://unpkg.com/marked/marked.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/c.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/java.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/cpp.min.js"></script>
+
+<!-- 加载 marked -->
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script>
     new Vue({
         el: '#app',
@@ -408,34 +407,49 @@
             this.fetchUserInformation();
         },
         mounted() {
-            // 配置 marked.js 支持代码高亮
+            // 确保库已加载
+            if (typeof hljs === 'undefined' || typeof marked === 'undefined') {
+                console.error('库加载失败!');
+                return;
+            }
+
+            // 配置marked
             marked.setOptions({
-                breaks: true,  // 换行符转 <br>
-                highlight(code, lang) {
-                    // 检查语言是否支持，否则回退到纯文本
+                breaks: true,
+                highlight: function (code, lang) {
                     if (lang && hljs.getLanguage(lang)) {
-                        return hljs.highlight(lang, code).value;
+                        try {
+                            return hljs.highlight(code, {language: lang}).value;
+                        } catch (e) {
+                            console.warn(`Failed to highlight ${lang} code:`, e);
+                        }
                     }
-                    // 默认高亮（如未指定语言）
                     return hljs.highlightAuto(code).value;
                 }
             });
 
-            // 初始化高亮（适用于动态加载的内容）
-            this.$nextTick(() => {
-                document.querySelectorAll('pre code').forEach((block) => {
-                    hljs.highlightElement(block);
-                });
-            });
+            // 初始高亮
+            this.highlightAll();
         },
         methods: {
             // 渲染 Markdown 内容
             renderMarkdown(content) {
                 if (typeof marked === 'undefined') {
                     console.error('marked is not available');
-                    return content; // 回退到原始内容
+                    return content;
                 }
-                return marked.parse(content || ''); // 使用 marked.parse 而不是直接 marked()
+                const html = marked.parse(content || '');
+                this.$nextTick(() => {
+                    // 渲染后重新高亮
+                    this.highlightAll();
+                });
+                return html;
+            },
+            // 高亮所有代码块
+            highlightAll() {
+                document.querySelectorAll('pre code').forEach((block) => {
+                    hljs.highlightElement(block);
+                });
             },
             // 显示某个具体帖子
             turnThisPost(post_id, post_title) {
@@ -836,6 +850,12 @@
                     .catch(error => {
                         console.error("获取帖子：" + post_title + "失败", error);
                     });
+                // 确保内容渲染后高亮
+                this.$nextTick(() => {
+                    document.querySelectorAll('pre code').forEach((block) => {
+                        hljs.highlightElement(block);
+                    });
+                });
             },
             // 显示封禁用户模态框
             showBanModal(boardId) {

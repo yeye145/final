@@ -52,10 +52,6 @@
     font-size: 14px;
     line-height: 1.5;
     margin-bottom: 12px;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
 }
 
 .post-stats {
@@ -198,4 +194,30 @@
     padding: 0.2em 0.4em;
     border-radius: 3px;
     font-size: 85%;
+}
+
+/* 代码块基础样式 */
+pre {
+    background: #f6f8fa;
+    border-radius: 6px;
+    padding: 16px;
+    overflow: auto;
+}
+
+code {
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+    font-size: 85%;
+}
+
+/* 内联代码 */
+.markdown-body code:not([class]) {
+    background: rgba(175, 184, 193, 0.2);
+    border-radius: 6px;
+    padding: 0.2em 0.4em;
+}
+
+/* 代码块 */
+.markdown-body pre code {
+    background: transparent;
+    padding: 0;
 }

@@ -52,6 +52,8 @@ public class PostController extends BaseServlet {
 
         Post post = postService.getThisPostById(postId);
 
+        System.out.println("-帖子内容：\n" + post.getContent());
+
         // 获取版块信息
         response.getWriter().write(
                 JSON.toJSONString(
