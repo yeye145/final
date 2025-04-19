@@ -62,7 +62,8 @@
             <p>欢迎来到QG技术论坛！这里有最新技术动态和深度讨论。</p>
         </div>
 
-        <div class="content-section" v-if="(ifAllPostInThisBoard || ifAllPostInMyBoard) && !ifHomePage && !ifThisPost">
+        <div class="content-section" v-if="(ifAllPostInThisBoard || ifAllPostInMyBoard)
+         && !ifHomePage && !ifThisPost && !ifMyInformation">
             <h3>📌 公告
                 <button @click="showHistoryModal = true" class="history-btn">查看历史公告</button>
             </h3>
