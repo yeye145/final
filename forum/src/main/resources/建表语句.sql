@@ -199,6 +199,9 @@ ALTER TABLE `forum`.`post`
 ALTER TABLE `forum`.`board`
     ADD COLUMN `host_avatar` VARCHAR(255) NULL DEFAULT '/images/avatar/initAvatar.jpg' AFTER `host_name`;
 
+ALTER TABLE `forum`.`board`
+    ADD COLUMN `view_count` INT NOT NULL DEFAULT 0 AFTER `host_avatar`;
+
 
 -- 表列名扩展 -- 结束 ----------------------------------------------------------------------------------
 

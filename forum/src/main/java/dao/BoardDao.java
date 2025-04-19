@@ -13,4 +13,6 @@ public interface BoardDao {
 
 
     Set<Board> getAllBoardSet() throws SQLException;
+
+    void plusOneViewCount(Integer boardId) throws Exception;
 }

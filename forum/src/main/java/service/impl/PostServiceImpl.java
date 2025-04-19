@@ -1,6 +1,8 @@
 package service.impl;
 
+import dao.BoardDao;
 import dao.PostDao;
+import dao.impl.BoardDaoImpl;
 import dao.impl.PostDaoImpl;
 
 import pojo.Post;
@@ -17,12 +19,13 @@ public class PostServiceImpl implements PostService {
 
     /*--------------------------------------------    私有变量    --------------------------------------------*/
     private PostDao postDao = new PostDaoImpl();
+    private BoardDao boardDao = new BoardDaoImpl();
     private SubscriptionDao subscriptionDao = new SubscriptionDaoImpl();
 
 
     /*--------------------------------------------    获取帖子    --------------------------------------------*/
     @Override
-    public List<Post> getAllPostInThisBoardPrioritizeUserLike(Integer userId, Integer boardId) throws SQLException {
+    public List<Post> getAllPostInThisBoardPrioritizeUserLike(Integer userId, Integer boardId) throws Exception {
         // 获取版块下所有帖子，按时间倒序排列
         List<Post> allPost = postDao.getAllPostInThisBoardList(boardId);
 
@@ -65,6 +68,9 @@ public class PostServiceImpl implements PostService {
         resultPostList.addAll(priorityUserPost);  // 按时间排序
         resultPostList.addAll(priorityBoardPost); // 随机排序
         resultPostList.addAll(leftPost);        // 随机排序
+
+        // 增加一个浏览数
+        boardDao.plusOneViewCount(boardId);
 
         System.out.println("-获取版块id：" + boardId + " 下的所有帖子成功！");
 
