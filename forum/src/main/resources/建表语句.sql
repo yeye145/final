@@ -208,116 +208,118 @@ ALTER TABLE `forum`.`board`
 
 -- 触发器 -- 开始 --------------------------------------------------------------------------------------
 
-DELIMITER ;
--- 关注与粉丝 -- 触发器
 DELIMITER //
+
+CREATE TRIGGER before_insert_comment
+    BEFORE INSERT ON comment
+    FOR EACH ROW
+BEGIN
+    IF NEW.user_id IS NOT NULL THEN
+        SET NEW.user_name = (SELECT name FROM forum.user WHERE id = NEW.user_id);
+        SET NEW.user_avatar = (SELECT avatar FROM forum.user WHERE id = NEW.user_id);
+END IF;
+END //
 
 CREATE TRIGGER after_insert_subscription
     AFTER INSERT ON subscription
     FOR EACH ROW
 BEGIN
     -- 更新关注者的 my_subscribe_count 字段
-    UPDATE user
+    UPDATE forum.user
     SET my_subscribe_count = my_subscribe_count + 1
     WHERE id = NEW.user_id;
 
     -- 如果被关注的是用户，则更新被关注者的 fans_count 字段
     IF NEW.subscribe_to_user_id IS NOT NULL THEN
-    UPDATE user
+    UPDATE forum.user
     SET fans_count = fans_count + 1
     WHERE id = NEW.subscribe_to_user_id;
 END IF;
 END //
 
-DELIMITER ;
-
--- 发帖 -- 触发器
-DELIMITER //
-
 CREATE TRIGGER after_insert_post
     AFTER INSERT ON post
     FOR EACH ROW
 BEGIN
-    UPDATE user
+    UPDATE forum.user
     SET post_count = post_count + 1
     WHERE id = NEW.author_id;
 END //
-
-DELIMITER ;
-
--- 收藏 -- 触发器
-DELIMITER //
 
 CREATE TRIGGER after_insert_collect
     AFTER INSERT ON collect
     FOR EACH ROW
 BEGIN
-    UPDATE user
+    UPDATE forum.user
     SET my_collect_count = my_collect_count + 1
     WHERE id = NEW.user_id;
 END //
-
-DELIMITER ;
-
--- 版块 -- 触发器
-DELIMITER //
 
 CREATE TRIGGER after_insert_board
     AFTER INSERT ON board
     FOR EACH ROW
 BEGIN
-    UPDATE user
+    UPDATE forum.user
     SET my_board_count = my_board_count + 1
     WHERE id = NEW.host_id;
 END //
-
-DELIMITER ;
-
--- 插入帖子后更新版块帖子数 -- 触发器
-DELIMITER //
 
 CREATE TRIGGER after_insert_post_update_board
     AFTER INSERT ON post
     FOR EACH ROW
 BEGIN
-    UPDATE board
+    UPDATE forum.board
     SET post_count = post_count + 1
     WHERE id = NEW.board_id;
 END //
 
-DELIMITER ;
-
-DELIMITER //
-
--- 更新用户昵称和头像的触发器
 CREATE TRIGGER after_user_update
-    AFTER UPDATE ON `user`
+    AFTER UPDATE ON `forum`.`user`
     FOR EACH ROW
 BEGIN
     -- 如果昵称被更新，同步更新 board 表中的 host_name
     IF NEW.name != OLD.name THEN
-    UPDATE `board`
+    UPDATE `forum`.`board`
     SET host_name = NEW.name
     WHERE host_id = NEW.id;
 END IF;
 
 -- 如果头像被更新，同步更新 board 表中的 host_avatar
 IF NEW.avatar != OLD.avatar THEN
-UPDATE `board`
+UPDATE `forum`.`board`
 SET host_avatar = NEW.avatar
 WHERE host_id = NEW.id;
 
 -- 同时更新 post 表中的 author_avatar
-UPDATE `post`
+UPDATE `forum`.`post`
 SET author_avatar = NEW.avatar
 WHERE author_id = NEW.id;
 END IF;
 
     -- 如果昵称被更新，同步更新 post 表中的 author_name
     IF NEW.name != OLD.name THEN
-UPDATE `post`
+UPDATE `forum`.`post`
 SET author_name = NEW.name
 WHERE author_id = NEW.id;
+END IF;
+END //
+
+CREATE TRIGGER after_user_update_comment
+    AFTER UPDATE ON `forum`.`user`
+    FOR EACH ROW
+BEGIN
+    -- 如果昵称被更新，同步更新 comment 表中的 user_name
+    IF NEW.name != OLD.name THEN
+    UPDATE `forum`.`comment`
+    SET user_name = NEW.name
+    WHERE user_id = NEW.id;
+END IF;
+
+-- 如果头像被更新，同步更新 comment 表中的 user_avatar
+IF NEW.avatar != OLD.avatar THEN
+UPDATE `forum`.`comment`
+SET user_avatar = NEW.avatar
+WHERE user_id = NEW.id;
 END IF;
 END //
 
@@ -371,13 +373,52 @@ VALUES (3, 'Python学习交流', 'Python', "李四"),
 INSERT INTO `forum`.`post` (`title`, `content`, `author_id`, `board_id`, `author_name`)
 VALUES
 -- 版块1（Java）
-('Java入门指南', '**Java**基础语法和开发环境配置,System.out.println("Hello! Highlight and markdown!")', 2, 1, '张三'),
+('Java入门指南', '`Java`**基础语法**
+
+```java
+System.out.println("Hello! Highlight and markdown!");
+System.out.println("2025/04/19/17/53");
+```
+* 这是俩个简单的打印语句
+', 2, 1, '张三'),
 ('Spring框架实战', '*Spring Boot*快速入门教程...', 3, 1, '李四'),
 ('MySQL索引优化', '`B+`树原理与索引设计...', 8, 1, '周九'),
 ('Redis缓存设计', '`Redis`持久化策略...', 11, 1, '孙十二'),
 ('微服务架构', '`Spring Cloud`实战...', 12, 1, '朱十三'),
 -- 版块2（Python）
-('Python数据分析', '迭代方法...', 4, 2, '王五'),
+('Python数据分析', '```python
+import numpy as np
+from scipy.linalg import hilbert, norm, solve
+
+def jacobi(A, b, max_iter=1000, tol=1e-6):
+    D = np.diag(np.diag(A))
+    LU = A - D
+    x = np.zeros_like(b)
+    for _ in range(max_iter):
+        try:
+            x_new = np.linalg.inv(D) @ (b - LU @ x)
+            if np.any(np.isinf(x_new)) or np.any(np.isnan(x_new)):
+                raise RuntimeError("数值溢出，迭代终止")
+            if norm(x_new - x) < tol:
+                return x_new
+            x = x_new
+        except RuntimeError as e:
+            print(f"警告：{e}")
+            return None
+    return None
+
+# 测试n=3（小规模可收敛）
+n = 3
+H = hilbert(n)
+b = np.sum(H, axis=1)  # 真实解为全1向量
+
+x_direct = solve(H, b)
+x_jacobi = jacobi(H, b)
+
+print(f"直接法解：{x_direct}")
+print(f"Jacobi解：{x_jacobi if x_jacobi is not None else \'发散\'}")
+```
+', 4, 2, '王五'),
 ('机器学习入门', '线性回归模型原理...', 10, 2, '郑十一'),
 ('Django项目实战', '从零搭建一个博客系统...', 5, 2, '赵六'),
 ('Flask快速开发', '轻量级`Web`框架实践...', 13, 2, '秦十四'),
@@ -387,17 +428,17 @@ VALUES
 ('Node.js性能优化', 'Node.js高并发解决方案...', 7, 3, '林八'),
 ('Vue3新特性', 'Composition API详解...', 2, 3, '张三'),
 ('前端工程化', 'Webpack配置指南...', 14, 3, '许十五'),
-('Git高级技巧', 'Rebase与Cherry-pick...', 15, 3, '何十六');
+('Git', 'Rebase与Cherry-pick...', 15, 3, '何十六');
 
 
 
 -- 生成评论
 INSERT INTO `forum`.`comment` (`post_id`, `user_id`, `content`, `parent_id`)
 VALUES (1, 3, '非常实用的入门教程！', NULL),
-       (1, 4, '期待更新更多内容！', 2),
+       (1, 4, '期待更新更多内容！', 1),
        (2, 5, 'Spring Boot真方便！', NULL),
-       (2, 6, '有没有项目源码？', 4),
-       (3, 7, '这个办法处理数据确实高效', NULL),
+       (2, 6, '有没有项目源码？', 1),
+       (3, 7, '这个办法处理数据确实高效', 2),
        (3, 8, '案例可以再详细些吗？', NULL),
        (15, 19, '脚本部分讲得很清楚', NULL);
 

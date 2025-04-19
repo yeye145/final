@@ -160,6 +160,40 @@
             <!-- 评论区域 -->
             <div class="comment-section">
                 <h3>评论 ({{ thisPost.commentCount }})</h3>
+
+                <!-- 评论输入框 -->
+                <div class="comment-input">
+                    <textarea v-model="newComment" placeholder="写下你的评论..."></textarea>
+                    <button @click="submitComment">发表评论</button>
+                </div>
+
+                <!-- 评论列表 -->
+                <div class="comment-list">
+                    <div v-for="comment in allCommentInThisPost" :key="comment.id" class="comment-item">
+                        <div class="comment-header">
+                            <img :src="comment.userAvatar" class="comment-avatar">
+                            <span class="comment-author">{{ comment.userName }}</span>
+                            <span class="comment-time">{{ formatTime(comment.time) }}</span>
+                        </div>
+                        <div class="comment-content" v-html="renderMarkdown(comment.content)"></div>
+                        <div class="comment-actions">
+                            <button @click="likeComment(comment.id)">❤️ {{ comment.likeCount }}</button>
+                            <button @click="showReplyBox(comment.id)">回复</button>
+                        </div>
+
+                        <!-- 子评论 -->
+                        <div v-if="comment.childComment && comment.childComment.length" class="child-comments">
+                            <div v-for="reply in comment.childComment" :key="reply.id" class="child-comment">
+                                <div class="comment-header">
+                                    <img :src="reply.userAvatar" class="comment-avatar">
+                                    <span class="comment-author">{{ reply.userName }}</span>
+                                    <span class="comment-time">{{ formatTime(reply.time) }}</span>
+                                </div>
+                                <div class="comment-content" v-html="renderMarkdown(reply.content)"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -342,6 +376,13 @@
 
 <!-- 加载 marked -->
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+<script>
+    hljs.configure({
+        ignoreUnescapedHTML: true
+    });
+    hljs.highlightAll();
+</script>
 <script>
     new Vue({
         el: '#app',
@@ -399,8 +440,10 @@
             newName: '',
 
             thisPost: {},                   // 访问某个帖子
-            allCommentInThisPost: {},       // 该帖子下的所有评论
+            allCommentInThisPost: [],       // 该帖子下的所有评论
             compiledMarkdown: '',           // 帖子内容
+
+            newComment: '',                 // 新的评论
         },
         created() {
             // 页面加载时自动获取用户头像
@@ -408,6 +451,7 @@
             this.fetchUserInformation();
         },
         mounted() {
+
             // 确保库已加载
             if (typeof hljs === 'undefined' || typeof marked === 'undefined') {
                 console.error('库加载失败!');
@@ -433,6 +477,58 @@
             this.highlightAll();
         },
         methods: {
+            // 时间格式化
+            formatTime(time) {
+                return new Date(time).toLocaleString();
+            },
+            // 提交评论
+            submitComment() {
+                if (!this.newComment.trim()) {
+                    alert('评论内容不能为空');
+                    return;
+                }
+                axios.post('/comment/create', new URLSearchParams({
+                    postId: this.thisPost.id,
+                    content: this.newComment
+                }), {
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                }).then(response => {
+                    if (response.data.code === 200) {
+                        this.newComment = '';
+                        this.fetchComments(this.thisPost.id);
+                        this.thisPost.commentCount++;
+                    }
+                });
+            },
+            // 点赞评论
+            likeComment(commentId) {
+                axios.post('/comment/like', new URLSearchParams({
+                    commentId: commentId
+                })).then(response => {
+                    if (response.data.code === 200) {
+                        const comment = this.allCommentInThisPost.find(c => c.id === commentId);
+                        if (comment) comment.like_count++;
+                    }
+                });
+            },
+            // 获取该帖子的所有评论
+            fetchComment(post_id) {
+                axios.post('/comment/getAllCommentInThisPost', new URLSearchParams({
+                    postId: post_id,
+                }), {
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                }).then(response => {
+                    if (response.data.code === 200) {
+                        this.allCommentInThisPost = response.data.data;
+                    }
+                }).catch(error => {
+                    console.error("获取评论失败", error);
+                });
+            },
             // 渲染 Markdown 内容
             renderMarkdown(content) {
                 if (typeof marked === 'undefined') {
@@ -463,7 +559,8 @@
                 this.ifAllBoard = false;
                 this.ifAllPostInMyBoard = false;
                 this.ifThisPost = true;
-                this.fetchThisPost(post_id, post_title);
+                this.fetchThisPost(post_id, post_title);        // 抓取这个帖子的信息
+                this.fetchComment(post_id);                     // 抓取所有评论
             },
             // 获取公告
             fetchNotice(board_id) {

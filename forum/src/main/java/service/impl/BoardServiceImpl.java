@@ -21,21 +21,28 @@ public class BoardServiceImpl implements BoardService {
     private SubscriptionDao subscriptionDao = new SubscriptionDaoImpl();
 
 
+    /*-------------------------------------------    获取我的版块    ------------------------------------------*/
     @Override
     public List<Board> getMyBoard(Integer userId) throws SQLException {
         return boardDao.getOneBoardList(userId);
     }
 
+
+    /*--------------------------------------------    获取热门版块    ------------------------------------------*/
     @Override
     public List<Board> getHotBoard() throws Exception {
         return boardDao.getAllBoardPrioritizeBy(Constants.HOT, Constants.DESCENDING_ORDER);
     }
 
+
+    /*--------------------------------------------    获取最新版块    ------------------------------------------*/
     @Override
     public List<Board> getNewBoard() throws Exception {
         return boardDao.getAllBoardPrioritizeBy(Constants.NEW, Constants.DESCENDING_ORDER);
     }
 
+
+    /*----------------------------------------    获取推荐版块（默认）    ---------------------------------------*/
     @Override
     public List<Board> getAllBoardPrioritizeUserLike(Integer userId) throws SQLException {
 

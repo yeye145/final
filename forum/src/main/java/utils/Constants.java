@@ -14,7 +14,7 @@ public class Constants {
     // 过滤器白名单
     public static final String[] FREE_URLS = {"/login.html", ".css", ".png", ".js", ".images",
             "/login", "/user", "/admin", "/verify", "/forget", "/register",
-            "/avatar", "/user", "/board", "/post"};
+            "/avatar", "/user", "/board", "/post", "/comment"};
 
     public static final String HOT = "view_count";
     public static final String NEW = "time";

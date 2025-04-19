@@ -1,6 +1,8 @@
 package pojo;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Comment {
 
@@ -8,15 +10,17 @@ public class Comment {
     private String content;
     private Integer postId;
     private Integer userId;
-    private Integer parentId;       // 父评论
+    private Integer parentId;            // 父评论
     private Integer likeCount;
     private LocalDateTime time;
-
+    private String userName;
+    private String userAvatar;
+    private List<Comment> childComment = new ArrayList<>();   // 子评论列表
 
     public Comment() {
     }
 
-    public Comment(Integer id, String content, Integer postId, Integer userId, Integer parentId, Integer likeCount, LocalDateTime time) {
+    public Comment(Integer id, String content, Integer postId, Integer userId, Integer parentId, Integer likeCount, LocalDateTime time, String userName, String userAvatar, List<Comment> childComment) {
         this.id = id;
         this.content = content;
         this.postId = postId;
@@ -24,6 +28,9 @@ public class Comment {
         this.parentId = parentId;
         this.likeCount = likeCount;
         this.time = time;
+        this.userName = userName;
+        this.userAvatar = userAvatar;
+        this.childComment = childComment;
     }
 
     /**
@@ -138,7 +145,55 @@ public class Comment {
         this.time = time;
     }
 
+    /**
+     * 获取
+     * @return userName
+     */
+    public String getUserName() {
+        return userName;
+    }
+
+    /**
+     * 设置
+     * @param userName
+     */
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    /**
+     * 获取
+     * @return userAvatar
+     */
+    public String getUserAvatar() {
+        return userAvatar;
+    }
+
+    /**
+     * 设置
+     * @param userAvatar
+     */
+    public void setUserAvatar(String userAvatar) {
+        this.userAvatar = userAvatar;
+    }
+
+    /**
+     * 获取
+     * @return childComment
+     */
+    public List<Comment> getChildComment() {
+        return childComment;
+    }
+
+    /**
+     * 设置
+     * @param childComment
+     */
+    public void setChildComment(List<Comment> childComment) {
+        this.childComment = childComment;
+    }
+
     public String toString() {
-        return "Comment{id = " + id + ", content = " + content + ", postId = " + postId + ", userId = " + userId + ", parentId = " + parentId + ", likeCount = " + likeCount + ", time = " + time + "}";
+        return "Comment{id = " + id + ", content = " + content + ", postId = " + postId + ", userId = " + userId + ", parentId = " + parentId + ", likeCount = " + likeCount + ", time = " + time + ", userName = " + userName + ", userAvatar = " + userAvatar + ", childComment = " + childComment + "}";
     }
 }
