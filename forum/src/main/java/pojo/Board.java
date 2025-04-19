@@ -10,12 +10,13 @@ public class Board {
     private Integer hostId;
     private Integer postCount;
     private String hostName;
+    private String hostAvatar;
 
 
     public Board() {
     }
 
-    public Board(Integer id, String title, String type, LocalDateTime time, Integer hostId, Integer postCount, String hostName) {
+    public Board(Integer id, String title, String type, LocalDateTime time, Integer hostId, Integer postCount, String hostName, String hostAvatar) {
         this.id = id;
         this.title = title;
         this.type = type;
@@ -23,10 +24,12 @@ public class Board {
         this.hostId = hostId;
         this.postCount = postCount;
         this.hostName = hostName;
+        this.hostAvatar = hostAvatar;
     }
 
     /**
      * 获取
+     *
      * @return id
      */
     public Integer getId() {
@@ -35,6 +38,7 @@ public class Board {
 
     /**
      * 设置
+     *
      * @param id
      */
     public void setId(Integer id) {
@@ -43,6 +47,7 @@ public class Board {
 
     /**
      * 获取
+     *
      * @return title
      */
     public String getTitle() {
@@ -51,6 +56,7 @@ public class Board {
 
     /**
      * 设置
+     *
      * @param title
      */
     public void setTitle(String title) {
@@ -59,6 +65,7 @@ public class Board {
 
     /**
      * 获取
+     *
      * @return type
      */
     public String getType() {
@@ -67,6 +74,7 @@ public class Board {
 
     /**
      * 设置
+     *
      * @param type
      */
     public void setType(String type) {
@@ -75,6 +83,7 @@ public class Board {
 
     /**
      * 获取
+     *
      * @return time
      */
     public LocalDateTime getTime() {
@@ -83,6 +92,7 @@ public class Board {
 
     /**
      * 设置
+     *
      * @param time
      */
     public void setTime(LocalDateTime time) {
@@ -91,6 +101,7 @@ public class Board {
 
     /**
      * 获取
+     *
      * @return hostId
      */
     public Integer getHostId() {
@@ -99,6 +110,7 @@ public class Board {
 
     /**
      * 设置
+     *
      * @param hostId
      */
     public void setHostId(Integer hostId) {
@@ -107,6 +119,7 @@ public class Board {
 
     /**
      * 获取
+     *
      * @return postCount
      */
     public Integer getPostCount() {
@@ -115,6 +128,7 @@ public class Board {
 
     /**
      * 设置
+     *
      * @param postCount
      */
     public void setPostCount(Integer postCount) {
@@ -123,6 +137,7 @@ public class Board {
 
     /**
      * 获取
+     *
      * @return hostName
      */
     public String getHostName() {
@@ -131,13 +146,32 @@ public class Board {
 
     /**
      * 设置
+     *
      * @param hostName
      */
     public void setHostName(String hostName) {
         this.hostName = hostName;
     }
 
+    /**
+     * 获取
+     *
+     * @return hostAvatar
+     */
+    public String getHostAvatar() {
+        return hostAvatar;
+    }
+
+    /**
+     * 设置
+     *
+     * @param hostAvatar
+     */
+    public void setHostAvatar(String hostAvatar) {
+        this.hostAvatar = hostAvatar;
+    }
+
     public String toString() {
-        return "Board{id = " + id + ", title = " + title + ", type = " + type + ", time = " + time + ", hostId = " + hostId + ", postCount = " + postCount + ", hostName = " + hostName + "}";
+        return "Board{id = " + id + ", title = " + title + ", type = " + type + ", time = " + time + ", hostId = " + hostId + ", postCount = " + postCount + ", hostName = " + hostName + ", hostAvatar = " + hostAvatar + "}";
     }
 }

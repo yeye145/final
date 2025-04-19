@@ -51,7 +51,7 @@ public class UserDaoImpl implements UserDao {
     @Override
     public void updateAvatar(Integer userId, String fileName) throws Exception {
         MyUpdate.update("UPDATE `forum`.`User` SET `avatar` = ? WHERE (`id` = ?);"
-                , fileName, userId);
+                , "/images/avatar/" + fileName, userId);
     }
 
     @Override

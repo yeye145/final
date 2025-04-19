@@ -9,6 +9,7 @@ public class Post {
     private String content;
     private Integer authorId;
     private String authorName;
+    private String authorAvatar;
     private Integer boardId;
     private Integer viewCount;                  // 浏览次数
     private Integer likeCount;                  // 点赞数量
@@ -19,12 +20,13 @@ public class Post {
     public Post() {
     }
 
-    public Post(Integer id, String title, String content, Integer authorId, String authorName, Integer boardId, Integer viewCount, Integer likeCount, Integer commentCount, LocalDateTime time) {
+    public Post(Integer id, String title, String content, Integer authorId, String authorName, String authorAvatar, Integer boardId, Integer viewCount, Integer likeCount, Integer commentCount, LocalDateTime time) {
         this.id = id;
         this.title = title;
         this.content = content;
         this.authorId = authorId;
         this.authorName = authorName;
+        this.authorAvatar = authorAvatar;
         this.boardId = boardId;
         this.viewCount = viewCount;
         this.likeCount = likeCount;
@@ -114,6 +116,22 @@ public class Post {
 
     /**
      * 获取
+     * @return authorAvatar
+     */
+    public String getAuthorAvatar() {
+        return authorAvatar;
+    }
+
+    /**
+     * 设置
+     * @param authorAvatar
+     */
+    public void setAuthorAvatar(String authorAvatar) {
+        this.authorAvatar = authorAvatar;
+    }
+
+    /**
+     * 获取
      * @return boardId
      */
     public Integer getBoardId() {
@@ -193,6 +211,6 @@ public class Post {
     }
 
     public String toString() {
-        return "Post{id = " + id + ", title = " + title + ", content = " + content + ", authorId = " + authorId + ", authorName = " + authorName + ", boardId = " + boardId + ", viewCount = " + viewCount + ", likeCount = " + likeCount + ", commentCount = " + commentCount + ", time = " + time + "}";
+        return "Post{id = " + id + ", title = " + title + ", content = " + content + ", authorId = " + authorId + ", authorName = " + authorName + ", authorAvatar = " + authorAvatar + ", boardId = " + boardId + ", viewCount = " + viewCount + ", likeCount = " + likeCount + ", commentCount = " + commentCount + ", time = " + time + "}";
     }
 }

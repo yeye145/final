@@ -22,7 +22,7 @@ public class UserServiceImpl implements UserService {
                 .get();
 
         System.out.println("--UserService，获取头像，用户id：" + targetUser.getId());
-        return "/images/avatar/" + targetUser.getAvatar();
+        return targetUser.getAvatar();
     }
 
     @Override

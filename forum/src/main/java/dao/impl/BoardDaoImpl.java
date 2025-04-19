@@ -15,6 +15,7 @@ public class BoardDaoImpl implements BoardDao {
         return MySearch.searchToList("SELECT id, title, type, `time`" +
                 ", host_id AS hostId" +
                 ", post_count AS postCount" +
+                ", host_avatar AS hostAvatar" +
                 ", host_name AS hostName " +
                 "FROM `forum`.`board` " +
                 "WHERE host_id = ?", Board.class, userId);
@@ -26,6 +27,7 @@ public class BoardDaoImpl implements BoardDao {
         return MySearch.searchToSet("SELECT id, title, type, `time`" +
                 ", host_id AS hostId" +
                 ", post_count AS postCount " +
+                ", host_avatar AS hostAvatar" +
                 ", host_name AS hostName " +
                 "FROM `forum`.`board`", Board.class);
     }

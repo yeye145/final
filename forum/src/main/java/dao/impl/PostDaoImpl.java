@@ -15,6 +15,7 @@ public class PostDaoImpl implements PostDao {
         return MySearch.searchToList("SELECT id, title, content, time" +
                 ", author_id AS authorId" +
                 ", author_name AS authorName" +
+                ", author_avatar AS authorAvatar" +
                 ", board_id AS boardId" +
                 ", view_count AS viewCount" +
                 ", like_count AS likeCount" +

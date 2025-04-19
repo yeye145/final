@@ -16,7 +16,7 @@ CREATE TABLE user
     is_admin        BOOLEAN DEFAULT FALSE COMMENT '是否为管理员',
     name            VARCHAR(50)  NOT NULL COMMENT '昵称',
     grade           INT     DEFAULT 1 COMMENT '等级',
-    avatar          VARCHAR(255) COMMENT '头像路径',
+    avatar          VARCHAR(255) COMMENT '头像路径' NOT NULL DEFAULT '/images/avatar/initAvatar.jpg',
     if_receive_like BOOLEAN DEFAULT TRUE COMMENT '接收点赞通知',
     INDEX           idx_email (email),
     INDEX           idx_phone (phone)
@@ -173,6 +173,7 @@ CREATE TABLE subscription
     FOREIGN KEY (subscribe_to_board_id) REFERENCES board (id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- 表列名扩展 -- 开始 ----------------------------------------------------------------------------------
 ALTER TABLE `forum`.`user`
     ADD COLUMN `receive_like_count` INT NULL DEFAULT '0' AFTER `if_receive_like`,
 ADD COLUMN `fans_count` INT NULL DEFAULT '0' AFTER `receive_like_count`,
@@ -188,7 +189,23 @@ ALTER TABLE `forum`.`board`
 ALTER TABLE `forum`.`post`
     ADD COLUMN `author_name` VARCHAR(255) NOT NULL AFTER `author_id`;
 
+ALTER TABLE `forum`.`comment`
+    ADD COLUMN `user_name` VARCHAR(255) NULL AFTER `user_id`,
+ADD COLUMN `user_avatar` VARCHAR(255) NULL AFTER `user_name`;
 
+ALTER TABLE `forum`.`post`
+    ADD COLUMN `author_avatar` VARCHAR(255) NULL DEFAULT '/images/avatar/initAvatar.jpg' AFTER `time`;
+
+ALTER TABLE `forum`.`board`
+    ADD COLUMN `host_avatar` VARCHAR(255) NULL DEFAULT '/images/avatar/initAvatar.jpg' AFTER `host_name`;
+
+
+-- 表列名扩展 -- 结束 ----------------------------------------------------------------------------------
+
+
+-- 触发器 -- 开始 --------------------------------------------------------------------------------------
+
+DELIMITER ;
 -- 关注与粉丝 -- 触发器
 DELIMITER //
 
@@ -267,31 +284,68 @@ END //
 
 DELIMITER ;
 
-INSERT INTO `forum`.`user` (`id`, `email`, `phone`, `password`, `is_admin`, `name`, `grade`, `avatar`,
-                            `if_receive_like`)
-VALUES ('1', 'y@y.com', '18300000985', 'yyy111', '1', 'Yiiie.', '7', 'initAvatar.jpg', '0');
+DELIMITER //
+
+-- 更新用户昵称和头像的触发器
+CREATE TRIGGER after_user_update
+    AFTER UPDATE ON `user`
+    FOR EACH ROW
+BEGIN
+    -- 如果昵称被更新，同步更新 board 表中的 host_name
+    IF NEW.name != OLD.name THEN
+    UPDATE `board`
+    SET host_name = NEW.name
+    WHERE host_id = NEW.id;
+END IF;
+
+-- 如果头像被更新，同步更新 board 表中的 host_avatar
+IF NEW.avatar != OLD.avatar THEN
+UPDATE `board`
+SET host_avatar = NEW.avatar
+WHERE host_id = NEW.id;
+
+-- 同时更新 post 表中的 author_avatar
+UPDATE `post`
+SET author_avatar = NEW.avatar
+WHERE author_id = NEW.id;
+END IF;
+
+    -- 如果昵称被更新，同步更新 post 表中的 author_name
+    IF NEW.name != OLD.name THEN
+UPDATE `post`
+SET author_name = NEW.name
+WHERE author_id = NEW.id;
+END IF;
+END //
+
+DELIMITER ;
+
+-- 触发器 -- 结束 --------------------------------------------------------------------------------------
+
+INSERT INTO `forum`.`user` (`id`, `email`, `phone`, `password`, `is_admin`, `name`, `grade`, `if_receive_like`)
+VALUES ('1', 'y@y.com', '18300000985', 'yyy111', '1', 'Yiiie.', '7', '0');
 
 -- 生成新用户
-INSERT INTO `forum`.`user` (`email`, `phone`, `password`, `name`, `grade`, `avatar`)
-VALUES ('3@3.com', '18300003030', 'sss333', '张三', '3', 'initAvatar.jpg'),
-       ('4@4.com', '18400001234', 'lll444', '李四', '4', 'initAvatar.jpg'),
-       ('user4@test.com', '18511110001', 'password123', '王五', 2, 'initAvatar.jpg'),
-       ('user5@test.com', '18511110002', 'password123', '赵六', 3, 'initAvatar.jpg'),
-       ('user6@test.com', '18511110003', 'password123', '陈七', 1, 'initAvatar.jpg'),
-       ('user7@test.com', '18511110004', 'password123', '林八', 4, 'initAvatar.jpg'),
-       ('user8@test.com', '18511110005', 'password123', '周九', 2, 'initAvatar.jpg'),
-       ('user9@test.com', '18511110006', 'password123', '吴十', 3, 'initAvatar.jpg'),
-       ('user10@test.com', '18511110007', 'password123', '郑十一', 1, 'initAvatar.jpg'),
-       ('user11@test.com', '18511110008', 'password123', '孙十二', 5, 'initAvatar.jpg'),
-       ('user12@test.com', '18511110009', 'password123', '朱十三', 2, 'initAvatar.jpg'),
-       ('user13@test.com', '18511110010', 'password123', '秦十四', 3, 'initAvatar.jpg'),
-       ('user14@test.com', '18511110011', 'password123', '许十五', 1, 'initAvatar.jpg'),
-       ('user15@test.com', '18511110012', 'password123', '何十六', 4, 'initAvatar.jpg'),
-       ('user16@test.com', '18511110013', 'password123', '吕十七', 2, 'initAvatar.jpg'),
-       ('user17@test.com', '18511110014', 'password123', '张十八', 3, 'initAvatar.jpg'),
-       ('user18@test.com', '18511110015', 'password123', '高十九', 1, 'initAvatar.jpg'),
-       ('user19@test.com', '18511110016', 'password123', '程二十', 5, 'initAvatar.jpg'),
-       ('user20@test.com', '18511110017', 'password123', '黄二一', 2, 'initAvatar.jpg');
+INSERT INTO `forum`.`user` (`email`, `phone`, `password`, `name`, `grade`)
+VALUES ('3@3.com', '18300003030', 'sss333', '张三', '3'),
+       ('4@4.com', '18400001234', 'lll444', '李四', '4'),
+       ('user4@test.com', '18511110001', 'password123', '王五', 2),
+       ('user5@test.com', '18511110002', 'password123', '赵六', 3),
+       ('user6@test.com', '18511110003', 'password123', '陈七', 1),
+       ('user7@test.com', '18511110004', 'password123', '林八', 4),
+       ('user8@test.com', '18511110005', 'password123', '周九', 2),
+       ('user9@test.com', '18511110006', 'password123', '吴十', 3),
+       ('user10@test.com', '18511110007', 'password123', '郑十一', 1),
+       ('user11@test.com', '18511110008', 'password123', '孙十二', 5),
+       ('user12@test.com', '18511110009', 'password123', '朱十三', 2),
+       ('user13@test.com', '18511110010', 'password123', '秦十四', 3),
+       ('user14@test.com', '18511110011', 'password123', '许十五', 1),
+       ('user15@test.com', '18511110012', 'password123', '何十六', 4),
+       ('user16@test.com', '18511110013', 'password123', '吕十七', 2),
+       ('user17@test.com', '18511110014', 'password123', '张十八', 3),
+       ('user18@test.com', '18511110015', 'password123', '高十九', 1),
+       ('user19@test.com', '18511110016', 'password123', '程二十', 5),
+       ('user20@test.com', '18511110017', 'password123', '黄二一', 2);
 
 INSERT INTO `forum`.`board` (`id`, `host_id`, `title`, `type`, `post_count`, `time`, `host_name`)
 VALUES ('1', '2', '张三学java', 'java', '0', '2025-04-14 15:14:50', '张三');
@@ -352,4 +406,9 @@ VALUES (2, 3, NULL),
        (3, NULL, 1),
        (4, 5, NULL),
        (5, NULL, 2);
+
+-- 生成公告
+INSERT INTO `forum`.`notice` (`board_id`, `content`) VALUES ('1', '这里是张三学java，欢迎大家学习交流~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
+INSERT INTO `forum`.`notice` (`board_id`, `content`) VALUES ('1', '请大家不要发布无关内容，专注于学习交流');
+INSERT INTO `forum`.`notice` (`board_id`, `content`) VALUES ('2', 'B站关注我~');
 
