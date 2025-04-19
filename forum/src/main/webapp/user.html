@@ -152,7 +152,6 @@
 
             <!-- 帖子内容(Markdown渲染区域) -->
             <div class="post-content markdown-body" v-html="compiledMarkdown"></div>
-            <div>{{ thisPost.content }}</div>
 
             <!-- 水平分割线 -->
             <hr class="post-divider">
@@ -328,20 +327,21 @@
 
     </div>
 </div>
-
+<!--加载axios-->
 <script src="https://cdn.bootcdn.net/ajax/libs/axios/1.6.7/axios.min.js"></script>
+<!--加载vue-->
 <script src="https://cdn.bootcdn.net/ajax/libs/vue/2.6.14/vue.min.js"></script>
+<!-- 加载 highlight.js 核心 -->
+<script src="https://unpkg.com/highlight.js@11.7.0/lib/core.min.js"></script>
+<!-- 加载语言文件 -->
+<script src="https://unpkg.com/highlight.js@11.7.0/dist/languages/c.min.js"></script>
+<script src="https://unpkg.com/highlight.js@11.7.0/dist/languages/java.min.js"></script>
+<script src="https://unpkg.com/highlight.js@11.7.0/dist/languages/javascript.min.js"></script>
+<script src="https://unpkg.com/highlight.js@11.7.0/dist/languages/python.min.js"></script>
+<script src="https://unpkg.com/highlight.js@11.7.0/dist/languages/cpp.min.js"></script>
 
 <!-- 加载核心库 -->
 <script src="https://unpkg.com/marked/marked.min.js"></script>
-
-<!-- 加载语言文件 -->
-<script src="https://cdn.jsdelivr.net/npm/highlight.js@11.7.0/dist/languages/c.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/highlight.js@11.7.0/dist/languages/java.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/highlight.js@11.7.0/dist/languages/javascript.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/highlight.js@11.7.0/dist/languages/python.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/highlight.js@11.7.0/dist/languages/cpp.min.js"></script>
-
 <script>
     new Vue({
         el: '#app',
@@ -429,6 +429,14 @@
             });
         },
         methods: {
+            // 渲染 Markdown 内容
+            renderMarkdown(content) {
+                if (typeof marked === 'undefined') {
+                    console.error('marked is not available');
+                    return content; // 回退到原始内容
+                }
+                return marked.parse(content || ''); // 使用 marked.parse 而不是直接 marked()
+            },
             // 显示某个具体帖子
             turnThisPost(post_id, post_title) {
                 this.ifMyInformation = false;
@@ -818,6 +826,8 @@
                         alert(response.data.message);
                     } else {
                         this.thisPost = response.data.data;
+                        // 渲染 Markdown 内容
+                        this.compiledMarkdown = this.renderMarkdown(this.thisPost.content);
                         // 把当前帖子加入路径中显示在左上角
                         this.currentPath.push(post_title);
                         console.log("获取帖子：" + post_title + "成功");
