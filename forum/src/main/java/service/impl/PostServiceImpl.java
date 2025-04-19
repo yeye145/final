@@ -10,7 +10,6 @@ import pojo.Subscription;
 import service.PostService;
 import service.SubscriptionDao;
 
-import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 

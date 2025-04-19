@@ -15,4 +15,7 @@ public interface BoardDao {
     Set<Board> getAllBoardSet() throws SQLException;
 
     void plusOneViewCount(Integer boardId) throws Exception;
+
+
+    List<Board> getAllBoardPrioritizeBy(String orderByName, String orderByWay) throws Exception;
 }

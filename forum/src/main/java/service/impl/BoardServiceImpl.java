@@ -6,6 +6,7 @@ import pojo.Board;
 import pojo.Subscription;
 import service.BoardService;
 import service.SubscriptionDao;
+import utils.Constants;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -23,6 +24,16 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public List<Board> getMyBoard(Integer userId) throws SQLException {
         return boardDao.getOneBoardList(userId);
+    }
+
+    @Override
+    public List<Board> getHotBoard() throws Exception {
+        return boardDao.getAllBoardPrioritizeBy(Constants.HOT, Constants.DESCENDING_ORDER);
+    }
+
+    @Override
+    public List<Board> getNewBoard() throws Exception {
+        return boardDao.getAllBoardPrioritizeBy(Constants.NEW, Constants.DESCENDING_ORDER);
     }
 
     @Override
@@ -44,7 +55,7 @@ public class BoardServiceImpl implements BoardService {
             for (Board board : originBoardSet) {
 
                 // 如果与用户关注的版块id相同
-                if (Objects.equals(board.getId(), userLike.getSubscribeToBoardId())){
+                if (Objects.equals(board.getId(), userLike.getSubscribeToBoardId())) {
                     resultBoardList.add(board);                // 增加到结果集合
                     originBoardSetForCopy.remove(board);       // 移除相同元素
                     break;

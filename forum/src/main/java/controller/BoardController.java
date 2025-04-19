@@ -63,6 +63,41 @@ public class BoardController extends BaseServlet {
     }
 
 
+    /*-------------------------------------------    获取热门版块   ------------------------------------------*/
+    public void getHotBoard(HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+        System.out.println("BoardController，获取热门版块");
+
+        List<Board> hotBoard = boardService.getHotBoard();
+
+        // 获取版块信息
+        response.getWriter().write(
+                JSON.toJSONString(
+                        ResponseResult.success(hotBoard)
+                )
+        );
+
+        System.out.println("-获取热门版块成功！");
+    }
+
+
+    /*-------------------------------------------    获取最新版块   ------------------------------------------*/
+    public void getNewBoard(HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+        System.out.println("BoardController，获取最新版块");
+
+        List<Board> newBoard = boardService.getNewBoard();
+
+        // 获取版块信息
+        response.getWriter().write(
+                JSON.toJSONString(
+                        ResponseResult.success(newBoard)
+                )
+        );
+
+        System.out.println("-获取最新版块成功！");
+    }
+
     /*-------------------------------------------    获取全部公告    ------------------------------------------*/
     public void getNotice(HttpServletRequest request, HttpServletResponse response) throws Exception {
         Integer boardId = Integer.parseInt(request.getParameter("boardId"));

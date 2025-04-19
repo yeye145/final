@@ -15,4 +15,11 @@ public class Constants {
     public static final String[] FREE_URLS = {"/login.html", ".css", ".png", ".js", ".images",
             "/login", "/user", "/admin", "/verify", "/forget", "/register",
             "/avatar", "/user", "/board", "/post"};
+
+    public static final String HOT = "view_count";
+    public static final String NEW = "time";
+
+    public static final String ASCENDING_ORDER = "ASC";
+    public static final String DESCENDING_ORDER = "DESC";
+
 }

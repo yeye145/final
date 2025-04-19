@@ -42,4 +42,20 @@ public class BoardDaoImpl implements BoardDao {
                 " WHERE id = ?", boardId);
     }
 
+    @Override
+    public List<Board> getAllBoardPrioritizeBy(String orderByName, String orderByWay) throws Exception {
+        return MySearch.searchToList(
+                "SELECT id, title, type, `time`, " +
+                        "host_id AS hostId, " +
+                        "post_count AS postCount, " +
+                        "view_count AS viewCount, " +
+                        "host_avatar AS hostAvatar, " +
+                        "host_name AS hostName " +
+                        "FROM `forum`.`board` " +
+                        "ORDER BY ? ?",
+                Board.class, orderByName, orderByWay
+        );
+    }
+
+
 }
