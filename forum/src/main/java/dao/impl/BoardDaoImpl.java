@@ -52,9 +52,7 @@ public class BoardDaoImpl implements BoardDao {
                         "host_avatar AS hostAvatar, " +
                         "host_name AS hostName " +
                         "FROM `forum`.`board` " +
-                        "ORDER BY ? ?",
-                Board.class, orderByName, orderByWay
-        );
+                        "ORDER BY " + orderByName + " " + orderByWay, Board.class);
     }
 
 

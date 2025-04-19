@@ -33,7 +33,7 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public List<Board> getNewBoard() throws Exception {
-        return boardDao.getAllBoardPrioritizeBy(Constants.NEW, Constants.ASCENDING_ORDER);
+        return boardDao.getAllBoardPrioritizeBy(Constants.NEW, Constants.DESCENDING_ORDER);
     }
 
     @Override
