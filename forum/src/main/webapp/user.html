@@ -62,8 +62,7 @@
             <p>欢迎来到QG技术论坛！这里有最新技术动态和深度讨论。</p>
         </div>
 
-        <div class="content-section" v-if="(ifAllPostInThisBoard || ifAllPostInMyBoard)
-         && !ifHomePage && !ifThisPost && !ifMyInformation">
+        <div class="content-section" v-if="ifBoardNotice">
             <h3>📌 公告
                 <button @click="showHistoryModal = true" class="history-btn">查看历史公告</button>
             </h3>
@@ -135,6 +134,7 @@
             </div>
         </div>
 
+        <!--帖子具体内容-->
         <div v-if="ifThisPost" class="post-detail-section">
             <!-- 帖子标题和元信息 -->
             <div class="post-header">
@@ -251,7 +251,7 @@
                 </div>
 
                 <!-- 第二行 -->
-                <div class="stat-card">
+                <div class="stat-card" @click="turnMyHistory">
                     <div class="stat-icon">🕒</div>
                     <div class="stat-value">...</div>
                     <div class="stat-label">历史记录</div>
@@ -360,6 +360,31 @@
             </div>
         </div>
 
+        <!-- 历史版块——我的历史记录 -->
+        <div v-if="ifMyHistory" class="board-section">
+            <div class="post-list">
+                <!--帖子搜索框-->
+                <div class="search-bar">
+                    <input type="text" v-model="postSearchQuery"
+                           placeholder="输入发帖用户昵称、帖子名称或浏览时间以搜索"
+                           @input="searchPostHistory">
+                </div>
+                <!--渲染帖子信息-->
+                <div v-for="postHistory in myHistoryReadPost" :key="postHistory.id" class="post-card">
+                    <div class="post-meta">
+                        <span class="author">👤 {{ postHistory.post.authorName }}</span>
+                        <span class="time">📅 {{ postHistory.post.time }}</span>
+                    </div>
+                    <h4 class="post-title">{{ postHistory.post.title }}</h4>
+                    <div class="post-stats">
+                        <span>❤️ {{ postHistory.post.likeCount }}</span>
+                        <span>💬 {{ postHistory.post.commentCount }}</span>
+                        <span>👀 {{ postHistory.post.viewCount }}</span>
+                    </div>
+                    <span class="time">💻浏览时间 {{ postHistory.time }}</span>
+                </div>
+            </div>
+        </div>
     </div>
 
 </div>
@@ -385,6 +410,7 @@
     hljs.highlightAll();
 </script>
 
+<!--循环渲染评论的组件注册-->
 <script>
     Vue.component('comment-tree', {
         // 定义组件接收的属性
@@ -444,6 +470,9 @@
             ifAllPostInThisBoard: false,    // 显示该版块所有帖子
             ifAllPostInMyBoard: false,      // 显示我的版块的所有帖子
             ifThisPost: false,              // 显示该帖子
+            ifMyHistory: false,             // 显示我的历史记录
+            ifBoardNotice: false,           // 显示版块公告
+
 
             ifMyBoard: false,
             showCreateBoardModal: false,
@@ -460,6 +489,7 @@
             postSearchQuery: '',            // 帖子关键字搜索
             originalAllPostInThisBoard: [],
             originalAllPostInMyBoard: [],
+            originalPostHistory: [],        // 原始历史记录存储
 
             notice: [],                     // 存储所有公告
             currentNotice: {                // 当前展示的公告
@@ -491,6 +521,8 @@
             compiledMarkdown: '',           // 帖子内容
 
             newComment: '',                 // 新的评论
+
+            myHistoryReadPost: [],          // 我的历史浏览记录
         },
         created() {
             // 页面加载时自动获取用户头像
@@ -524,6 +556,53 @@
             this.highlightAll();
         },
         methods: {
+            // 历史记录的搜索
+            searchPostHistory() {
+                if (this.postSearchQuery.trim() === '') {
+                    // 清空搜索时恢复原始数据
+                    this.myHistoryReadPost = this.originalPostHistory;
+                    return;
+                }
+
+                // 将查询的字符串转化为小写
+                const query = this.postSearchQuery.toLowerCase();
+                this.myHistoryReadPost = this.originalPostHistory.filter(post =>
+                    // 将名称转化为小写，如果包含作者名称或标题或时间，则储存
+                    post.authorName.toLowerCase().includes(query) ||
+                    post.title.toLowerCase().includes(query)) ||
+                    post.time.toLowerCase().includes(query)
+            },
+            // 切换我的历史
+            turnMyHistory() {
+                this.ifMyInformation = false;
+                this.ifHomePage = false;
+                this.ifUploadMyAvatar = false;
+                this.ifEditName = false;
+                this.ifMyBoard = false;
+                this.ifShowDropdown = false;
+                this.ifAllBoard = false;
+                this.ifAllPostInMyBoard = false;
+                this.ifThisPost = false;
+                this.ifBoardNotice = false;
+                this.fetchHistory();
+                this.ifMyHistory = true;
+                this.currentPath = ['QG技术论坛', '我的信息', '浏览历史'];
+            },
+            // 获取我的历史浏览记录
+            fetchHistory() {
+                let that = this;
+                axios.post('/post/getHistory').then(response => {
+                    if (response.data.code !== 200) {
+                        console.log("状态码：" + response.data.code + response.data.message);
+                        alert(response.data.message);
+                    } else {
+                        that.myHistoryReadPost = response.data.data;
+                        that.originalPostHistory = that.myHistoryReadPost;
+                        console.log(response.data.data);
+                    }
+                })
+            },
+            // 计入我的历史浏览记录
             recordHistory(post_id) {
                 axios.post('/post/recordHistory', new URLSearchParams({
                     postId: post_id,
@@ -540,6 +619,7 @@
                     }
                 })
             },
+            // 回复输入
             showReplyBox(commentId) {
                 // 实现回复框显示逻辑
             },
@@ -616,6 +696,7 @@
             },
             // 显示某个具体帖子
             turnThisPost(post_id, post_title) {
+                this.ifBoardNotice = false;
                 this.ifMyInformation = false;
                 this.ifHomePage = false;
                 this.ifUploadMyAvatar = false;
@@ -624,6 +705,7 @@
                 this.ifShowDropdown = false;
                 this.ifAllBoard = false;
                 this.ifAllPostInMyBoard = false;
+                this.ifMyHistory = false;
                 this.ifThisPost = true;
                 this.fetchThisPost(post_id, post_title);        // 抓取这个帖子的信息
                 this.fetchComment(post_id);                     // 抓取所有评论
@@ -655,7 +737,7 @@
                 this.currentNotice = this.notice[index];
                 this.showHistoryModal = false; // 点击后关闭弹窗
             },
-            // 帖子关键字搜索版块
+            // 我的版块中，帖子关键字搜
             searchPostInMyBoard() {
                 if (this.postSearchQuery.trim() === '') {
                     // 清空搜索时恢复原始数据
@@ -666,11 +748,11 @@
                 // 将查询的字符串转化为小写
                 const query = this.postSearchQuery.toLowerCase();
                 this.allPostInMyBoard = this.originalAllPostInMyBoard.filter(post =>
-                    // 将课程名称转化为小写，如果包含这个课程名称，则储存
+                    // 将名称转化为小写，如果包含作者名称或标题，则储存
                     post.authorName.toLowerCase().includes(query) ||
                     post.title.toLowerCase().includes(query))
             },
-            // 帖子关键字搜索版块
+            // 全部版块中，帖子关键字搜索版块
             searchPost() {
                 if (this.postSearchQuery.trim() === '') {
                     // 清空搜索时恢复原始数据
@@ -681,7 +763,7 @@
                 // 将查询的字符串转化为小写
                 const query = this.postSearchQuery.toLowerCase();
                 this.allPostInThisBoard = this.originalAllPostInThisBoard.filter(post =>
-                    // 将课程名称转化为小写，如果包含这个课程名称，则储存
+                    // 将名称转化为小写，如果包含作者名称或标题，则储存
                     post.authorName.toLowerCase().includes(query) ||
                     post.title.toLowerCase().includes(query))
             },
@@ -702,6 +784,7 @@
             },
             // 切换回主页
             backHomePage() {
+                this.ifBoardNotice = false;
                 this.ifMyInformation = false;
                 this.ifHomePage = true;
                 this.ifUploadMyAvatar = false;
@@ -715,6 +798,7 @@
             },
             // 切换该版块下所有帖子
             turnAllPostInThisBoard(board_id, board_title) {
+                this.ifBoardNotice = true;
                 this.ifAllPostInMyBoard = false;
                 this.ifAllPostInThisBoard = true;
                 this.ifMyInformation = false;
@@ -723,11 +807,13 @@
                 this.ifMyBoard = false;
                 this.ifShowDropdown = false;
                 this.ifThisPost = false;
+                this.ifMyHistory = false;
                 this.fetchAllPostInThisBoard(board_id, board_title);
                 this.fetchNotice(board_id);
             },
             // 切换我的版块下所有帖子
             turnAllPostInMyBoard(board_id, board_title) {
+                this.ifBoardNotice = true;
                 this.ifAllPostInMyBoard = true;
                 this.ifAllPostInThisBoard = false;
                 this.ifMyInformation = false;
@@ -735,11 +821,13 @@
                 this.ifUploadMyAvatar = false;
                 this.ifShowDropdown = false;
                 this.ifThisPost = false;
+                this.ifMyHistory = false;
                 this.fetchAllPostInMyBoard(board_id, board_title);
                 this.fetchNotice(board_id);
             },
             // 切换所有版块
             turnAllBoard() {
+                this.ifBoardNotice = false;
                 this.ifMyInformation = false;
                 this.ifHomePage = false;
                 this.ifUploadMyAvatar = false;
@@ -750,11 +838,13 @@
                 this.ifAllPostInThisBoard = false;
                 this.ifAllPostInMyBoard = false;
                 this.ifThisPost = false;
+                this.ifMyHistory = false;
                 this.fetchAllBoard();
                 this.currentPath = ['QG技术论坛', '所有版块'];
             },
             // 切换我的版块
             turnMyBoard() {
+                this.ifBoardNotice = false;
                 this.ifAllPostInMyBoard = false;
                 this.ifMyInformation = false;
                 this.ifHomePage = false;
@@ -762,6 +852,7 @@
                 this.ifMyBoard = true;
                 this.ifShowDropdown = false;
                 this.ifThisPost = false;
+                this.ifMyHistory = false;
                 this.fetchMyBoard();
                 this.currentPath = ['QG技术论坛', '我的信息', '我的版块'];
             },
@@ -813,6 +904,7 @@
                 this.ifShowDropdown = false;
                 this.ifAllBoard = false;
                 this.ifThisPost = false;
+                this.ifMyHistory = false;
                 this.currentPath = ['QG技术论坛', '我的信息'];
             },
             // 获取我的个人信息

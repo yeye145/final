@@ -64,7 +64,7 @@ public class PostController extends BaseServlet {
                 ));
 
         System.out.println("-->用户id：" + userId + "获取历史记录成功！");
-
+        postHistory.forEach(System.out::println);
 
     }
 
