@@ -2,7 +2,7 @@ package controller;
 
 import com.alibaba.fastjson.JSON;
 import controller.utils.BaseServlet;
-import controller.utils.GetUserId;
+import controller.utils.ControllerToolMethod;
 import pojo.Board;
 import pojo.Notice;
 import pojo.ResponseResult;
@@ -29,7 +29,7 @@ public class BoardController extends BaseServlet {
 
     /*-------------------------------------------    获取我的版块    ------------------------------------------*/
     public void getMyBoard(HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {
-        Integer userId = GetUserId.getUserId(request);
+        Integer userId = ControllerToolMethod.getUserId(request);
         System.out.println("BoardController，获取我的版块，用户id" + userId);
 
         List<Board> targetBoard = boardService.getMyBoard(userId);
@@ -47,7 +47,7 @@ public class BoardController extends BaseServlet {
 
     /*------------------------------------    获取全部版块，优先渲染他喜欢的   -----------------------------------*/
     public void getAllBoard(HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {
-        Integer userId = GetUserId.getUserId(request);
+        Integer userId = ControllerToolMethod.getUserId(request);
         System.out.println("BoardController，获取全部版块，用户id" + userId);
 
         List<Board> allBoard = boardService.getAllBoardPrioritizeUserLike(userId);
@@ -117,7 +117,7 @@ public class BoardController extends BaseServlet {
 
     /*-------------------------------------------    申请新的版块    ------------------------------------------*/
     public void applyBoard(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        System.out.println("BoardController，申请版块，用户id" + GetUserId.getUserId(request));
+        System.out.println("BoardController，申请版块，用户id" + ControllerToolMethod.getUserId(request));
         String title = request.getParameter("title");
         String type = request.getParameter("type");
         String notice = request.getParameter("notice");

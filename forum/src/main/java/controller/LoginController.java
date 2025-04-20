@@ -2,6 +2,7 @@ package controller;
 
 import com.alibaba.fastjson.JSON;
 import controller.utils.BaseServlet;
+import controller.utils.ControllerToolMethod;
 import pojo.User;
 import pojo.ResponseResult;
 import service.LoginService;
@@ -25,7 +26,6 @@ public class LoginController extends BaseServlet {
     private LoginService loginService = new LoginServiceImpl();
 
 
-
     /*--------------------------------------------    登录验证    --------------------------------------------*/
     public void login(HttpServletRequest request, HttpServletResponse response) throws Exception {
         // 获取参数
@@ -33,6 +33,16 @@ public class LoginController extends BaseServlet {
         String password = request.getParameter("password");
 
         System.out.println("LoginController的login方法，账号为：" + account + " 的用户正在登录，密码输入为：" + password);
+
+
+        // 后端正则验证
+        if (!ControllerToolMethod.accountRegexCheck(account)) {
+            String json = JSON.toJSONString(
+                    ResponseResult.error(Constants.RESPONSE_CODE_UNAUTHORIZED, "手机号或邮箱格式无效")
+            );
+            response.getWriter().write(json);
+        }
+
 
         User user = loginService.loginCheck(account, password);
         HttpSession session = request.getSession();
@@ -53,13 +63,12 @@ public class LoginController extends BaseServlet {
     }
 
 
-
     /*--------------------------------------------    退出登录    --------------------------------------------*/
-    public void exitLogin(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void exitLogin(HttpServletRequest request, HttpServletResponse response) throws
+            ServletException, IOException {
         HttpSession session = request.getSession();
         session.setAttribute("user", null);
     }
-
 
 
 }

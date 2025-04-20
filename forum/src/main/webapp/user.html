@@ -180,7 +180,6 @@
                             <button @click="likeComment(comment.id)">❤️ {{ comment.likeCount }}</button>
                             <button @click="showReplyBox(comment.id)">回复</button>
                         </div>
-
                         <!-- 子评论区域：使用递归组件 -->
                         <div class="child-comments">
                             <comment-tree
@@ -195,6 +194,7 @@
                     </div>
                 </div>
             </div>
+
         </div>
 
         <!-- 个人信息 -->
@@ -361,6 +361,7 @@
         </div>
 
     </div>
+
 </div>
 <!--加载axios-->
 <script src="https://cdn.bootcdn.net/ajax/libs/axios/1.6.7/axios.min.js"></script>

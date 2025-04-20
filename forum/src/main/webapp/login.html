@@ -242,7 +242,7 @@
                     ifSuccess = false;
                     this.errors.setEmail = "!!!不符合邮箱格式";
                 }
-                if(this.setPasswordAgain !== this.setPassword){
+                if (this.setPasswordAgain !== this.setPassword) {
                     ifSuccess = false;
                     this.errors.setPasswordAgain = "!!!两次输入密码不一致";
                 }
@@ -254,6 +254,18 @@
                 if (!this.loginAccount) {
                     this.errors.loginAccount = '!!!请输入手机号/邮箱';
                     ifSuccess = false;
+                } else {
+                    if (this.loginAccount.includes('@')) {
+                        if (!this.validateEmail(this.loginAccount)) {
+                            this.errors.loginAccount = '!!!不符合邮箱格式';
+                            ifSuccess = false;
+                        }
+                    } else {
+                        if (!this.validatePhone(this.loginAccount)) {
+                            this.errors.loginAccount = '!!!不符合中国大陆手机号格式';
+                            ifSuccess = false;
+                        }
+                    }
                 }
                 return ifSuccess;
             },
@@ -307,6 +319,18 @@
                 if (!this.forgotAccount) {
                     this.errors.forgotAccount = '!!!请输入手机号/邮箱';
                     ifSuccess = false;
+                } else {
+                    if (this.forgotAccount.includes('@')) {
+                        if (!this.validateEmail(this.forgotAccount)) {
+                            this.errors.forgotAccount = '!!!不符合邮箱格式';
+                            ifSuccess = false;
+                        }
+                    } else {
+                        if (!this.validatePhone(this.forgotAccount)) {
+                            this.errors.forgotAccount = '!!!不符合中国大陆手机号格式';
+                            ifSuccess = false;
+                        }
+                    }
                 }
 
                 if (this.confirmNewPassword !== this.newPassword) {

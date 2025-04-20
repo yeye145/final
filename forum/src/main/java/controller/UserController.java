@@ -2,7 +2,7 @@ package controller;
 
 import com.alibaba.fastjson.JSON;
 import controller.utils.BaseServlet;
-import controller.utils.GetUserId;
+import controller.utils.ControllerToolMethod;
 import pojo.ResponseResult;
 import pojo.User;
 
@@ -28,7 +28,7 @@ public class UserController extends BaseServlet {
 
         System.out.println("UserController.avatar，获取头像：");
 
-        Integer userId = GetUserId.getUserId(request);
+        Integer userId = ControllerToolMethod.getUserId(request);
 
         if (userId != null) {
             System.out.println("-用户id：" + userId);
@@ -46,7 +46,7 @@ public class UserController extends BaseServlet {
     /*--------------------------------------------   获取个人信息   --------------------------------------------*/
     public void information(HttpServletRequest request, HttpServletResponse response) throws Exception {
         System.out.println("UserController.information，获取个人信息");
-        Integer userId = GetUserId.getUserId(request);
+        Integer userId = ControllerToolMethod.getUserId(request);
         if (userId != null) {
             System.out.println("-用户id：" + userId);
 
