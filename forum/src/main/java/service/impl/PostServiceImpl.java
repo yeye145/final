@@ -26,6 +26,7 @@ public class PostServiceImpl implements PostService {
     private HistoryDao historyDao = new HistoryDaoImpl();
 
 
+    /*-----------------------------------------    新增历史记录    --------------------------------------------*/
     @Override
     public boolean recordPost(Integer postId, Integer userId) throws Exception {
         historyDao.recordHistory(postId, userId);
@@ -33,6 +34,7 @@ public class PostServiceImpl implements PostService {
     }
 
 
+    /*-----------------------------------------    获得历史记录    --------------------------------------------*/
     @Override
     public List<History> getPostHistory(Integer userId) throws Exception {
 

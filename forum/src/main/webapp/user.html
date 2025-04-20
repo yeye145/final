@@ -524,6 +524,22 @@
             this.highlightAll();
         },
         methods: {
+            recordHistory(post_id) {
+                axios.post('/post/recordHistory', new URLSearchParams({
+                    postId: post_id,
+                }), {
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                }).then(response => {
+                    if (response.data.code !== 200) {
+                        console.log("状态码：" + response.data.code + response.data.message);
+                        alert(response.data.message);
+                    } else {
+                        console.log(response.data.data);
+                    }
+                })
+            },
             showReplyBox(commentId) {
                 // 实现回复框显示逻辑
             },
@@ -611,6 +627,7 @@
                 this.ifThisPost = true;
                 this.fetchThisPost(post_id, post_title);        // 抓取这个帖子的信息
                 this.fetchComment(post_id);                     // 抓取所有评论
+                this.recordHistory(post_id);                    // 计入历史记录
             },
             // 获取公告
             fetchNotice(board_id) {
