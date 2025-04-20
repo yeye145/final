@@ -1,6 +1,8 @@
 package service.impl;
 
 import dao.BoardDao;
+import dao.HistoryDao;
+import dao.impl.HistoryDaoImpl;
 import dao.PostDao;
 import dao.impl.BoardDaoImpl;
 import dao.impl.PostDaoImpl;
@@ -20,6 +22,15 @@ public class PostServiceImpl implements PostService {
     private PostDao postDao = new PostDaoImpl();
     private BoardDao boardDao = new BoardDaoImpl();
     private SubscriptionDao subscriptionDao = new SubscriptionDaoImpl();
+    private HistoryDao historyDao = new HistoryDaoImpl();
+
+
+    @Override
+    public boolean recordPost(Integer postId, Integer userId) throws Exception {
+        historyDao.recordHistory(postId,userId);
+        return true;
+    }
+
 
 
     /*--------------------------------------------    获取帖子    --------------------------------------------*/

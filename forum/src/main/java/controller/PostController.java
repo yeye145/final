@@ -4,15 +4,19 @@ import com.alibaba.fastjson.JSON;
 import controller.utils.BaseServlet;
 import controller.utils.ControllerToolMethod;
 
+import pojo.History;
 import pojo.Post;
 import pojo.ResponseResult;
 import service.PostService;
 import service.impl.PostServiceImpl;
+import utils.Constants;
 
 
+import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.List;
 
 @WebServlet("/post/*")
@@ -21,6 +25,31 @@ public class PostController extends BaseServlet {
 
     /*--------------------------------------------    私有变量    --------------------------------------------*/
     private PostService postService = new PostServiceImpl();
+
+
+
+    /*------------------------------------------    记录历史浏览帖子    ----------------------------------------*/
+    public void recordHistory(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        Integer postId = Integer.parseInt(request.getParameter("postId"));
+        Integer userId = ControllerToolMethod.getUserId(request);
+
+        System.out.println("PostController.recordHistory" +
+                "，记录访问历史，帖子id：" + postId + ",用户id：" + userId);
+
+        if (postService.recordPost(postId, userId)) {
+            response.getWriter().write(
+                    JSON.toJSONString(
+                            ResponseResult.success("记录帖子浏览记录成功！")
+                    )
+            );
+            System.out.println("-->记录用户id：" + userId + "帖子id：" + postId + "浏览记录成功！");
+        } else {
+            response.getWriter().write(JSON.toJSONString(
+                    ResponseResult.error(Constants.RESPONSE_CODE_NOT_FOUND, "帖子不存在！")
+            ));
+        }
+
+    }
 
 
     /*----------------------------    获取该版块的所有帖子，优先推送他关注的用户发的帖子   ---------------------------*/
@@ -41,6 +70,8 @@ public class PostController extends BaseServlet {
 
         System.out.println("-获取该版块下的全部帖子成功！");
     }
+
+
 
     /*--------------------------------------    获取某条具体的帖子内容   ----------------------------------------*/
     public void getThisPost(HttpServletRequest request, HttpServletResponse response) throws Exception {

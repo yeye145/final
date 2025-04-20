@@ -2,13 +2,14 @@ package utils;
 
 public class Constants {
 
-    public static final Integer RESPONSE_CODE_SUCCESS = 200;
+    public static final Integer RESPONSE_CODE_SUCCESS = 200;                // 请求成功
 
-    public static final Integer RESPONSE_CODE_BAD_REQUEST = 400;
-    public static final Integer RESPONSE_CODE_UNAUTHORIZED = 401;
-    public static final Integer RESPONSE_CODE_CONFLICT = 409;
+    public static final Integer RESPONSE_CODE_BAD_REQUEST = 400;            // 请求错误
+    public static final Integer RESPONSE_CODE_UNAUTHORIZED = 401;           // 未认证
+    public static final Integer RESPONSE_CODE_NOT_FOUND = 404;              // 资源不存在
+    public static final Integer RESPONSE_CODE_CONFLICT = 409;               // 资源冲突
 
-    public static final Integer RESPONSE_CODE_SERVER_ERROR = 500;
+    public static final Integer RESPONSE_CODE_SERVER_ERROR = 500;           // 服务器错误
 
 
     // 过滤器白名单
