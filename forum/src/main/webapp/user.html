@@ -342,7 +342,7 @@
         </div>
 
         <!-- 版块封禁用户功能 -->
-        <div v-if="showBanModal" class="modal">
+        <div v-if="ifShowBanModal" class="modal">
             <div class="modal-content">
                 <h3>封禁用户</h3>
                 <div class="form-group">
@@ -355,7 +355,7 @@
                 </div>
                 <div class="modal-actions">
                     <button @click="banUserFromBoard">确认封禁</button>
-                    <button @click="showBanModal = false">取消</button>
+                    <button @click="ifShowBanModal = false">取消</button>
                 </div>
             </div>
         </div>
@@ -473,11 +473,11 @@
             ifThisPost: false,              // 显示该帖子
             ifMyHistory: false,             // 显示我的历史记录
             ifBoardNotice: false,           // 显示版块公告
+            ifShowBanModal: false,          // 是否显示用户封禁框
 
 
             ifMyBoard: false,
             showCreateBoardModal: false,
-            showBanModal: false,
             currentBoardId: null,
 
             myBoard: [],
@@ -1118,7 +1118,7 @@
             // 显示封禁用户模态框
             showBanModal(boardId) {
                 this.banUser.boardId = boardId;
-                this.showBanModal = true;
+                this.ifShowBanModal = true;
             },
             // 创建新版块
             createBoard() {
@@ -1155,13 +1155,15 @@
                     alert('请输入用户名');
                     return;
                 }
-
-                axios.post('/board/banUser', {
+                axios.post('/board/banUserInThisBoard', new URLSearchParams({
                     boardId: this.banUser.boardId,
-                    username: this.banUser.username,
+                    userName: this.banUser.username,
                     reason: this.banUser.reason
-                })
-                    .then(response => {
+                }), {
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                }).then(response => {
                         if (response.data.code === 200) {
                             alert('用户已封禁');
                             this.showBanModal = false;

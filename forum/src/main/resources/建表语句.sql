@@ -73,6 +73,7 @@ CREATE TABLE report
     post_id     INT     NOT NULL COMMENT '帖子ID',
     reported_id INT     NOT NULL COMMENT '被举报者ID',
     judge       BOOLEAN NOT NULL COMMENT '举报受理对象',
+    reason      TEXT    NOT NULL COMMENT '举报原因',
     # 1 -> 管理员，0 -> 版主
     FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE,
     FOREIGN KEY (board_id) REFERENCES board (id) ON DELETE CASCADE,
@@ -130,12 +131,13 @@ CREATE TABLE comment
     FOREIGN KEY (parent_id) REFERENCES comment (id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- 版块封禁表
+-- 版块用户封禁表
 CREATE TABLE board_ban
 (
     id       INT PRIMARY KEY AUTO_INCREMENT,
     ban_id   INT NOT NULL COMMENT '被禁用户ID',
     board_id INT NOT NULL COMMENT '版块ID',
+    reason   TEXT NOT NULL COMMENT '封禁原因',
     FOREIGN KEY (ban_id) REFERENCES user (id) ON DELETE CASCADE,
     FOREIGN KEY (board_id) REFERENCES board (id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

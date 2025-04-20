@@ -98,6 +98,7 @@ public class BoardController extends BaseServlet {
         System.out.println("-获取最新版块成功！");
     }
 
+
     /*-------------------------------------------    获取全部公告    ------------------------------------------*/
     public void getNotice(HttpServletRequest request, HttpServletResponse response) throws Exception {
         Integer boardId = Integer.parseInt(request.getParameter("boardId"));
@@ -122,6 +123,16 @@ public class BoardController extends BaseServlet {
         String type = request.getParameter("type");
         String notice = request.getParameter("notice");
         System.out.println("-版块标题：" + title + "，版块类型：" + type + "\n-版块公告：" + notice);
+    }
+
+
+    /*-------------------------------------------     版块封禁用户    -----------------------------------------*/
+    public void banUserInThisBoard(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        System.out.println("BoardController，版块封禁用户，版主id：" + ControllerToolMethod.getUserId(request));
+        Integer boardId = Integer.parseInt(request.getParameter("boardId"));
+        String reason = request.getParameter("reason");
+        String userName = request.getParameter("userName");
+        System.out.println("封禁用户：" + userName + ",版块id：" + boardId + ",封禁原因：\n" + reason);
     }
 
 
