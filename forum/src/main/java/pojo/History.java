@@ -6,18 +6,18 @@ public class History {
     private Integer id;
     private Integer userId;
     private Integer postId;
-    private Integer boardId;
+    private Post post;
     private LocalDateTime time;
 
 
     public History() {
     }
 
-    public History(Integer id, Integer userId, Integer postId, Integer boardId, LocalDateTime time) {
+    public History(Integer id, Integer userId, Integer postId, Post post, LocalDateTime time) {
         this.id = id;
         this.userId = userId;
         this.postId = postId;
-        this.boardId = boardId;
+        this.post = post;
         this.time = time;
     }
 
@@ -71,18 +71,18 @@ public class History {
 
     /**
      * 获取
-     * @return boardId
+     * @return post
      */
-    public Integer getBoardId() {
-        return boardId;
+    public Post getPost() {
+        return post;
     }
 
     /**
      * 设置
-     * @param boardId
+     * @param post
      */
-    public void setBoardId(Integer boardId) {
-        this.boardId = boardId;
+    public void setPost(Post post) {
+        this.post = post;
     }
 
     /**
@@ -102,6 +102,6 @@ public class History {
     }
 
     public String toString() {
-        return "history{id = " + id + ", userId = " + userId + ", postId = " + postId + ", boardId = " + boardId + ", time = " + time + "}";
+        return "History{id = " + id + ", userId = " + userId + ", postId = " + postId + ", post = " + post + ", time = " + time + "}";
     }
 }

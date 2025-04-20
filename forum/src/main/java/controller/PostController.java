@@ -27,7 +27,6 @@ public class PostController extends BaseServlet {
     private PostService postService = new PostServiceImpl();
 
 
-
     /*------------------------------------------    记录历史浏览帖子    ----------------------------------------*/
     public void recordHistory(HttpServletRequest request, HttpServletResponse response) throws Exception {
         Integer postId = Integer.parseInt(request.getParameter("postId"));
@@ -52,6 +51,25 @@ public class PostController extends BaseServlet {
     }
 
 
+    /*------------------------------------------    获取历史浏览帖子    ----------------------------------------*/
+    public void getHistory(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        Integer userId = ControllerToolMethod.getUserId(request);
+
+        System.out.println("PostController.getHistory，获取访问历史,用户id：" + userId);
+
+        List<History> postHistory = postService.getPostHistory(userId);
+
+        response.getWriter().write(
+                JSON.toJSONString(
+                        ResponseResult.success(postHistory)
+                ));
+
+        System.out.println("-->用户id：" + userId + "获取历史记录成功！");
+
+
+    }
+
+
     /*----------------------------    获取该版块的所有帖子，优先推送他关注的用户发的帖子   ---------------------------*/
     public void getAllPostInThisBoard(HttpServletRequest request, HttpServletResponse response) throws Exception {
         Integer userId = ControllerToolMethod.getUserId(request);
@@ -70,7 +88,6 @@ public class PostController extends BaseServlet {
 
         System.out.println("-获取该版块下的全部帖子成功！");
     }
-
 
 
     /*--------------------------------------    获取某条具体的帖子内容   ----------------------------------------*/

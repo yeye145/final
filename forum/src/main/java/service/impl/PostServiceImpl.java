@@ -7,6 +7,7 @@ import dao.PostDao;
 import dao.impl.BoardDaoImpl;
 import dao.impl.PostDaoImpl;
 
+import pojo.History;
 import pojo.Post;
 import pojo.Subscription;
 import service.PostService;
@@ -27,8 +28,40 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public boolean recordPost(Integer postId, Integer userId) throws Exception {
-        historyDao.recordHistory(postId,userId);
+        historyDao.recordHistory(postId, userId);
         return true;
+    }
+
+
+    @Override
+    public List<History> getPostHistory(Integer userId) throws Exception {
+
+        // 获取历史记录列表
+        List<History> historyList = historyDao.getHistoryWithNullPostInformation(userId);
+
+        // 提取所有postId用于查询Post对象
+        List<Integer> postId = historyList.stream()
+                .map(History::getPostId)
+                .collect(Collectors.toList());
+
+        if (postId.isEmpty()) {
+            return historyList; // 若无数据直接返回
+        }
+
+        // 获取Post对象的Map（键为postId）
+        String inClause = postId.stream()
+                .map(String::valueOf)
+                .collect(Collectors.joining(",", "(", ")"));
+
+        Map<Integer, Post> postMap = postDao.getPostMapIn(inClause);
+
+        // 填充History中的Post对象
+        for (History history : historyList) {
+            Post post = postMap.get(history.getPostId());
+            history.setPost(post);
+        }
+
+        return historyList;
     }
 
 
@@ -88,6 +121,7 @@ public class PostServiceImpl implements PostService {
 
 
     }
+
     /*--------------------------------------------    获取帖子    --------------------------------------------*/
     @Override
     public Post getThisPostById(Integer postId) throws Exception {

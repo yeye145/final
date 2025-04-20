@@ -7,6 +7,7 @@ import pojo.Post;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
 public class PostDaoImpl implements PostDao {
 
@@ -42,5 +43,22 @@ public class PostDaoImpl implements PostDao {
         MyUpdate.update("UPDATE `forum`.`post`" +
                 " SET view_count = view_count + 1" +
                 " WHERE id = ?", postId);
+    }
+
+    @Override
+    public Map<Integer, Post> getPostMapIn(String inClause) throws Exception {
+        return MySearch.searchToMap(
+                "SELECT id, title, time" +
+                        ", author_id AS authorId" +
+                        ", author_name AS authorName" +
+                        ", author_avatar AS authorAvatar" +
+                        ", board_id AS boardId" +
+                        ", view_count AS viewCount" +
+                        ", like_count AS likeCount" +
+                        ", comment_count AS commentCount " +
+                        "FROM `forum`.`post` WHERE id IN " + inClause,
+                Post.class,
+                "id"
+        );
     }
 }
