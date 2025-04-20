@@ -13,8 +13,9 @@ public class HistoryDaoImpl implements HistoryDao {
 
     @Override
     public void recordHistory(Integer postId, Integer userId) throws Exception {
-        MyUpdate.update("INSERT INTO `forum`.`history` " +
-                "(`user_id`, `post_id`) VALUES (?, ?)", userId, postId);
+        MyUpdate.update("INSERT INTO history (user_id, post_id, time) " +
+                "VALUES (?, ?, NOW()) " +
+                "ON DUPLICATE KEY UPDATE time = NOW()", userId, postId);
     }
 
 

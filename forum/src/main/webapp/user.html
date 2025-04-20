@@ -566,11 +566,11 @@
 
                 // 将查询的字符串转化为小写
                 const query = this.postSearchQuery.toLowerCase();
-                this.myHistoryReadPost = this.originalPostHistory.filter(post =>
-                    // 将名称转化为小写，如果包含作者名称或标题或时间，则储存
-                    post.authorName.toLowerCase().includes(query) ||
-                    post.title.toLowerCase().includes(query)) ||
-                    post.time.toLowerCase().includes(query)
+                this.myHistoryReadPost = this.originalPostHistory.filter(postHistory =>
+                        // 将名称转化为小写，如果包含作者名称或标题或时间，则储存
+                        postHistory.post.authorName.toLowerCase().includes(query) ||
+                        postHistory.post.title.toLowerCase().includes(query) ||
+                        postHistory.time.toLowerCase().includes(query))
             },
             // 切换我的历史
             turnMyHistory() {
