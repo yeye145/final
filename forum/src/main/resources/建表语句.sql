@@ -43,6 +43,7 @@ CREATE TABLE board_apply
     time    DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '申请时间',
     title   VARCHAR(255) NOT NULL COMMENT '标题',
     type    VARCHAR(255) NOT NULL COMMENT '类型',
+    notice  TEXT         NOT NULL COMMENT '公告',
     FOREIGN KEY (host_id) REFERENCES user (id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -86,6 +87,7 @@ CREATE TABLE history
     user_id  INT NOT NULL COMMENT '用户ID',
     post_id  INT NOT NULL COMMENT '帖子ID',
     time     DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '浏览时间',
+    UNIQUE KEY `unique_user_post` (`user_id`, `post_id`),
     FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE,
     FOREIGN KEY (post_id) REFERENCES post (id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
