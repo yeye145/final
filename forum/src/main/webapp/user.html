@@ -182,11 +182,15 @@
                         </div>
 
                         <!-- 子评论区域：使用递归组件 -->
-                        <div v-if="comment.childComment && comment.childComment.length" class="child-comments">
-                            <CommentTree
+                        <div class="child-comments">
+                            <comment-tree
                                     :comments="comment.childComment"
                                     :parent-name="comment.userName"
-                            />
+                                    :format-time="formatTime"
+                                    :render-markdown="renderMarkdown"
+                                    :like-comment="likeComment"
+                                    :show-reply-box="showReplyBox"
+                            ></comment-tree>
                         </div>
                     </div>
                 </div>
@@ -379,35 +383,53 @@
     });
     hljs.highlightAll();
 </script>
+
 <script>
-    // 定义递归组件 CommentTree
-    Vue.component('CommentTree', {
-        props: ['comments', 'parentName'],
+    Vue.component('comment-tree', {
+        // 定义组件接收的属性
+        props: [
+            'comments',
+            'parentName',
+            'formatTime',
+            'renderMarkdown',
+            'likeComment',
+            'showReplyBox'
+        ],
+        // 定义组件的模板
         template: `
           <div>
             <div v-for="child in comments" :key="child.id" class="child-comment">
               <div class="comment-header">
                 <img :src="child.userAvatar" class="comment-avatar">
                 <span class="comment-author">{{ child.userName }}</span>
+                <!-- 使用props传递的方法 -->
                 <span class="comment-time">{{ formatTime(child.time) }}</span>
               </div>
+              <!-- 使用props传递的方法 -->
               <div class="comment-content" v-html="renderMarkdown('回复 @' + parentName + '：' + child.content)"></div>
-              <!-- 递归渲染深层子评论 -->
-              <CommentTree
+              <!-- 操作按钮 -->
+              <div class="comment-actions">
+                <button @click.stop="likeComment(child.id)">❤️ {{ child.likeCount }}</button>
+                <button @click.stop="showReplyBox(child.id)">回复</button>
+              </div>
+              <!-- 递归时继续传递方法，递归渲染子评论 -->
+              <comment-tree
                   v-if="child.childComment && child.childComment.length"
                   :comments="child.childComment"
                   :parent-name="child.userName"
-              />
+                  :format-time="formatTime"
+                  :render-markdown="renderMarkdown"
+                  :like-comment="likeComment"
+                  :show-reply-box="showReplyBox"
+              ></comment-tree>
             </div>
           </div>
-        `,
-        // 混入父级方法
-        methods: {
-            formatTime: Vue.prototype.formatTime,  // 继承时间格式化方法
-            renderMarkdown: Vue.prototype.renderMarkdown  // 继承 Markdown 渲染方法
-        }
+        `
     });
+</script>
 
+
+<script>
     new Vue({
         el: '#app',
         data: {
@@ -501,6 +523,9 @@
             this.highlightAll();
         },
         methods: {
+            showReplyBox(commentId) {
+                // 实现回复框显示逻辑
+            },
             // 时间格式化
             formatTime(time) {
                 return new Date(time).toLocaleString();
@@ -533,7 +558,7 @@
                 })).then(response => {
                     if (response.data.code === 200) {
                         const comment = this.allCommentInThisPost.find(c => c.id === commentId);
-                        if (comment) comment.like_count++;
+                        if (comment) comment.likeCount++;
                     }
                 });
             },
