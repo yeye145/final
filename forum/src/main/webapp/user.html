@@ -65,6 +65,9 @@
         <div class="content-section" v-if="ifBoardNotice">
             <h3>📌 公告
                 <button @click="showHistoryModal = true" class="history-btn">查看历史公告</button>
+                <button v-if="ifMyBoard"
+                        @click="showEditNewNoticeModal" class="create-board-btn">+ 发布新的公告
+                </button>
             </h3>
             <p class="notice-content">{{ currentNotice.content }}</p>
             <p class="notice-time">📅 发布时间：{{ currentNotice.time }}</p>
@@ -278,7 +281,9 @@
         <div v-if="ifMyBoard" class="board-section">
             <div class="board-header">
                 <h3>我的版块</h3>
-                <button @click="showCreateBoardModal = true" class="create-board-btn">+ 申请新增版块</button>
+                <button v-if="!ifAllPostInMyBoard"
+                        @click="showCreateBoardModal = true" class="create-board-btn">+ 申请新增版块
+                </button>
             </div>
 
             <div class="board-list" v-if="!ifAllPostInMyBoard">
@@ -357,6 +362,19 @@
                     <button @click="banUserFromBoard">确认封禁</button>
                     <button @click="ifShowBanModal = false">取消</button>
                 </div>
+            </div>
+        </div>
+
+        <!-- 编辑公告弹窗 -->
+        <div v-if="ifShowEditNewNoticeModal" class="modal">
+            <div class="modal-content">
+                <h3>编辑公告</h3>
+                <div class="form-group">
+                    <label>公告内容：</label>
+                    <textarea v-model="newNotice.content" placeholder="输入公告内容"></textarea>
+                </div>
+                <button @click="publishNewNotice">保存</button>
+                <button @click="ifShowEditNewNoticeModal = false">取消</button>
             </div>
         </div>
 
@@ -456,24 +474,24 @@
 </script>
 
 
-
 <script>
     new Vue({
         el: '#app',
         data: {
 
-            ifMyInformation: false,         // 显示我的个人信息
-            ifUploadMyAvatar: false,        // 是否上传我的头像
-            ifHomePage: true,               // 显示主页
-            ifEditName: false,              // 是否编辑我的昵称
-            ifShowDropdown: false,          // 显示头像下拉选项
-            ifAllBoard: false,              // 显示所有版块
-            ifAllPostInThisBoard: false,    // 显示该版块所有帖子
-            ifAllPostInMyBoard: false,      // 显示我的版块的所有帖子
-            ifThisPost: false,              // 显示该帖子
-            ifMyHistory: false,             // 显示我的历史记录
-            ifBoardNotice: false,           // 显示版块公告
-            ifShowBanModal: false,          // 是否显示用户封禁框
+            ifMyInformation: false,             // 显示我的个人信息
+            ifUploadMyAvatar: false,            // 是否上传我的头像
+            ifHomePage: true,                   // 显示主页
+            ifEditName: false,                  // 是否编辑我的昵称
+            ifShowDropdown: false,              // 显示头像下拉选项
+            ifAllBoard: false,                  // 显示所有版块
+            ifAllPostInThisBoard: false,        // 显示该版块所有帖子
+            ifAllPostInMyBoard: false,          // 显示我的版块的所有帖子
+            ifThisPost: false,                  // 显示该帖子
+            ifMyHistory: false,                 // 显示我的历史记录
+            ifBoardNotice: false,               // 显示版块公告
+            ifShowBanModal: false,              // 是否显示用户封禁框
+            ifShowEditNewNoticeModal: false,    // 是否显示新增公告框
 
 
             ifMyBoard: false,
@@ -485,19 +503,19 @@
             allPostInThisBoard: [],
             allPostInMyBoard: [],
 
-            boardSearchQuery: '',           // 版块关键字搜索
+            boardSearchQuery: '',               // 版块关键字搜索
             originalAllBoard: [],
-            postSearchQuery: '',            // 帖子关键字搜索
+            postSearchQuery: '',                // 帖子关键字搜索
             originalAllPostInThisBoard: [],
             originalAllPostInMyBoard: [],
-            originalPostHistory: [],        // 原始历史记录存储
+            originalPostHistory: [],            // 原始历史记录存储
 
-            notice: [],                     // 存储所有公告
-            currentNotice: {                // 当前展示的公告
+            notice: [],                         // 存储所有公告
+            currentNotice: {                    // 当前展示的公告
                 time: '',
                 content: '当前暂无公告',
             },
-            showHistoryModal: false,        // 是否显示历史公告弹窗
+            showHistoryModal: false,            // 是否显示历史公告弹窗
 
             newBoard: {
                 title: '',
@@ -509,7 +527,10 @@
                 reason: '',
                 boardId: '',
             },
-
+            newNotice: {
+                content: '',
+                boardId: '',
+            },
             currentPath: ['QG技术论坛', '主页'],
 
             avatar: '/images/avatar/initAvatar.jpg',
@@ -517,13 +538,13 @@
             userInformation: {},
             newName: '',
 
-            thisPost: {},                   // 访问某个帖子
-            allCommentInThisPost: [],       // 该帖子下的所有评论
-            compiledMarkdown: '',           // 帖子内容
+            thisPost: {},                       // 访问某个帖子
+            allCommentInThisPost: [],           // 该帖子下的所有评论
+            compiledMarkdown: '',               // 帖子内容
 
-            newComment: '',                 // 新的评论
+            newComment: '',                     // 新的评论
 
-            myHistoryReadPost: [],          // 我的历史浏览记录
+            myHistoryReadPost: [],              // 我的历史浏览记录
         },
         created() {
             // 页面加载时自动获取用户头像
@@ -568,10 +589,10 @@
                 // 将查询的字符串转化为小写
                 const query = this.postSearchQuery.toLowerCase();
                 this.myHistoryReadPost = this.originalPostHistory.filter(postHistory =>
-                        // 将名称转化为小写，如果包含作者名称或标题或时间，则储存
-                        postHistory.post.authorName.toLowerCase().includes(query) ||
-                        postHistory.post.title.toLowerCase().includes(query) ||
-                        postHistory.time.toLowerCase().includes(query))
+                    // 将名称转化为小写，如果包含作者名称或标题或时间，则储存
+                    postHistory.post.authorName.toLowerCase().includes(query) ||
+                    postHistory.post.title.toLowerCase().includes(query) ||
+                    postHistory.time.toLowerCase().includes(query))
             },
             // 切换我的历史
             turnMyHistory() {
@@ -823,6 +844,7 @@
                 this.ifShowDropdown = false;
                 this.ifThisPost = false;
                 this.ifMyHistory = false;
+                this.newNotice.boardId = board_id;
                 this.fetchAllPostInMyBoard(board_id, board_title);
                 this.fetchNotice(board_id);
             },
@@ -898,6 +920,7 @@
             },
             // 切换显示我的个人信息
             turnMyInformation() {
+                this.ifBoardNotice = false;
                 this.ifMyInformation = true;
                 this.ifHomePage = false;
                 this.ifUploadMyAvatar = false;
@@ -1120,6 +1143,10 @@
                 this.banUser.boardId = boardId;
                 this.ifShowBanModal = true;
             },
+            // 显示新公告编辑发布模态框
+            showEditNewNoticeModal() {
+                this.ifShowEditNewNoticeModal = true;
+            },
             // 创建新版块
             createBoard() {
                 if (!this.newBoard.title.trim()) {
@@ -1163,18 +1190,42 @@
                         'Content-Type': 'application/x-www-form-urlencoded'
                     }
                 }).then(response => {
-                        if (response.data.code === 200) {
-                            alert('用户已封禁');
-                            this.showBanModal = false;
-                            this.banUser = {username: '', reason: '', boardId: null};
-                        } else {
-                            alert(response.data.message);
-                        }
-                    })
+                    if (response.data.code === 200) {
+                        alert('用户已封禁');
+                        this.showBanModal = false;
+                        this.banUser = {username: '', reason: '', boardId: null};
+                    } else {
+                        alert(response.data.message);
+                    }
+                })
                     .catch(error => {
                         console.error('封禁用户失败:', error);
                         alert('封禁用户失败');
                     });
+            },
+            // 新增公告
+            publishNewNotice() {
+                if (!this.newNotice.content.trim()) {
+                    alert('请输入公告内容');
+                    return;
+                }
+                axios.post('/board/publishNewNotice', new URLSearchParams({
+                    boardId: this.newNotice.boardId,
+                    content: this.newNotice.content,
+                }), {
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                }).then(response => {
+                    if (response.data.code === 200) {
+                        alert('发布成功！');
+                        this.ifShowEditNewNoticeModal = false;
+                        this.fetchNotice(this.newNotice.boardId);
+                        this.newNotice = {content: '', boardId: null};
+                    } else {
+                        alert(response.data.message);
+                    }
+                })
             },
             // 退出登录
             exitLogin() {

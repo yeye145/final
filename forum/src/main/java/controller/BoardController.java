@@ -162,5 +162,24 @@ public class BoardController extends BaseServlet {
         }
     }
 
+    /*-----------------------------------------    发布新的版块公告    ------------------------------------------*/
+    public void publishNewNotice(HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+        Integer boardId = Integer.parseInt(request.getParameter("boardId"));
+        String content = request.getParameter("content");
+        System.out.println("BoardController，发布版块公告，版块id" + boardId);
+
+        boardService.publishNewNotice(boardId, content);
+
+        response.getWriter().write(
+                JSON.toJSONString(
+                        ResponseResult.success("发布成功")
+                )
+        );
+
+        System.out.println("-->公告发布成功！内容：\n" + content
+                + "\n--------------------------------------------------------------------------------");
+
+    }
 
 }

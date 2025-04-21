@@ -1,13 +1,7 @@
 package service.impl;
 
-import dao.BoardApplyDao;
-import dao.BoardBanDao;
-import dao.BoardDao;
-import dao.UserDao;
-import dao.impl.BoardApplyDaoImpl;
-import dao.impl.BoardBanDaoImpl;
-import dao.impl.BoardDaoImpl;
-import dao.impl.UserDaoImpl;
+import dao.*;
+import dao.impl.*;
 import pojo.Board;
 import pojo.Subscription;
 import pojo.User;
@@ -26,6 +20,7 @@ public class BoardServiceImpl implements BoardService {
     private BoardBanDao boardBanDao = new BoardBanDaoImpl();
     private SubscriptionDao subscriptionDao = new SubscriptionDaoImpl();
     private UserDao userDao = new UserDaoImpl();
+    private NoticeDao noticeDao = new NoticeDaoImpl();
 
 
     /*-------------------------------------------    获取我的版块    ------------------------------------------*/
@@ -111,4 +106,11 @@ public class BoardServiceImpl implements BoardService {
         }
         return false;
     }
+
+    @Override
+    public void publishNewNotice(Integer boardId, String content) throws Exception {
+        noticeDao.publishNewNotice(boardId, content);
+    }
+
+
 }
