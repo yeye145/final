@@ -321,12 +321,6 @@
                 <div v-for="post in allPostInMyBoard"
                      :key="post.id"
                      class="post-card">
-                    <!-- 批量删除帖子勾选框 -->
-                    <div class="post-checkbox" v-if="ifDeleteMode">
-                        <input type="checkbox"
-                               v-model="deleteChosenPost"
-                               :value="post.id">
-                    </div>
                     <div class="post-meta" @click="turnThisPost(post.id, post.title)">
                         <span class="author">👤 {{ post.authorName }}</span>
                         <span class="time">📅 {{ post.time }}</span>
@@ -336,6 +330,12 @@
                         <span>❤️ {{ post.likeCount }}</span>
                         <span>💬 {{ post.commentCount }}</span>
                         <span>👀 {{ post.viewCount }}</span>
+                    </div>
+                    <!-- 批量删除帖子勾选框 -->
+                    <div class="post-checkbox" v-if="ifDeleteMode">
+                        <input type="checkbox"
+                               v-model="deleteChosenPost"
+                               :value="post.id">
                     </div>
                 </div>
             </div>
@@ -614,9 +614,7 @@
             // 切换删除模式
             turnDeleteMode() {
                 this.ifDeleteMode = !this.ifDeleteMode;
-                if (!this.ifDeleteMode) {
-                    this.deleteChosenPost = []; // 退出删除模式时清空勾选
-                }
+                this.deleteChosenPost = []; // 退出删除模式时清空勾选
             },
             // 确认删除帖子
             confirmDeletePost() {
@@ -635,6 +633,7 @@
                         // 删除成功后刷新列表
                         this.fetchAllPostInMyBoard(this.currentBoardId, this.currentPath[this.currentPath.length - 1]);
                         this.deleteChosenPost = [];
+                        this.ifDeleteMode = false;
                         this.showDeletePostModal = false;
                         alert("帖子删除成功");
                     } else {
@@ -662,6 +661,7 @@
             },
             // 切换我的历史
             turnMyHistory() {
+                this.ifDeleteMode = false;
                 this.ifMyInformation = false;
                 this.ifHomePage = false;
                 this.ifUploadMyAvatar = false;
@@ -784,6 +784,7 @@
             },
             // 显示某个具体帖子
             turnThisPost(post_id, post_title) {
+                this.ifDeleteMode = false;
                 this.ifBoardNotice = false;
                 this.ifMyInformation = false;
                 this.ifHomePage = false;
@@ -886,6 +887,7 @@
             },
             // 切换该版块下所有帖子
             turnAllPostInThisBoard(board_id, board_title) {
+                this.ifDeleteMode = false;
                 this.ifBoardNotice = true;
                 this.ifAllPostInMyBoard = false;
                 this.ifAllPostInThisBoard = true;
@@ -901,6 +903,7 @@
             },
             // 切换我的版块下所有帖子
             turnAllPostInMyBoard(board_id, board_title) {
+                this.ifDeleteMode = false;
                 this.ifBoardNotice = true;
                 this.ifAllPostInMyBoard = true;
                 this.ifAllPostInThisBoard = false;
@@ -917,6 +920,7 @@
             },
             // 切换所有版块
             turnAllBoard() {
+                this.ifDeleteMode = false;
                 this.ifBoardNotice = false;
                 this.ifMyInformation = false;
                 this.ifHomePage = false;
@@ -934,6 +938,7 @@
             },
             // 切换我的版块
             turnMyBoard() {
+                this.ifDeleteMode = false;
                 this.ifBoardNotice = false;
                 this.ifAllPostInMyBoard = false;
                 this.ifMyInformation = false;
@@ -987,6 +992,7 @@
             },
             // 切换显示我的个人信息
             turnMyInformation() {
+                this.ifDeleteMode = false;
                 this.ifBoardNotice = false;
                 this.ifMyInformation = true;
                 this.ifHomePage = false;
@@ -1155,7 +1161,7 @@
             },
             // 获取我的版块下的所有帖子
             fetchAllPostInMyBoard(board_id, board_title) {
-                console.log("版块id：" + board_id + "，版块名称：" +board_title);
+                console.log("版块id：" + board_id + "，版块名称：" + board_title);
                 axios.post('/post/getAllPostInThisBoard', new URLSearchParams({
                     boardId: board_id,
                 }), {
