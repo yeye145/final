@@ -282,9 +282,19 @@
             <div class="board-header">
                 <h3>我的版块</h3>
                 <button v-if="!ifAllPostInMyBoard"
-                        @click="showCreateBoardModal = true" class="create-board-btn">+ 申请新增版块
+                        @click="showCreateBoardModal = true"
+                        class="create-board-btn">+ 申请新增版块
+                </button>
+                <button v-if="ifAllPostInMyBoard && !ifDeleteMode"
+                        @click="turnDeleteMode"
+                        class="delete-post-btn">🗑️ 批量删除帖子
+                </button>
+                <button v-if="ifDeleteMode"
+                        @click="showDeletePostModal = true"
+                        class="delete-post-btn">确认删除帖子
                 </button>
             </div>
+
 
             <div class="board-list" v-if="!ifAllPostInMyBoard">
                 <!--展示我管理的全部版块-->
@@ -309,6 +319,12 @@
                 </div>
                 <!--渲染帖子信息-->
                 <div v-for="post in allPostInMyBoard" :key="post.id" class="post-card">
+                    <!-- 批量删除帖子勾选框 -->
+                    <div class="post-checkbox" v-if="ifDeleteMode">
+                        <input type="checkbox"
+                               v-model="deleteChosenPost"
+                               :value="post.id">
+                    </div>
                     <div class="post-meta">
                         <span class="author">👤 {{ post.authorName }}</span>
                         <span class="time">📅 {{ post.time }}</span>
@@ -375,6 +391,17 @@
                 </div>
                 <button @click="publishNewNotice">保存</button>
                 <button @click="ifShowEditNewNoticeModal = false">取消</button>
+            </div>
+        </div>
+
+        <!-- 我的版块——删除帖子确认弹窗 -->
+        <div v-if="showDeletePostModal" class="modal">
+            <div class="modal-content">
+                <h3>确认删除选中的 {{ deleteChosenPost.length }} 篇帖子？</h3>
+                <div class="modal-actions">
+                    <button @click="confirmDeletePost" class="confirm-btn">确认删除</button>
+                    <button @click="showDeletePostModal = false; turnDeleteMode()">取消</button>
+                </div>
             </div>
         </div>
 
@@ -492,9 +519,11 @@
             ifBoardNotice: false,               // 显示版块公告
             ifShowBanModal: false,              // 是否显示用户封禁框
             ifShowEditNewNoticeModal: false,    // 是否显示新增公告框
+            ifMyBoard: false,                   // 是否显示我的版块
+            ifDeleteMode: false,                // 是否进入帖子删除模式
 
-
-            ifMyBoard: false,
+            showHistoryModal: false,            // 是否显示历史公告弹窗
+            showDeletePostModal: false,         // 是否控制删除弹窗显示
             showCreateBoardModal: false,
             currentBoardId: null,
 
@@ -502,6 +531,7 @@
             allBoard: [],
             allPostInThisBoard: [],
             allPostInMyBoard: [],
+            deleteChosenPost: [],               // 存储待删除帖子ID
 
             boardSearchQuery: '',               // 版块关键字搜索
             originalAllBoard: [],
@@ -515,8 +545,6 @@
                 time: '',
                 content: '当前暂无公告',
             },
-            showHistoryModal: false,            // 是否显示历史公告弹窗
-
             newBoard: {
                 title: '',
                 type: '',
@@ -578,6 +606,39 @@
             this.highlightAll();
         },
         methods: {
+            // 切换删除模式
+            turnDeleteMode() {
+                this.ifDeleteMode = !this.ifDeleteMode;
+                if (!this.ifDeleteMode) {
+                    this.deleteChosenPost = []; // 退出删除模式时清空勾选
+                }
+            },
+            // 确认删除帖子
+            confirmDeletePost() {
+                if (this.deleteChosenPost.length === 0) {
+                    alert("请先选择要删除的帖子");
+                    return;
+                }
+                axios.post('/post/deleteThesePost', {
+                    postId: this.deleteChosenPost
+                }, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }).then(response => {
+                    if (response.data.code === 200) {
+                        // 删除成功后刷新列表
+                        this.fetchAllPostInMyBoard(this.currentBoardId, this.currentPath[this.currentPath.length - 1]);
+                        this.deleteChosenPost = [];
+                        this.showDeletePostModal = false;
+                        alert("帖子删除成功");
+                    } else {
+                        alert("删除失败: " + response.data.message);
+                    }
+                }).catch(error => {
+                    alert("请求错误: " + error.message);
+                });
+            },
             // 历史记录的搜索
             searchPostHistory() {
                 if (this.postSearchQuery.trim() === '') {

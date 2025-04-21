@@ -255,3 +255,36 @@ code {
     background: transparent;
     padding: 0;
 }
+
+/* 帖子勾选框样式 */
+.post-checkbox {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+}
+
+/* 按钮容器布局 */
+.board-action-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+/* 删除按钮样式 */
+.delete-post-btn {
+    background-color: #ff4444;
+    color: white;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.delete-post-btn:hover {
+    background-color: #cc0000;
+}
+
+/* 确认弹窗样式 */
+.confirm-btn {
+    background-color: #ff4444;
+    margin-right: 10px;
+}

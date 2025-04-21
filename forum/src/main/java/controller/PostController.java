@@ -1,6 +1,7 @@
 package controller;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import controller.utils.BaseServlet;
 import controller.utils.ControllerToolMethod;
 
@@ -109,4 +110,19 @@ public class PostController extends BaseServlet {
         System.out.println("=获取该帖子成功！");
     }
 
+    public void deleteThesePost(HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+        System.out.println("PostController，deleteThesePost，删除帖子");
+        // 获得html传递过来的数组
+        String jsonString = request.getReader().readLine();
+
+        // 解析JSON数据
+        JSONObject jsonData = JSON.parseObject(jsonString);
+
+        // 获取解析后的数组，链式语句
+        jsonData.getJSONArray("postId")
+                .toJavaList(String.class)
+                .forEach(System.out::println);
+
+    }
 }
