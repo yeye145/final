@@ -148,6 +148,10 @@
                     <span class="time">📅 {{ thisPost.time }}</span>
                     <span class="views">👀 {{ thisPost.viewCount }} 浏览</span>
                     <span class="likes">❤️ {{ thisPost.likeCount }} 点赞</span>
+                    <button class="like-collect-item"
+                            @click="likePost(thisPost.id);
+                            thisPost.likeCount = thisPost.likeCount + 1">👍 点赞</button>
+                    <button class="like-collect-item" @click="collectPost(thisPost.id)">⭐ 收藏</button>
                 </div>
             </div>
 
@@ -528,7 +532,7 @@
             ifDeleteMode: false,                // 是否进入帖子删除模式
 
             showHistoryModal: false,            // 是否显示历史公告弹窗
-            showDeletePostModal: false,         // 是否控制删除弹窗显示
+            showDeletePostModal: false,         // 是否显示控制删除弹窗
             showCreateBoardModal: false,
             currentBoardId: null,
 
@@ -611,6 +615,38 @@
             this.highlightAll();
         },
         methods: {
+            // 收藏帖子
+            collectPost(postId) {
+                axios.post('/post/collectThisPost', {
+                    postId: postId,
+                }, {
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                }).then(response => {
+                    if (response.data.code === 200) {
+
+                    } else {
+                        alert(response.data.message);
+                    }
+                });
+            },
+            // 为帖子点赞
+            likePost(postId) {
+                axios.post('/post/likeThisPost', {
+                    postId: postId,
+                }, {
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                }).then(response => {
+                    if (response.data.code === 200) {
+
+                    } else {
+                        alert(response.data.message);
+                    }
+                });
+            },
             // 切换删除模式
             turnDeleteMode() {
                 this.ifDeleteMode = !this.ifDeleteMode;

@@ -289,3 +289,19 @@ code {
     background-color: #ff4444;
     margin-right: 10px;
 }
+
+.like-collect-item {
+    padding: 12px 20px;
+    margin: 8px 0;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.2s;
+    background-color: #f8f9fa;
+    border: none; /* 去掉边框 */
+}
+
+.like-collect-item:hover {
+    background-color: #e9ecef;
+    transform: translateX(2px);
+}
+

@@ -20,4 +20,7 @@ public interface PostService {
 
     /*-----------------------------------    删除特定帖子，通过id    --------------------------------------------*/
     void deleteThesePost(List<Integer> postIdAboutToDelete);
+
+    /*-----------------------------------------    为帖子点赞    ---------------------------------------------*/
+    void likeThisPost(Integer postId) throws Exception;
 }

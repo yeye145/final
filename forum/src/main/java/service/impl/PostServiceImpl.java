@@ -145,4 +145,11 @@ public class PostServiceImpl implements PostService {
         });
     }
 
+    /*-----------------------------------------    为帖子点赞    ---------------------------------------------*/
+    @Override
+    public void likeThisPost(Integer postId) throws Exception {
+        postDao.plusOneLikeCount(postId);
+    }
+
+
 }

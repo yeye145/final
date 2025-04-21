@@ -66,4 +66,12 @@ public class PostDaoImpl implements PostDao {
     public void deleteThisPost(Integer postId) throws Exception {
         MyUpdate.update("DELETE FROM `forum`.`post` WHERE (`id` = ?);", postId);
     }
+
+
+    @Override
+    public void plusOneLikeCount(Integer postId) throws Exception {
+        MyUpdate.update("UPDATE `forum`.`post`" +
+                " SET like_count = like_count + 1" +
+                " WHERE (`id` = ?)", postId);
+    }
 }

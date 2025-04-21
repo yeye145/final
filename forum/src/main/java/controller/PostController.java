@@ -109,6 +109,8 @@ public class PostController extends BaseServlet {
         System.out.println("=获取该帖子成功！");
     }
 
+
+    /*-----------------------------------------    批量删除帖子   ---------------------------------------------*/
     public void deleteThesePost(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
         System.out.println("PostController，deleteThesePost，删除帖子");
@@ -136,4 +138,24 @@ public class PostController extends BaseServlet {
         System.out.println("-->删除这些帖子成功！");
 
     }
+
+
+    /*------------------------------------------    为这条帖子点个赞    ----------------------------------------*/
+    public void likeThisPost(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        Integer postId = Integer.parseInt(request.getParameter("postId"));
+
+        System.out.println("PostController.likeThisPost，为帖子点赞，帖子id：" + postId);
+
+        postService.likeThisPost(postId);
+
+        response.getWriter().write(
+                JSON.toJSONString(
+                        ResponseResult.success("记录帖子浏览记录成功！")
+                )
+        );
+
+    }
+
+
+
 }

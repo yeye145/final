@@ -18,4 +18,6 @@ public interface PostDao {
     Map<Integer, Post> getPostMapIn(String inClause) throws Exception;
 
     void deleteThisPost(Integer postId) throws Exception;
+
+    void plusOneLikeCount(Integer postId) throws Exception;
 }
