@@ -8,8 +8,13 @@ import java.util.List;
 
 public interface PostService {
 
+    boolean checkIfCollect(Integer postId, Integer userId) throws Exception;
+
     /*-----------------------------------------    获得历史记录    --------------------------------------------*/
     List<Collect> getPostCollect(Integer userId) throws Exception;
+
+    /*-----------------------------------------    新增历史记录    --------------------------------------------*/
+    boolean collectThisPost(Integer postId, Integer userId, String remark) throws Exception;
 
     boolean recordPost(Integer postId, Integer userId) throws Exception;
 

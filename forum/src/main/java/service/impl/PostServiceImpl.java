@@ -30,6 +30,19 @@ public class PostServiceImpl implements PostService {
     private CollectDao collectDao = new CollectDaoImpl();
 
 
+    @Override
+    public boolean checkIfCollect(Integer postId, Integer userId) throws Exception {
+        // 获取收藏记录列表
+        List<Collect> collectList = collectDao.getCollectWithNullPostInformation(userId);
+        for (Collect collect : collectList) {
+            if (collect.getPostId() == (postId)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
     /*-----------------------------------------    获得历史记录    --------------------------------------------*/
     @Override
     public List<Collect> getPostCollect(Integer userId) throws Exception {
@@ -63,6 +76,12 @@ public class PostServiceImpl implements PostService {
     }
 
 
+    /*-----------------------------------------    新增历史记录    --------------------------------------------*/
+    @Override
+    public boolean collectThisPost(Integer postId, Integer userId, String remark) throws Exception {
+        collectDao.collectThisPost(postId, userId, remark);
+        return true;
+    }
 
 
     /*-----------------------------------------    新增历史记录    --------------------------------------------*/
@@ -183,7 +202,7 @@ public class PostServiceImpl implements PostService {
         });
     }
 
-    
+
     /*-----------------------------------------    为帖子点赞    ---------------------------------------------*/
     @Override
     public void likeThisPost(Integer postId) throws Exception {

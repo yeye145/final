@@ -154,7 +154,7 @@
                             thisPost.likeCount = thisPost.likeCount + 1">👍 点赞
                     </button>
                     <button class="like-collect-item"
-                            @click="collectPost(thisPost.id)"
+                            @click="handleCollectClick(thisPost.id)"
                             :class="{ 'collected': thisPost.ifHadCollected }">
                         {{ thisPost.ifHadCollected ? '⭐ 已收藏' : '⭐ 收藏' }}
                     </button>
@@ -407,6 +407,19 @@
             </div>
         </div>
 
+        <!-- 备注收藏信息 -->
+        <div v-if="ifShowEditCollectRemark" class="modal">
+            <div class="modal-content">
+                <h3>收藏</h3>
+                <div class="form-group">
+                    <label>收藏备注：</label>
+                    <textarea v-model="newCollectRemark" placeholder="输入收藏的备注信息"></textarea>
+                </div>
+                <button @click="saveCollect">保存</button>
+                <button @click="ifShowEditCollectRemark = false">取消</button>
+            </div>
+        </div>
+
         <!-- 我的版块——删除帖子确认弹窗 -->
         <div v-if="showDeletePostModal" class="modal">
             <div class="modal-content">
@@ -475,6 +488,7 @@
                 </div>
             </div>
         </div>
+
     </div>
 
 </div>
@@ -566,7 +580,8 @@
             ifMyBoard: false,                   // 是否显示我的版块
             ifMyCollect: false,                 // 是否显示我的收藏
             ifDeleteMode: false,                // 是否进入帖子删除模式
-            ifHadCollected: false,               // 新增收藏状态
+            // ifHadCollected: false,              // 新增收藏状态
+            ifShowEditCollectRemark: false,     // 是否显示编辑收藏备注
 
             showHistoryModal: false,            // 是否显示历史公告弹窗
             showDeletePostModal: false,         // 是否显示控制删除弹窗
@@ -619,6 +634,7 @@
             compiledMarkdown: '',               // 帖子内容
 
             newComment: '',                     // 新的评论
+            newCollectRemark: '',               // 新增收藏备注
 
             myHistoryReadPost: [],              // 我的历史浏览记录
 
@@ -704,26 +720,56 @@
                     }
                 })
             },
-            // 收藏帖子
-            collectPost(postId) {
-                const action = this.thisPost.ifHadCollected ? 'unCollect' : 'collect';
+            // 处理收藏点击
+            handleCollectClick(postId) {
+                if (this.thisPost.ifHadCollected) {
+                    // 已收藏状态：直接执行取消收藏
+                    this.collectPost(postId);
+                } else {
+                    // 未收藏状态：显示备注输入框
+                    this.ifShowEditCollectRemark = true;
+                    this.postId = postId; // 存储当前操作的帖子ID
+                }
+            },
+            // 保存收藏
+            saveCollect() {
                 axios.post('/post/collectThisPost', new URLSearchParams({
-                    postId: postId,
-                    action: action
+                    postId: this.postId,
+                    remark: this.newCollectRemark,
+                    action: 'collect' // 新增action参数
                 }), {
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded'
                     }
                 }).then(response => {
                     if (response.data.code === 200) {
-                        // 切换收藏状态
-                        this.thisPost.ifHadCollected = !this.thisPost.ifHadCollected;
-                    } else {
-                        alert(response.data.message);
+                        this.ifShowEditCollectRemark = false;
+                        this.newCollectRemark = '';
+                        // 更新收藏状态
+                        this.thisPost.ifHadCollected = true;
+                        // 更新收藏数
+                        this.userInformation.myCollectCount++;
+                        alert('收藏成功！');
                     }
                 }).catch(error => {
-                    console.error('操作失败:', error);
-                    alert('操作失败，请检查网络');
+                    alert('收藏失败: ' + error.message);
+                });
+            },
+            // 取消收藏
+            collectPost(postId) {
+                axios.post('/post/collectThisPost', new URLSearchParams({
+                    postId: postId,
+                    action: 'unCollect'
+                }), {
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                }).then(response => {
+                    if (response.data.code === 200) {
+                        this.thisPost.ifHadCollected = false;
+                        this.userInformation.myCollectCount--;
+                        alert('已取消收藏');
+                    }
                 });
             },
             // 为帖子点赞
@@ -1338,6 +1384,12 @@
                         // 把当前帖子加入路径中显示在左上角
                         this.currentPath.push(post_title);
                         console.log("获取帖子：" + post_title + "成功");
+                        this.checkIfHadCollect(post_id).then(isCollected => {
+                            this.thisPost = {
+                                ...this.thisPost,
+                                ifHadCollected: isCollected
+                            };
+                        });
                     }
                 })
                     .catch(error => {
@@ -1438,6 +1490,22 @@
                         alert(response.data.message);
                     }
                 })
+            },
+            // 检查是否已经收藏
+            async checkIfHadCollect(postId) {
+                try {
+                    const response = await axios.post('/post/checkIfCollect', new URLSearchParams({
+                        postId: postId,
+                    }), {
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        }
+                    });
+                    return response.data.data === "yes";
+                } catch (error) {
+                    console.error('检查收藏状态失败:', error);
+                    return false;
+                }
             },
             // 退出登录
             exitLogin() {

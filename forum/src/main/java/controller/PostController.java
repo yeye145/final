@@ -28,6 +28,31 @@ public class PostController extends BaseServlet {
     private PostService postService = new PostServiceImpl();
 
 
+    /*--------------------------------------------    收藏这条帖子    -----------------------------------------*/
+    public void collectThisPost(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        Integer postId = Integer.parseInt(request.getParameter("postId"));
+        Integer userId = ControllerToolMethod.getUserId(request);
+        String remark = request.getParameter("remark");
+
+        System.out.println("PostController.collectThisPost" +
+                "，收藏帖子id：" + postId + ",用户id：" + userId);
+
+        if (postService.collectThisPost(postId, userId, remark)) {
+            response.getWriter().write(
+                    JSON.toJSONString(
+                            ResponseResult.success("收藏帖子成功！")
+                    )
+            );
+            System.out.println("-->记录用户id：" + userId + "帖子id：" + postId + "浏览记录成功！");
+        } else {
+            response.getWriter().write(JSON.toJSONString(
+                    ResponseResult.error(Constants.RESPONSE_CODE_NOT_FOUND, "帖子不存在！")
+            ));
+        }
+
+    }
+
+
     /*------------------------------------------    记录历史浏览帖子    ----------------------------------------*/
     public void recordHistory(HttpServletRequest request, HttpServletResponse response) throws Exception {
         Integer postId = Integer.parseInt(request.getParameter("postId"));
@@ -178,4 +203,34 @@ public class PostController extends BaseServlet {
 
 
 
+    /*---------------------------------    判断某条帖子，用户是否已经收藏   ---------------------------------------*/
+    public void checkIfCollect(HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+        Integer postId = Integer.parseInt(request.getParameter("postId"));
+        Integer userId = ControllerToolMethod.getUserId(request);
+        System.out.println("PostController.checkIfCollect" +
+                "，判断帖子是否收藏，帖子id" + postId + "，用户id：" + userId);
+
+        if (postService.checkIfCollect(postId,userId)) {
+            // 返回已经收藏响应
+            response.getWriter().write(
+                    JSON.toJSONString(
+                            ResponseResult.success("yes")
+                    )
+            );
+            System.out.println("-->已经收藏");
+        } else {
+            // 返回已经收藏响应
+            response.getWriter().write(
+                    JSON.toJSONString(
+                            ResponseResult.success("no")
+                    )
+            );
+            System.out.println("-->还没有收藏");
+        }
+
+
+
+
+    }
 }
