@@ -1126,8 +1126,7 @@
                     alert('版块标题不能为空');
                     return;
                 }
-
-                axios.post('/board/applyBoard', new URLSearchParams({
+                axios.post('/board/applyNewBoard', new URLSearchParams({
                     title: this.newBoard.title,
                     type: this.newBoard.type,
                     notice: this.newBoard.notice,

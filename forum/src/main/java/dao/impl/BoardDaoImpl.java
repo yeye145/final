@@ -11,6 +11,8 @@ import java.util.Set;
 
 public class BoardDaoImpl implements BoardDao {
 
+
+
     @Override
     public List<Board> getOneBoardList(Integer userId) throws SQLException {
         return MySearch.searchToList("SELECT id, title, type, `time`" +

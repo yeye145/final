@@ -10,6 +10,7 @@ import service.BoardService;
 import service.NoticeService;
 import service.impl.BoardServiceImpl;
 import service.impl.NoticeServiceImpl;
+import utils.Constants;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -117,22 +118,48 @@ public class BoardController extends BaseServlet {
 
 
     /*-------------------------------------------    申请新的版块    ------------------------------------------*/
-    public void applyBoard(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        System.out.println("BoardController，申请版块，用户id" + ControllerToolMethod.getUserId(request));
+    public void applyNewBoard(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        Integer userId = ControllerToolMethod.getUserId(request);
+        System.out.println("BoardController，申请版块，用户id" + userId);
         String title = request.getParameter("title");
         String type = request.getParameter("type");
         String notice = request.getParameter("notice");
         System.out.println("-版块标题：" + title + "，版块类型：" + type + "\n-版块公告：" + notice);
+
+        boardService.applyNewBoard(userId, title, type, notice);
+
+        response.getWriter().write(
+                JSON.toJSONString(
+                        ResponseResult.success("申请成功！请等待管理员审核")
+                )
+        );
+
+        System.out.println("-->申请成功！等待审核");
+
     }
 
 
     /*-------------------------------------------     版块封禁用户    -----------------------------------------*/
-    public void banUserInThisBoard(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void banUserInThisBoard(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException {
         System.out.println("BoardController，版块封禁用户，版主id：" + ControllerToolMethod.getUserId(request));
         Integer boardId = Integer.parseInt(request.getParameter("boardId"));
         String reason = request.getParameter("reason");
         String userName = request.getParameter("userName");
-        System.out.println("封禁用户：" + userName + ",版块id：" + boardId + ",封禁原因：\n" + reason);
+        System.out.println("-->封禁用户：" + userName + ",版块id：" + boardId + ",封禁原因：\n" + reason);
+
+        if (boardService.banUserInThisBoard(boardId, userName, reason)) {
+            response.getWriter().write(
+                    JSON.toJSONString(
+                            ResponseResult.success("封禁用户发帖成功")
+                    )
+            );
+        } else {
+            response.getWriter().write(
+                    JSON.toJSONString(
+                            ResponseResult.error(Constants.RESPONSE_CODE_NOT_FOUND, "用户名不存在")
+                    )
+            );
+        }
     }
 
 
