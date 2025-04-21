@@ -241,3 +241,19 @@
     background-color: #252525;
     font-weight: bold;
 }
+
+
+.follow-btn {
+    background: #4CAF50;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    margin-top: 10px; /* 添加一些顶部间距，使按钮与搜索框分开 */
+}
+
+.follow-btn:hover {
+    transform: translateY(-2px);
+}

@@ -6,7 +6,7 @@ import pojo.Board;
 import pojo.Subscription;
 import pojo.User;
 import service.BoardService;
-import service.SubscriptionDao;
+import dao.SubscriptionDao;
 import utils.Constants;
 
 import java.sql.SQLException;
@@ -21,6 +21,13 @@ public class BoardServiceImpl implements BoardService {
     private SubscriptionDao subscriptionDao = new SubscriptionDaoImpl();
     private UserDao userDao = new UserDaoImpl();
     private NoticeDao noticeDao = new NoticeDaoImpl();
+
+
+    /*-------------------------------------------    订阅版块    ----------------------------------------------*/
+    @Override
+    public void subscribeThisBoard(Integer boardId, Integer userId) throws Exception {
+        subscriptionDao.subscribeThisBoard(boardId, userId);
+    }
 
 
     /*-------------------------------------------    获取我的版块    ------------------------------------------*/

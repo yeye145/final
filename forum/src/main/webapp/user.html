@@ -56,6 +56,7 @@
 
     <!-- 右侧内容区域 -->
     <div class="right-column">
+
         <!-- 主页内容 -->
         <div v-if="ifHomePage" class="content-section">
             <h3>📌 最新公告</h3>
@@ -116,6 +117,9 @@
                     <input type="text" v-model="postSearchQuery"
                            placeholder="输入发帖用户昵称或帖子名称以搜索"
                            @input="searchPost">
+                </div>
+                <div class="fold-buttons">
+                <button @click="subscribeThisBoard" class="follow-btn">关注版块</button>
                 </div>
                 <!--渲染全部帖子信息，点击帖子切换到对应帖子内容-->
                 <div v-for="post in allPostInThisBoard"
@@ -580,7 +584,6 @@
             ifMyBoard: false,                   // 是否显示我的版块
             ifMyCollect: false,                 // 是否显示我的收藏
             ifDeleteMode: false,                // 是否进入帖子删除模式
-            // ifHadCollected: false,              // 新增收藏状态
             ifShowEditCollectRemark: false,     // 是否显示编辑收藏备注
 
             showHistoryModal: false,            // 是否显示历史公告弹窗
@@ -672,6 +675,22 @@
             this.highlightAll();
         },
         methods: {
+            // 订阅这个版块
+            subscribeThisBoard() {
+                axios.post('/board/subscribeThisBoard', new URLSearchParams({
+                    boardId: this.currentBoardId,
+                }), {
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                }).then(response => {
+                    if (response.data.code === 200) {
+                        alert('订阅该版块成功！');
+                    }
+                }).catch(error => {
+                    alert('收藏失败: ' + error.message);
+                });
+            },
             // 收藏帖子的搜索
             searchPostCollect() {
                 if (this.postSearchQuery.trim() === '') {
@@ -720,7 +739,7 @@
                     }
                 })
             },
-            // 处理收藏点击
+            // 收藏状态切换
             handleCollectClick(postId) {
                 if (this.thisPost.ifHadCollected) {
                     // 已收藏状态：直接执行取消收藏
@@ -1076,6 +1095,7 @@
                 this.ifShowDropdown = false;
                 this.ifThisPost = false;
                 this.ifMyHistory = false;
+                this.currentBoardId = board_id;
                 this.fetchAllPostInThisBoard(board_id, board_title);
                 this.fetchNotice(board_id);
             },

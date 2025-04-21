@@ -27,6 +27,23 @@ public class BoardController extends BaseServlet {
     private BoardService boardService = new BoardServiceImpl();
     private NoticeService noticeService = new NoticeServiceImpl();
 
+    /*-------------------------------------------    获取我的版块    ------------------------------------------*/
+    public void subscribeThisBoard(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        Integer userId = ControllerToolMethod.getUserId(request);
+        Integer boardId = Integer.parseInt(request.getParameter("boardId"));
+        System.out.println("BoardController，关注版块，用户id" + userId + "关注的版块id：" + boardId);
+
+        boardService.subscribeThisBoard(boardId, userId);
+
+        response.getWriter().write(
+                JSON.toJSONString(
+                        ResponseResult.success("关注成功！")
+                )
+        );
+
+        System.out.println("-关注版块成功！--");
+    }
+
 
     /*-------------------------------------------    获取我的版块    ------------------------------------------*/
     public void getMyBoard(HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {
@@ -161,6 +178,7 @@ public class BoardController extends BaseServlet {
             );
         }
     }
+
 
     /*-----------------------------------------    发布新的版块公告    ------------------------------------------*/
     public void publishNewNotice(HttpServletRequest request, HttpServletResponse response) throws Exception {

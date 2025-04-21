@@ -236,7 +236,6 @@ public class PostController extends BaseServlet {
 
 
 
-
     /*-----------------------------------------    删除收藏这条帖子   ------------------------------------------*/
     public void cancelCollectThisPost(HttpServletRequest request, HttpServletResponse response) throws Exception {
 

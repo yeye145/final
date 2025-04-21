@@ -32,4 +32,7 @@ public class CollectDaoImpl implements CollectDao {
         MyUpdate.update("DELETE FROM `forum`.`collect`" +
                 " WHERE (`user_id` = ? AND `post_id` = ?)", userId, postId);
     }
+
+
+
 }

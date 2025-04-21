@@ -3,18 +3,15 @@ package service.impl;
 import dao.BoardDao;
 import dao.CollectDao;
 import dao.HistoryDao;
-import dao.impl.CollectDaoImpl;
-import dao.impl.HistoryDaoImpl;
+import dao.impl.*;
 import dao.PostDao;
-import dao.impl.BoardDaoImpl;
-import dao.impl.PostDaoImpl;
 
 import pojo.Collect;
 import pojo.History;
 import pojo.Post;
 import pojo.Subscription;
 import service.PostService;
-import service.SubscriptionDao;
+import dao.SubscriptionDao;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -30,12 +27,15 @@ public class PostServiceImpl implements PostService {
     private CollectDao collectDao = new CollectDaoImpl();
 
 
+
+    /*-----------------------------------------    取消收藏帖子    --------------------------------------------*/
     @Override
     public void cancelCollectThisPost(Integer postId, Integer userId) throws Exception {
         collectDao.cancelCollectThisPost(postId, userId);
     }
 
 
+    /*-----------------------------------------    获得收藏记录    --------------------------------------------*/
     @Override
     public boolean checkIfCollect(Integer postId, Integer userId) throws Exception {
         // 获取收藏记录列表
