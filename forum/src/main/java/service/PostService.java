@@ -16,4 +16,8 @@ public interface PostService {
 
     /*--------------------------------------------    获取帖子    --------------------------------------------*/
     Post getThisPostById(Integer postId) throws Exception;
+
+
+    /*-----------------------------------    删除特定帖子，通过id    --------------------------------------------*/
+    void deleteThesePost(List<Integer> postIdAboutToDelete);
 }

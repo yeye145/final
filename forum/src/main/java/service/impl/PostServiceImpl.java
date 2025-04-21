@@ -67,8 +67,7 @@ public class PostServiceImpl implements PostService {
     }
 
 
-
-    /*--------------------------------------------    获取帖子    --------------------------------------------*/
+    /*----------------------------------    获取帖子，优先考虑用户关注的    ---------------------------------------*/
     @Override
     public List<Post> getAllPostInThisBoardPrioritizeUserLike(Integer userId, Integer boardId) throws Exception {
         // 获取版块下所有帖子，按时间倒序排列
@@ -124,12 +123,26 @@ public class PostServiceImpl implements PostService {
 
     }
 
-    /*--------------------------------------------    获取帖子    --------------------------------------------*/
+
+    /*-----------------------------------    获取特定帖子，通过id    --------------------------------------------*/
     @Override
     public Post getThisPostById(Integer postId) throws Exception {
         // 增加一个浏览数，并获取该帖子内容
         postDao.plusOneViewCount(postId);
         return postDao.getThisPostById(postId);
+    }
+
+
+    /*-----------------------------------    删除特定帖子，通过id    --------------------------------------------*/
+    @Override
+    public void deleteThesePost(List<Integer> postIdAboutToDelete) {
+        postIdAboutToDelete.forEach(postId -> {
+            try {
+                postDao.deleteThisPost(postId);
+            } catch (Exception e) {
+                System.err.println("删除帖子时出现异常: " + e.getMessage());
+            }
+        });
     }
 
 }

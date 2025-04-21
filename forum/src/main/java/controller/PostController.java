@@ -76,10 +76,9 @@ public class PostController extends BaseServlet {
         Integer boardId = Integer.parseInt(request.getParameter("boardId"));
         System.out.println("PostController，获取版块id：" + boardId + "  下的全部帖子，用户id" + userId);
 
-
         List<Post> allPostInThisBoard = postService.getAllPostInThisBoardPrioritizeUserLike(userId, boardId);
 
-        // 获取版块信息
+        // 返回成功响应
         response.getWriter().write(
                 JSON.toJSONString(
                         ResponseResult.success(allPostInThisBoard)
@@ -100,7 +99,7 @@ public class PostController extends BaseServlet {
 
         System.out.println("-帖子内容：\n" + post.getContent());
 
-        // 获取版块信息
+        // 返回成功响应
         response.getWriter().write(
                 JSON.toJSONString(
                         ResponseResult.success(post)
@@ -114,15 +113,27 @@ public class PostController extends BaseServlet {
 
         System.out.println("PostController，deleteThesePost，删除帖子");
         // 获得html传递过来的数组
-        String jsonString = request.getReader().readLine();
+        String json = request.getReader().readLine();
 
         // 解析JSON数据
-        JSONObject jsonData = JSON.parseObject(jsonString);
+        JSONObject jsonData = JSON.parseObject(json);
 
-        // 获取解析后的数组，链式语句
-        jsonData.getJSONArray("postId")
-                .toJavaList(String.class)
-                .forEach(System.out::println);
+        // 获取解析后的集合
+        List<Integer> postIdAboutToDelete = jsonData.getJSONArray("postId").toJavaList(Integer.class);
+
+        postIdAboutToDelete.forEach(System.out::println);
+
+        // 传递参数，执行删除服务
+        postService.deleteThesePost(postIdAboutToDelete);
+
+        // 返回成功响应
+        response.getWriter().write(
+                JSON.toJSONString(
+                        ResponseResult.success("删除成功！")
+                )
+        );
+
+        System.out.println("-->删除这些帖子成功！");
 
     }
 }

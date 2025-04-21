@@ -61,4 +61,9 @@ public class PostDaoImpl implements PostDao {
                 "id"
         );
     }
+
+    @Override
+    public void deleteThisPost(Integer postId) throws Exception {
+        MyUpdate.update("DELETE FROM `forum`.`post` WHERE (`id` = ?);", postId);
+    }
 }

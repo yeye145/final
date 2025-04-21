@@ -320,19 +320,18 @@
                 <!--渲染帖子信息-->
                 <div v-for="post in allPostInMyBoard"
                      :key="post.id"
-                     class="post-card"
-                     @click="turnThisPost(post.id, post.title)">
+                     class="post-card">
                     <!-- 批量删除帖子勾选框 -->
                     <div class="post-checkbox" v-if="ifDeleteMode">
                         <input type="checkbox"
                                v-model="deleteChosenPost"
                                :value="post.id">
                     </div>
-                    <div class="post-meta">
+                    <div class="post-meta" @click="turnThisPost(post.id, post.title)">
                         <span class="author">👤 {{ post.authorName }}</span>
                         <span class="time">📅 {{ post.time }}</span>
                     </div>
-                    <h4 class="post-title">{{ post.title }}</h4>
+                    <h4 class="post-title" @click="turnThisPost(post.id, post.title)">{{ post.title }}</h4>
                     <div class="post-stats">
                         <span>❤️ {{ post.likeCount }}</span>
                         <span>💬 {{ post.commentCount }}</span>
@@ -436,6 +435,7 @@
                 </div>
             </div>
         </div>
+
     </div>
 
 </div>
@@ -505,7 +505,6 @@
         `
     });
 </script>
-
 
 <script>
     new Vue({
@@ -912,6 +911,7 @@
                 this.ifThisPost = false;
                 this.ifMyHistory = false;
                 this.newNotice.boardId = board_id;
+                this.currentBoardId = board_id;
                 this.fetchAllPostInMyBoard(board_id, board_title);
                 this.fetchNotice(board_id);
             },
@@ -1155,6 +1155,7 @@
             },
             // 获取我的版块下的所有帖子
             fetchAllPostInMyBoard(board_id, board_title) {
+                console.log("版块id：" + board_id + "，版块名称：" +board_title);
                 axios.post('/post/getAllPostInThisBoard', new URLSearchParams({
                     boardId: board_id,
                 }), {

@@ -16,4 +16,6 @@ public interface PostDao {
     void plusOneViewCount(Integer postId) throws Exception;
 
     Map<Integer, Post> getPostMapIn(String inClause) throws Exception;
+
+    void deleteThisPost(Integer postId) throws Exception;
 }
