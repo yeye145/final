@@ -211,6 +211,9 @@
                     return;
                 }
 
+                // 更新 lastSubmitTime
+                this.lastSubmitTime = bridgeSubmitTime;
+
                 this.errors = {};
                 let ifSuccess = true;
 
@@ -220,9 +223,6 @@
                 } else {
                     ifSuccess = this.validateLogin(ifSuccess);
                 }
-
-                // 登录验证，输入密码非空
-                ifSuccess = this.loginPassword !== '';
 
                 if (ifSuccess) {
                     this.handleSubmit();
@@ -266,6 +266,10 @@
                             ifSuccess = false;
                         }
                     }
+                }
+                if (!this.loginPassword) {
+                    this.errors.loginPassword = '!!!请输入登录密码';
+                    ifSuccess = false;
                 }
                 return ifSuccess;
             },
