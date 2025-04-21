@@ -233,4 +233,30 @@ public class PostController extends BaseServlet {
 
 
     }
+
+
+
+
+    /*-----------------------------------------    删除收藏这条帖子   ------------------------------------------*/
+    public void cancelCollectThisPost(HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+        Integer postId = Integer.parseInt(request.getParameter("postId"));
+        Integer userId = ControllerToolMethod.getUserId(request);
+
+        System.out.println("PostController，cancelCollectThisPost，取消收藏帖子id:"+ postId + ",用户id:" + userId);
+
+        postService.cancelCollectThisPost(postId,userId);
+
+        // 返回成功响应
+        response.getWriter().write(
+                JSON.toJSONString(
+                        ResponseResult.success("取消收藏成功！")
+                )
+        );
+
+        System.out.println("-->取消收藏帖子成功！");
+
+    }
+
+
 }

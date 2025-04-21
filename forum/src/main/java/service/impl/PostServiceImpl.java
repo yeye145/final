@@ -31,6 +31,12 @@ public class PostServiceImpl implements PostService {
 
 
     @Override
+    public void cancelCollectThisPost(Integer postId, Integer userId) throws Exception {
+        collectDao.cancelCollectThisPost(postId, userId);
+    }
+
+
+    @Override
     public boolean checkIfCollect(Integer postId, Integer userId) throws Exception {
         // 获取收藏记录列表
         List<Collect> collectList = collectDao.getCollectWithNullPostInformation(userId);

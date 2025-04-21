@@ -8,4 +8,6 @@ public interface CollectDao {
     List<Collect> getCollectWithNullPostInformation(Integer userId) throws Exception;
 
     void collectThisPost(Integer postId, Integer userId, String remark) throws Exception;
+
+    void cancelCollectThisPost(Integer postId, Integer userId) throws Exception;
 }

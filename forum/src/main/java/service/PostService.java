@@ -8,6 +8,8 @@ import java.util.List;
 
 public interface PostService {
 
+    void cancelCollectThisPost(Integer postId, Integer userId) throws Exception;
+
     boolean checkIfCollect(Integer postId, Integer userId) throws Exception;
 
     /*-----------------------------------------    获得历史记录    --------------------------------------------*/

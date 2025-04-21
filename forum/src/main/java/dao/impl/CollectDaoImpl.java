@@ -25,4 +25,11 @@ public class CollectDaoImpl implements CollectDao {
                 " (`user_id`, `post_id`, `remark`)" +
                 " VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE remark = ?", userId, postId, remark, remark);
     }
+
+
+    @Override
+    public void cancelCollectThisPost(Integer postId, Integer userId) throws Exception {
+        MyUpdate.update("DELETE FROM `forum`.`collect`" +
+                " WHERE (`user_id` = ? AND `post_id` = ?)", userId, postId);
+    }
 }

@@ -724,7 +724,7 @@
             handleCollectClick(postId) {
                 if (this.thisPost.ifHadCollected) {
                     // 已收藏状态：直接执行取消收藏
-                    this.collectPost(postId);
+                    this.cancelCollectPost(postId);
                 } else {
                     // 未收藏状态：显示备注输入框
                     this.ifShowEditCollectRemark = true;
@@ -736,7 +736,6 @@
                 axios.post('/post/collectThisPost', new URLSearchParams({
                     postId: this.postId,
                     remark: this.newCollectRemark,
-                    action: 'collect' // 新增action参数
                 }), {
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded'
@@ -756,10 +755,9 @@
                 });
             },
             // 取消收藏
-            collectPost(postId) {
-                axios.post('/post/collectThisPost', new URLSearchParams({
+            cancelCollectPost(postId) {
+                axios.post('/post/cancelCollectThisPost', new URLSearchParams({
                     postId: postId,
-                    action: 'unCollect'
                 }), {
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded'
