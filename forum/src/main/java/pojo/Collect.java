@@ -1,5 +1,7 @@
 package pojo;
 
+import java.time.LocalDateTime;
+
 public class Collect {
 
     private Integer id;             // 主键
@@ -7,17 +9,21 @@ public class Collect {
     private Integer postId;        // 收藏的帖子的id
     private Integer boardId;       // 收藏的板块id
     private String remark;          // 备注，收藏了个啥
+    private Post post;
+    private LocalDateTime time;
 
 
     public Collect() {
     }
 
-    public Collect(Integer id, Integer userId, Integer postId, Integer boardId, String remark) {
+    public Collect(Integer id, Integer userId, Integer postId, Integer boardId, String remark, Post post, LocalDateTime time) {
         this.id = id;
         this.userId = userId;
         this.postId = postId;
         this.boardId = boardId;
         this.remark = remark;
+        this.post = post;
+        this.time = time;
     }
 
     /**
@@ -100,7 +106,39 @@ public class Collect {
         this.remark = remark;
     }
 
+    /**
+     * 获取
+     * @return post
+     */
+    public Post getPost() {
+        return post;
+    }
+
+    /**
+     * 设置
+     * @param post
+     */
+    public void setPost(Post post) {
+        this.post = post;
+    }
+
+    /**
+     * 获取
+     * @return time
+     */
+    public LocalDateTime getTime() {
+        return time;
+    }
+
+    /**
+     * 设置
+     * @param time
+     */
+    public void setTime(LocalDateTime time) {
+        this.time = time;
+    }
+
     public String toString() {
-        return "Collect{id = " + id + ", userId = " + userId + ", postId = " + postId + ", boardId = " + boardId + ", remark = " + remark + "}";
+        return "Collect{id = " + id + ", userId = " + userId + ", postId = " + postId + ", boardId = " + boardId + ", remark = " + remark + ", post = " + post + ", time = " + time + "}";
     }
 }

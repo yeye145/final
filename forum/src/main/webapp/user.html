@@ -62,6 +62,7 @@
             <p>欢迎来到QG技术论坛！这里有最新技术动态和深度讨论。</p>
         </div>
 
+        <!--版块公告内容-->
         <div class="content-section" v-if="ifBoardNotice">
             <h3>📌 公告
                 <button @click="showHistoryModal = true" class="history-btn">查看历史公告</button>
@@ -150,8 +151,13 @@
                     <span class="likes">❤️ {{ thisPost.likeCount }} 点赞</span>
                     <button class="like-collect-item"
                             @click="likePost(thisPost.id);
-                            thisPost.likeCount = thisPost.likeCount + 1">👍 点赞</button>
-                    <button class="like-collect-item" @click="collectPost(thisPost.id)">⭐ 收藏</button>
+                            thisPost.likeCount = thisPost.likeCount + 1">👍 点赞
+                    </button>
+                    <button class="like-collect-item"
+                            @click="collectPost(thisPost.id)"
+                            :class="{ 'collected': thisPost.ifHadCollected }">
+                        {{ thisPost.ifHadCollected ? '⭐ 已收藏' : '⭐ 收藏' }}
+                    </button>
                 </div>
             </div>
 
@@ -268,7 +274,7 @@
                     <div class="stat-value">{{ userInformation.mySubscribeCount }}</div>
                     <div class="stat-label">我的关注</div>
                 </div>
-                <div class="stat-card">
+                <div class="stat-card" @click="turnMyCollect">
                     <div class="stat-icon">⭐</div>
                     <div class="stat-value">{{ userInformation.myCollectCount }}</div>
                     <div class="stat-label">我的收藏</div>
@@ -279,6 +285,7 @@
                     <div class="stat-label">我的帖子</div>
                 </div>
             </div>
+
         </div>
 
         <!-- 我的版块 -->
@@ -440,6 +447,34 @@
             </div>
         </div>
 
+        <!-- 收藏版块——我的收藏帖子 -->
+        <div v-if="ifMyCollect" class="board-section">
+            <div class="post-list">
+                <!--帖子搜索框-->
+                <div class="search-bar">
+                    <input type="text" v-model="postSearchQuery"
+                           placeholder="输入发帖用户昵称、帖子名称或浏览时间以搜索"
+                           @input="searchPostCollect">
+                </div>
+                <!--渲染帖子信息-->
+                <div v-for="postCollect in postCollect"
+                     :key="postCollect.id"
+                     class="post-card"
+                     @click="turnThisPost(postCollect.post.id, postCollect.post.title)">
+                    <div class="post-meta">
+                        <span class="author">👤 {{ postCollect.post.authorName }}</span>
+                        <span class="time">📅 {{ postCollect.post.time }}</span>
+                    </div>
+                    <h4 class="post-title">{{ postCollect.post.title }}</h4>
+                    <div class="post-stats">
+                        <span>❤️ {{ postCollect.post.likeCount }}</span>
+                        <span>💬 {{ postCollect.post.commentCount }}</span>
+                        <span>👀 {{ postCollect.post.viewCount }}</span>
+                    </div>
+                    <span class="time">💻收藏时间： {{ postCollect.time }} | 📚备注： {{ postCollect.remark }}</span>
+                </div>
+            </div>
+        </div>
     </div>
 
 </div>
@@ -529,7 +564,9 @@
             ifShowBanModal: false,              // 是否显示用户封禁框
             ifShowEditNewNoticeModal: false,    // 是否显示新增公告框
             ifMyBoard: false,                   // 是否显示我的版块
+            ifMyCollect: false,                 // 是否显示我的收藏
             ifDeleteMode: false,                // 是否进入帖子删除模式
+            ifHadCollected: false,               // 新增收藏状态
 
             showHistoryModal: false,            // 是否显示历史公告弹窗
             showDeletePostModal: false,         // 是否显示控制删除弹窗
@@ -541,6 +578,7 @@
             allPostInThisBoard: [],
             allPostInMyBoard: [],
             deleteChosenPost: [],               // 存储待删除帖子ID
+            postCollect: [],                    // 收藏的帖子
 
             boardSearchQuery: '',               // 版块关键字搜索
             originalAllBoard: [],
@@ -548,6 +586,7 @@
             originalAllPostInThisBoard: [],
             originalAllPostInMyBoard: [],
             originalPostHistory: [],            // 原始历史记录存储
+            originalPostCollect: [],            // 原始我的收藏帖子
 
             notice: [],                         // 存储所有公告
             currentNotice: {                    // 当前展示的公告
@@ -582,6 +621,8 @@
             newComment: '',                     // 新的评论
 
             myHistoryReadPost: [],              // 我的历史浏览记录
+
+
         },
         created() {
             // 页面加载时自动获取用户头像
@@ -615,20 +656,74 @@
             this.highlightAll();
         },
         methods: {
+            // 收藏帖子的搜索
+            searchPostCollect() {
+                if (this.postSearchQuery.trim() === '') {
+                    // 清空搜索时恢复原始数据
+                    this.postCollect = this.originalPostCollect;
+                    return;
+                }
+
+                // 将查询的字符串转化为小写
+                const query = this.postSearchQuery.toLowerCase();
+                this.postCollect = this.originalPostCollect.filter(postCollection =>
+                    // 将名称转化为小写，如果包含作者名称或标题或时间，则储存
+                    postCollection.post.authorName.toLowerCase().includes(query) ||
+                    postCollection.post.title.toLowerCase().includes(query) ||
+                    postCollection.time.toLowerCase().includes(query))
+            },
+            // 切换我的收藏
+            turnMyCollect() {
+                this.ifDeleteMode = false;
+                this.ifMyInformation = false;
+                this.ifHomePage = false;
+                this.ifUploadMyAvatar = false;
+                this.ifEditName = false;
+                this.ifMyBoard = false;
+                this.ifShowDropdown = false;
+                this.ifAllBoard = false;
+                this.ifAllPostInMyBoard = false;
+                this.ifThisPost = false;
+                this.ifBoardNotice = false;
+                this.fetchCollect();
+                this.ifMyHistory = false;
+                this.ifMyCollect = true;
+                this.currentPath = ['QG技术论坛', '我的信息', '我的收藏'];
+            },
+            // 获取我的收藏
+            fetchCollect() {
+                let that = this;
+                axios.post('/post/getCollect').then(response => {
+                    if (response.data.code !== 200) {
+                        console.log("状态码：" + response.data.code + response.data.message);
+                        alert(response.data.message);
+                    } else {
+                        that.postCollect = response.data.data;
+                        that.originalPostCollect = that.postCollect;
+                        console.log(response.data.data);
+                    }
+                })
+            },
             // 收藏帖子
             collectPost(postId) {
-                axios.post('/post/collectThisPost', {
+                const action = this.thisPost.ifHadCollected ? 'unCollect' : 'collect';
+                axios.post('/post/collectThisPost', new URLSearchParams({
                     postId: postId,
-                }, {
+                    action: action
+                }), {
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded'
                     }
                 }).then(response => {
                     if (response.data.code === 200) {
-
+                        // 切换收藏状态
+                        this.thisPost.ifHadCollected = !this.thisPost.ifHadCollected;
                     } else {
                         alert(response.data.message);
                     }
+                }).catch(error => {
+                    console.error('操作失败:', error);
+                    alert('操作失败，请检查网络');
                 });
             },
             // 为帖子点赞
@@ -641,7 +736,7 @@
                     }
                 }).then(response => {
                     if (response.data.code === 200) {
-
+                        console.log(response.data);
                     } else {
                         alert(response.data.message);
                     }
@@ -697,6 +792,7 @@
             },
             // 切换我的历史
             turnMyHistory() {
+                this.ifMyCollect = false;
                 this.ifDeleteMode = false;
                 this.ifMyInformation = false;
                 this.ifHomePage = false;
@@ -820,6 +916,7 @@
             },
             // 显示某个具体帖子
             turnThisPost(post_id, post_title) {
+                this.ifMyCollect = false;
                 this.ifDeleteMode = false;
                 this.ifBoardNotice = false;
                 this.ifMyInformation = false;
@@ -923,6 +1020,7 @@
             },
             // 切换该版块下所有帖子
             turnAllPostInThisBoard(board_id, board_title) {
+                this.ifMyCollect = false;
                 this.ifDeleteMode = false;
                 this.ifBoardNotice = true;
                 this.ifAllPostInMyBoard = false;
@@ -939,6 +1037,7 @@
             },
             // 切换我的版块下所有帖子
             turnAllPostInMyBoard(board_id, board_title) {
+                this.ifMyCollect = false;
                 this.ifDeleteMode = false;
                 this.ifBoardNotice = true;
                 this.ifAllPostInMyBoard = true;
@@ -956,6 +1055,7 @@
             },
             // 切换所有版块
             turnAllBoard() {
+                this.ifMyCollect = false;
                 this.ifDeleteMode = false;
                 this.ifBoardNotice = false;
                 this.ifMyInformation = false;
@@ -974,6 +1074,7 @@
             },
             // 切换我的版块
             turnMyBoard() {
+                this.ifMyCollect = false;
                 this.ifDeleteMode = false;
                 this.ifBoardNotice = false;
                 this.ifAllPostInMyBoard = false;
@@ -1028,6 +1129,7 @@
             },
             // 切换显示我的个人信息
             turnMyInformation() {
+                this.ifMyCollect = false;
                 this.ifDeleteMode = false;
                 this.ifBoardNotice = false;
                 this.ifMyInformation = true;

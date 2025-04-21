@@ -305,3 +305,7 @@ code {
     transform: translateX(2px);
 }
 
+.like-collect-item.collected {
+    background: #ffd700;
+    border-color: #ffd700;
+}

@@ -101,6 +101,8 @@ CREATE TABLE collect
     user_id  INT NOT NULL COMMENT '用户ID',
     board_id INT NOT NULL COMMENT '版块ID',
     post_id  INT NOT NULL COMMENT '帖子ID',
+    remark   TEXT    NOT NULL COMMENT '收藏备注',
+    time    DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '收藏时间',
     FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE,
     FOREIGN KEY (board_id) REFERENCES board (id) ON DELETE CASCADE,
     FOREIGN KEY (post_id) REFERENCES post (id) ON DELETE CASCADE
@@ -135,10 +137,10 @@ CREATE TABLE comment
 CREATE TABLE board_ban
 (
     id       INT PRIMARY KEY AUTO_INCREMENT,
-    ban_id   INT NOT NULL COMMENT '被禁用户ID',
+    ban_user_id   INT NOT NULL COMMENT '被禁用户ID',
     board_id INT NOT NULL COMMENT '版块ID',
     reason   TEXT NOT NULL COMMENT '封禁原因',
-    FOREIGN KEY (ban_id) REFERENCES user (id) ON DELETE CASCADE,
+    FOREIGN KEY (ban_user_id) REFERENCES user (id) ON DELETE CASCADE,
     FOREIGN KEY (board_id) REFERENCES board (id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 

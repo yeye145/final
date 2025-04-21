@@ -1,11 +1,15 @@
 package service;
 
+import pojo.Collect;
 import pojo.History;
 import pojo.Post;
 
 import java.util.List;
 
 public interface PostService {
+
+    /*-----------------------------------------    获得历史记录    --------------------------------------------*/
+    List<Collect> getPostCollect(Integer userId) throws Exception;
 
     boolean recordPost(Integer postId, Integer userId) throws Exception;
 

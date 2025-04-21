@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import controller.utils.BaseServlet;
 import controller.utils.ControllerToolMethod;
 
+import pojo.Collect;
 import pojo.History;
 import pojo.Post;
 import pojo.ResponseResult;
@@ -150,9 +151,28 @@ public class PostController extends BaseServlet {
 
         response.getWriter().write(
                 JSON.toJSONString(
-                        ResponseResult.success("记录帖子浏览记录成功！")
+                        ResponseResult.success("点赞成功！")
                 )
         );
+
+    }
+
+
+    /*------------------------------------------    获取我的收藏帖子    ----------------------------------------*/
+    public void getCollect(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        Integer userId = ControllerToolMethod.getUserId(request);
+
+        System.out.println("PostController.getCollect，获取收藏记录,用户id：" + userId);
+
+        List<Collect> postCollect = postService.getPostCollect(userId);
+
+        response.getWriter().write(
+                JSON.toJSONString(
+                        ResponseResult.success(postCollect)
+                ));
+
+        System.out.println("-->用户id：" + userId + "获取历史记录成功！");
+        postCollect.forEach(System.out::println);
 
     }
 

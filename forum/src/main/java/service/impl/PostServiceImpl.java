@@ -1,12 +1,15 @@
 package service.impl;
 
 import dao.BoardDao;
+import dao.CollectDao;
 import dao.HistoryDao;
+import dao.impl.CollectDaoImpl;
 import dao.impl.HistoryDaoImpl;
 import dao.PostDao;
 import dao.impl.BoardDaoImpl;
 import dao.impl.PostDaoImpl;
 
+import pojo.Collect;
 import pojo.History;
 import pojo.Post;
 import pojo.Subscription;
@@ -24,6 +27,42 @@ public class PostServiceImpl implements PostService {
     private BoardDao boardDao = new BoardDaoImpl();
     private SubscriptionDao subscriptionDao = new SubscriptionDaoImpl();
     private HistoryDao historyDao = new HistoryDaoImpl();
+    private CollectDao collectDao = new CollectDaoImpl();
+
+
+    /*-----------------------------------------    获得历史记录    --------------------------------------------*/
+    @Override
+    public List<Collect> getPostCollect(Integer userId) throws Exception {
+
+        // 获取收藏记录列表
+        List<Collect> collectList = collectDao.getCollectWithNullPostInformation(userId);
+
+        // 提取所有postId用于查询Post对象
+        List<Integer> postId = collectList.stream()
+                .map(Collect::getPostId)
+                .collect(Collectors.toList());
+
+        if (postId.isEmpty()) {
+            return collectList; // 若无数据直接返回
+        }
+
+        // 获取Post对象的Map（键为postId）
+        String inClause = postId.stream()
+                .map(String::valueOf)
+                .collect(Collectors.joining(",", "(", ")"));
+
+        Map<Integer, Post> postMap = postDao.getPostMapIn(inClause);
+
+        // 填充collect中的Post对象
+        for (Collect collect : collectList) {
+            Post post = postMap.get(collect.getPostId());
+            collect.setPost(post);
+        }
+
+        return collectList;
+    }
+
+
 
 
     /*-----------------------------------------    新增历史记录    --------------------------------------------*/
@@ -32,7 +71,6 @@ public class PostServiceImpl implements PostService {
         historyDao.recordHistory(postId, userId);
         return true;
     }
-
 
     /*-----------------------------------------    获得历史记录    --------------------------------------------*/
     @Override
@@ -145,6 +183,7 @@ public class PostServiceImpl implements PostService {
         });
     }
 
+    
     /*-----------------------------------------    为帖子点赞    ---------------------------------------------*/
     @Override
     public void likeThisPost(Integer postId) throws Exception {
