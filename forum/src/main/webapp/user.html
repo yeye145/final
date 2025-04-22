@@ -122,7 +122,7 @@
             </div>
             <hr>
             <div class="confirm-publish-btn">
-                <button @click="" class="follow-btn">确认发布</button>
+                <button @click="createPost" class="follow-btn">确认发布</button>
             </div>
         </div>
 
@@ -712,6 +712,30 @@
             this.highlightAll();
         },
         methods: {
+            // 上传帖子
+            createPost(){
+                if (!this.markdownText.trim()) {
+                    alert('帖子内容不能为空');
+                    return;
+                }
+                axios.post('/post/creatPost', new URLSearchParams({
+                    title: this.newBoard.title,
+                    boardId: this.currentBoardId,
+                    content: this.markdownText,
+                }), {
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                }).then(response => {
+                    if (response.data.code === 200) {
+                        alert('帖子发布成功！快去叫你的好朋友来欣赏吧');
+
+
+                    } else {
+                        alert(response.data.message);
+                    }
+                })
+            },
             // 切换编辑帖子
             turnEditPost() {
                 this.currentPath[this.currentPath.length - 1] = '发布帖子';
