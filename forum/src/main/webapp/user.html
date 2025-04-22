@@ -743,7 +743,7 @@
                         },
                     })
                         .then((response) => {
-                            const imageUrl = response.data.imageUrl;
+                            const imageUrl = response.data.data;
                             // 将图片的 Markdown 语法插入到输入框中
                             this.markdownText += `![图片](${imageUrl})`;
                             this.updatePreview();

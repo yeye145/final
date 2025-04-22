@@ -70,7 +70,8 @@ public class PostEditImageUploadController extends BaseServlet {
 
             // 返回访问路径
             String imageUrl = "/images/post_images/" + fileName;
-            out.write("{\"code\":200,\"data\":\"" + imageUrl + "\"}");
+            response.getWriter().write(JSON.toJSONString(
+                    ResponseResult.success(imageUrl)));
 
         } catch (Exception e) {
             e.printStackTrace();
