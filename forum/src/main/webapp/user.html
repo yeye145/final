@@ -1114,9 +1114,10 @@
                     alert('评论内容不能为空');
                     return;
                 }
-                axios.post('/comment/create', new URLSearchParams({
+                axios.post('/comment/creatCommentOnPost', new URLSearchParams({
                     postId: this.thisPost.id,
-                    content: this.newComment
+                    content: this.newComment,
+                    boardId: this.currentBoardId,
                 }), {
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded'
@@ -1124,8 +1125,12 @@
                 }).then(response => {
                     if (response.data.code === 200) {
                         this.newComment = '';
-                        this.fetchComments(this.thisPost.id);
+                        this.fetchComment(this.thisPost.id);
                         this.thisPost.commentCount++;
+                        console.log(response.data);
+                    } else {
+                        alert(response.data.message);
+                        console.log(response.code + response.data.message);
                     }
                 });
             },

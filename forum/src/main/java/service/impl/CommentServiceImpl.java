@@ -1,21 +1,44 @@
 package service.impl;
 
+import dao.BoardBanDao;
 import dao.CommentDao;
+import dao.UserDao;
+import dao.impl.BoardBanDaoImpl;
 import dao.impl.CommentDaoImpl;
+import dao.impl.UserDaoImpl;
+import pojo.BoardBan;
 import pojo.Comment;
 
 import service.CommentService;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class CommentServiceImpl implements CommentService {
 
     /*--------------------------------------------    私有变量     ------------------------------------------*/
     private CommentDao commentDao = new CommentDaoImpl();
+    private BoardBanDao boardBanDao = new BoardBanDaoImpl();
+    private UserDao userDao = new UserDaoImpl();
+
+
+    /*-----------------------------------------    在该帖子下发表评论    --------------------------------------*/
+    @Override
+    public boolean creatCommentOnPost(Integer postId, Integer boardId, Integer userId, String content) throws Exception {
+
+        System.out.println("CommentServiceImpl.creatCommentOnPost，发布帖子评论，帖子id：" + postId);
+
+        Set<BoardBan> allBanUserSet = boardBanDao.getAllBanUserSet();
+
+        for (BoardBan boardBan : allBanUserSet) {
+            if (boardBan.getBanId() == userId && boardBan.getBoardId().equals(boardId)) {
+                System.out.println("--X>发布失败，用户已在该版块被禁止发言");
+                return false;
+            }
+        }
+        commentDao.creatCommentOnPost(postId, userDao.getUserById(userId), content);
+        return true;
+    }
 
 
     /*-----------------------------------------    获取帖子下所有评论    --------------------------------------*/

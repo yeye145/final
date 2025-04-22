@@ -6,6 +6,9 @@ import java.sql.SQLException;
 import java.util.List;
 
 public interface CommentService {
+    /*-----------------------------------------    在该帖子下发表评论    --------------------------------------*/
+    boolean creatCommentOnPost(Integer postId, Integer boardId, Integer userId, String content) throws Exception;
+
     List<Comment> getAllCommentInThisPost(Integer postId) throws SQLException;
 
     /*-----------------------------------------    为评论点赞    ---------------------------------------------*/

@@ -2,11 +2,13 @@ package controller;
 
 import com.alibaba.fastjson.JSON;
 import controller.utils.BaseServlet;
+import controller.utils.ControllerToolMethod;
 import pojo.Comment;
 
 import pojo.ResponseResult;
 import service.CommentService;
 import service.impl.CommentServiceImpl;
+import utils.Constants;
 
 
 import javax.servlet.annotation.WebServlet;
@@ -45,11 +47,11 @@ public class CommentController extends BaseServlet {
         resultCommentList.forEach(System.out::println);
     }
 
-    /*------------------------------------------    为这条帖子点个赞    ----------------------------------------*/
+    /*------------------------------------------    为这条评论点个赞    ----------------------------------------*/
     public void likeThisComment(HttpServletRequest request, HttpServletResponse response) throws Exception {
         Integer commentId = Integer.parseInt(request.getParameter("commentId"));
 
-        System.out.println("CommentController.likeThisComment，为帖子点赞，评论id：" + commentId);
+        System.out.println("CommentController.likeThisComment，为评论点赞，评论id：" + commentId);
 
         commentService.likeThisComment(commentId);
 
@@ -62,5 +64,32 @@ public class CommentController extends BaseServlet {
     }
 
 
+    /*------------------------------------------    对帖子进行评论    ------------------------------------------*/
+    public void creatCommentOnPost(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        Integer postId = Integer.parseInt(request.getParameter("postId"));
+        Integer userId = ControllerToolMethod.getUserId(request);
+        Integer boardId = Integer.parseInt(request.getParameter("boardId"));
+        String content = request.getParameter("content");
+
+        System.out.println("CommentController.creatCommentOnPost，为帖子评论，帖子id：" + postId);
+
+        if (commentService.creatCommentOnPost(postId, boardId, userId, content)) {
+            response.getWriter().write(
+                    JSON.toJSONString(
+                            ResponseResult.success("发表评论成功！")
+                    )
+            );
+            System.out.println("-->发表评论成功！");
+        } else {
+            response.getWriter().write(
+                    JSON.toJSONString(
+                            ResponseResult.error(Constants.RESPONSE_CODE_FORBIDDEN, "您已被禁止在该版块发布内容！")
+                    )
+            );
+            System.out.println("--X>发表评论失败");
+        }
+
+
+    }
 
 }
