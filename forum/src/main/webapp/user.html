@@ -157,7 +157,7 @@
                 <div class="fold-buttons">
                     <button @click="handleBoardSubscribeClick"
                             class="follow-btn"
-                    >{{ this.allPostInThisBoard.ifHadSubscribe ? '✔ 已关注' : '＋ 关注' }}
+                    >{{ this.allPostInThisBoard.ifHadSubscribeBoard ? '✔ 已关注' : '＋ 关注' }}
                     </button>
                     <button @click="turnEditPost" class="follow-btn">＋ 发布帖子</button>
                 </div>
@@ -202,6 +202,12 @@
                             @click="handleCollectClick(thisPost.id)"
                             :class="{ 'collected': thisPost.ifHadCollected }">
                         {{ thisPost.ifHadCollected ? '⭐ 已收藏' : '⭐ 收藏' }}
+                    </button>
+                    <!-- 在点赞和收藏按钮旁边添加关注按钮 -->
+                    <button class="like-collect-item"
+                            @click="handleUserSubscribeClick(thisPost.authorId)"
+                            :class="{ 'collected': thisPost.ifHadSubscribeUser }">
+                        {{ thisPost.ifHadSubscribeUser ? '✅ 已关注' : '➕ 关注' }}
                     </button>
                 </div>
             </div>
@@ -718,8 +724,51 @@
             this.highlightAll();
         },
         methods: {
+            // 订阅这个作者
+            subscribeThisUser(authorId) {
+                axios.post('/user/subscribeThisUser', new URLSearchParams({
+                    authorId: authorId,
+                }), {
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                }).then(response => {
+                    if (response.data.code === 200) {
+                        alert('订阅该用户成功！');
+                    }
+                }).catch(error => {
+                    alert('订阅失败: ' + error.message);
+                });
+            },
+            // 提交关注用户点击请求
+            handleUserSubscribeClick(authorId) {
+                if (this.thisPost.ifHadSubscribeUser) {
+                    // 已关注状态：取消关注
+                    this.cancelSubscribeThisUser(authorId);
+                } else {
+                    // 未关注状态,则关注
+                    this.subscribeThisUser(authorId);
+                }
+                this.turnThisPost(this.thisPost.id, this.thisPost.title);
+            },
+            // 取消收藏
+            cancelSubscribeThisUser(authorId) {
+                axios.post('/user/cancelSubscribeThisUser', new URLSearchParams({
+                    authorId: authorId,
+                }), {
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                }).then(response => {
+                    if (response.data.code === 200) {
+                        this.allPostInThisBoard.ifHadSubscribeBoard = false;
+                        alert('已取消关注');
+                    }
+                });
+            },
+            // 提交关注版块点击请求
             handleBoardSubscribeClick() {
-                if (this.allPostInThisBoard.ifHadSubscribe) {
+                if (this.allPostInThisBoard.ifHadSubscribeBoard) {
                     // 已关注状态：取消关注
                     this.cancelSubscribeThisBoard();
                 } else {
@@ -728,7 +777,7 @@
                 }
                 this.turnAllPostInThisBoard(this.currentBoardId, this.currentPath[this.currentPath.length - 1]);
             },
-            // 取消收藏
+            // 取消关注这个版块
             cancelSubscribeThisBoard() {
                 axios.post('/board/cancelSubscribeThisBoard', new URLSearchParams({
                     boardId: this.currentBoardId,
@@ -738,7 +787,7 @@
                     }
                 }).then(response => {
                     if (response.data.code === 200) {
-                        this.allPostInThisBoard.ifHadSubscribe = false;
+                        this.allPostInThisBoard.ifHadSubscribeBoard = false;
                         alert('已取消关注');
                     }
                 });
@@ -830,7 +879,7 @@
                         alert('订阅该版块成功！');
                     }
                 }).catch(error => {
-                    alert('收藏失败: ' + error.message);
+                    alert('订阅版块失败: ' + error.message);
                 });
             },
             // 收藏帖子的搜索
@@ -1507,7 +1556,7 @@
                         this.checkIfHadSubscribeThisBoard(board_id).then(isSubscribe => {
                             this.allPostInThisBoard = {
                                 ...this.allPostInThisBoard,
-                                ifHadSubscribe: isSubscribe
+                                ifHadSubscribeBoard: isSubscribe
                             };
                         });
                         console.log("获取版块：" + board_title + "的所有帖子成功,共有" + this.allPostInThisBoard.length + "条帖子");
@@ -1562,6 +1611,12 @@
                             this.thisPost = {
                                 ...this.thisPost,
                                 ifHadCollected: isCollected
+                            };
+                        });
+                        this.checkIfHadSubscribeThisUser(this.thisPost.authorId).then(isSubscribe => {
+                            this.thisPost = {
+                                ...this.thisPost,
+                                ifHadSubscribeUser: isSubscribe
                             };
                         });
                     }
@@ -1693,7 +1748,23 @@
                     });
                     return response.data.data === "yes";
                 } catch (error) {
-                    console.error('检查收藏状态失败:', error);
+                    console.error('检查关注版块状态失败:', error);
+                    return false;
+                }
+            },
+            // 检查用户是否已经关注
+            async checkIfHadSubscribeThisUser(authorId) {
+                try {
+                    const response = await axios.post('/user/checkIfHadSubscribeThisUser', new URLSearchParams({
+                        authorId: authorId,
+                    }), {
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        }
+                    });
+                    return response.data.data === "yes";
+                } catch (error) {
+                    console.error('检查关注用户状态失败:', error);
                     return false;
                 }
             },

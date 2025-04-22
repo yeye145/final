@@ -19,6 +19,7 @@ public class SubscriptionDaoImpl implements SubscriptionDao {
                 , Subscription.class, userId);
     }
 
+
     @Override
     public void subscribeThisBoard(Integer boardId, Integer userId) throws Exception {
         MyUpdate.update("INSERT INTO `forum`.`subscription`" +
@@ -27,11 +28,24 @@ public class SubscriptionDaoImpl implements SubscriptionDao {
 
     }
 
+    @Override
+    public void subscribeThisAuthor(Integer authorId, Integer userId) throws Exception {
+        MyUpdate.update("INSERT INTO `forum`.`subscription`" +
+                " (`user_id`, `subscribe_to_user_id`) VALUES (?, ?)", userId, authorId);
+
+    }
 
     @Override
     public void cancelSubscribeThisBoard(Integer boardId, Integer userId) throws Exception {
         MyUpdate.update("DELETE FROM `forum`.`subscription`" +
                 " WHERE (`user_id` = ? AND `subscribe_to_board_id` = ?)", userId, boardId);
+    }
+
+
+    @Override
+    public void cancelSubscribeThisUser(Integer authorId, Integer userId) throws Exception {
+        MyUpdate.update("DELETE FROM `forum`.`subscription`" +
+                " WHERE (`user_id` = ? AND `subscribe_to_user_id` = ?)", userId, authorId);
     }
 
 }

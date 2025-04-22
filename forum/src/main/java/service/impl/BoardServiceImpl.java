@@ -33,7 +33,7 @@ public class BoardServiceImpl implements BoardService {
     /*--------------------------------    判断用户是否已经关注版块    --------------------------------------------*/
     @Override
     public boolean checkIfSubcribe(Integer boardId, Integer userId) throws Exception {
-        // 获取收藏记录列表
+        // 获取关注列表
         List<Subscription> subscriptionList = subscriptionDao.getOneSubscriptionList(userId);
         for (Subscription subscription : subscriptionList) {
             if (subscription.getSubscribeToBoardId() == (boardId)) {
@@ -42,8 +42,6 @@ public class BoardServiceImpl implements BoardService {
         }
         return false;
     }
-
-
 
 
     /*-------------------------------------------    订阅版块    ----------------------------------------------*/

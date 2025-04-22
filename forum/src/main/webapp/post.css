@@ -350,3 +350,21 @@ textarea {
     display: block;
     margin: 10px auto;
 }
+
+.like-collect-item {
+    margin-right: 10px;
+    padding: 5px 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.like-collect-item:hover {
+    background-color: #f0f0f0;
+}
+
+.collected {
+    background-color: #e6f7ff;
+    border-color: #91d5ff;
+}

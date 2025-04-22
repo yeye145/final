@@ -10,5 +10,9 @@ public interface SubscriptionDao {
 
     void subscribeThisBoard(Integer boardId, Integer userId) throws Exception;
 
+    void subscribeThisAuthor(Integer authorId, Integer userId) throws Exception;
+
     void cancelSubscribeThisBoard(Integer boardId, Integer userId) throws Exception;
+
+    void cancelSubscribeThisUser(Integer authorId, Integer userId) throws Exception;
 }

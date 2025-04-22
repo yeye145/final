@@ -43,7 +43,7 @@ public class BoardController extends BaseServlet {
                             ResponseResult.success("yes")
                     )
             );
-            System.out.println("-->已经关注");
+            System.out.println("-->已经关注该版块");
         } else {
             // 返回已经收藏响应
             response.getWriter().write(
@@ -51,7 +51,7 @@ public class BoardController extends BaseServlet {
                             ResponseResult.success("no")
                     )
             );
-            System.out.println("-->还没有关注");
+            System.out.println("-->还没有关注该版块");
         }
 
 
@@ -80,8 +80,7 @@ public class BoardController extends BaseServlet {
     }
 
 
-
-    /*-------------------------------------------    获取我的版块    ------------------------------------------*/
+    /*-------------------------------------------    关注这个版块    ------------------------------------------*/
     public void subscribeThisBoard(HttpServletRequest request, HttpServletResponse response) throws Exception {
         Integer userId = ControllerToolMethod.getUserId(request);
         Integer boardId = Integer.parseInt(request.getParameter("boardId"));
