@@ -11,6 +11,8 @@
     <link rel="stylesheet" href="post.css"/>
     <!-- 引入代码高亮库 -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.7.0/styles/github.min.css">
+    <!-- 加载 marked -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
 <div id="app">
@@ -52,6 +54,11 @@
         <div class="nav-item" @click="backHomePage">🏠 回到主页</div>
         <div class="nav-item" @click="turnAllBoard">🧩 全部版块</div>
         <hr>
+        <div class="nav-item"
+             @click="turnAllPostInThisBoard(currentBoardId,currentPath[currentPath.length-1]);
+             ifAllBoard = true"
+             v-if="showEditPostModal">🚪 退出编辑</button>
+        </div>
     </div>
 
     <!-- 右侧内容区域 -->
@@ -91,6 +98,34 @@
             </div>
         </div>
 
+        <!--编辑帖子-->
+        <div class="profile-section" v-if="showEditPostModal">
+            <!-- 添加选择图片按钮 -->
+            <button @click="triggerImageInput" class="follow-btn">选择图片上传</button>
+            <hr>
+            <div class="markdown-editor">
+                <!-- 输入框 -->
+                <textarea
+                        v-model="markdownText"
+                        @input="updatePreview"
+                        placeholder="输入 Markdown 内容..."
+                ></textarea>
+                <input
+                        type="file"
+                        ref="imageInput"
+                        @change="handleImageUpload"
+                        accept="image/*"
+                        style="display: none;"
+                >
+                <!-- 实时预览 -->
+                <div class="markdown-preview" v-html="compiledMarkdown"></div>
+            </div>
+            <hr>
+            <div class="confirm-publish-btn">
+                <button @click="" class="follow-btn">确认发布</button>
+            </div>
+        </div>
+
         <!-- 全部版块 -->
         <div v-if="ifAllBoard" class="profile-section">
             <div class="board-list" v-if="!ifAllPostInThisBoard">
@@ -119,7 +154,8 @@
                            @input="searchPost">
                 </div>
                 <div class="fold-buttons">
-                <button @click="subscribeThisBoard" class="follow-btn">关注版块</button>
+                    <button @click="subscribeThisBoard" class="follow-btn">关注版块</button>
+                    <button @click="turnEditPost" class="follow-btn">＋ 发布帖子</button>
                 </div>
                 <!--渲染全部帖子信息，点击帖子切换到对应帖子内容-->
                 <div v-for="post in allPostInThisBoard"
@@ -508,8 +544,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/python.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/cpp.min.js"></script>
 
-<!-- 加载 marked -->
-<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
 <script>
     hljs.configure({
@@ -586,9 +620,11 @@
             ifDeleteMode: false,                // 是否进入帖子删除模式
             ifShowEditCollectRemark: false,     // 是否显示编辑收藏备注
 
+
             showHistoryModal: false,            // 是否显示历史公告弹窗
             showDeletePostModal: false,         // 是否显示控制删除弹窗
             showCreateBoardModal: false,
+            showEditPostModal: false,           // 是否显示编辑发布帖子
             currentBoardId: null,
 
             myBoard: [],
@@ -635,6 +671,7 @@
             thisPost: {},                       // 访问某个帖子
             allCommentInThisPost: [],           // 该帖子下的所有评论
             compiledMarkdown: '',               // 帖子内容
+            markdownText: '',
 
             newComment: '',                     // 新的评论
             newCollectRemark: '',               // 新增收藏备注
@@ -675,6 +712,51 @@
             this.highlightAll();
         },
         methods: {
+            // 切换编辑帖子
+            turnEditPost() {
+                this.currentPath[this.currentPath.length - 1] = '发布帖子';
+                this.ifAllBoard = false;
+                this.ifMyBoard = false;
+                this.compiledMarkdown = '';
+                this.showEditPostModal = true;
+                this.ifAllPostInThisBoard = false;
+                this.ifBoardNotice = false;
+                this.ifMyInformation = false;
+                this.ifMyHistory = false;
+                this.ifMyCollect = false;
+            },
+            // 帖子图片上传
+            triggerImageInput() {
+                this.$refs.imageInput.click();
+            },
+            // 帖子图片上传
+            handleImageUpload(event) {
+                const file = event.target.files[0];
+                if (file) {
+                    const formData = new FormData();
+                    formData.append('image', file);
+
+                    // 使用 axios 发送请求到服务器
+                    axios.post('/image/upload', formData, {
+                        headers: {
+                            'Content-Type': 'multipart/form-data',
+                        },
+                    })
+                        .then((response) => {
+                            const imageUrl = response.data.imageUrl;
+                            // 将图片的 Markdown 语法插入到输入框中
+                            this.markdownText += `![图片](${imageUrl})`;
+                            this.updatePreview();
+                        })
+                        .catch((error) => {
+                            console.error('图片上传失败:', error);
+                        });
+                }
+            },
+            // 即时预览显示md语法
+            updatePreview() {
+                this.compiledMarkdown = this.renderMarkdown(this.markdownText);
+            },
             // 订阅这个版块
             subscribeThisBoard() {
                 axios.post('/board/subscribeThisBoard', new URLSearchParams({
@@ -709,6 +791,7 @@
             },
             // 切换我的收藏
             turnMyCollect() {
+                this.showEditPostModal = false;
                 this.ifDeleteMode = false;
                 this.ifMyInformation = false;
                 this.ifHomePage = false;
@@ -807,6 +890,7 @@
             },
             // 切换删除模式
             turnDeleteMode() {
+                this.showEditPostModal = false;
                 this.ifDeleteMode = !this.ifDeleteMode;
                 this.deleteChosenPost = []; // 退出删除模式时清空勾选
             },
@@ -979,6 +1063,7 @@
             },
             // 显示某个具体帖子
             turnThisPost(post_id, post_title) {
+                this.showEditPostModal = false;
                 this.ifMyCollect = false;
                 this.ifDeleteMode = false;
                 this.ifBoardNotice = false;
@@ -1083,6 +1168,7 @@
             },
             // 切换该版块下所有帖子
             turnAllPostInThisBoard(board_id, board_title) {
+                this.showEditPostModal = false;
                 this.ifMyCollect = false;
                 this.ifDeleteMode = false;
                 this.ifBoardNotice = true;
@@ -1101,6 +1187,7 @@
             },
             // 切换我的版块下所有帖子
             turnAllPostInMyBoard(board_id, board_title) {
+                this.showEditPostModal = false;
                 this.ifMyCollect = false;
                 this.ifDeleteMode = false;
                 this.ifBoardNotice = true;
@@ -1119,6 +1206,7 @@
             },
             // 切换所有版块
             turnAllBoard() {
+                this.showEditPostModal = false;
                 this.ifMyCollect = false;
                 this.ifDeleteMode = false;
                 this.ifBoardNotice = false;
@@ -1138,6 +1226,7 @@
             },
             // 切换我的版块
             turnMyBoard() {
+                this.showEditPostModal = false;
                 this.ifMyCollect = false;
                 this.ifDeleteMode = false;
                 this.ifBoardNotice = false;
@@ -1193,6 +1282,7 @@
             },
             // 切换显示我的个人信息
             turnMyInformation() {
+                this.showEditPostModal = false;
                 this.ifMyCollect = false;
                 this.ifDeleteMode = false;
                 this.ifBoardNotice = false;

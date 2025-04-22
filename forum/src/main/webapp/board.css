@@ -257,3 +257,10 @@
 .follow-btn:hover {
     transform: translateY(-2px);
 }
+
+
+.confirm-publish-btn {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 15px;
+}

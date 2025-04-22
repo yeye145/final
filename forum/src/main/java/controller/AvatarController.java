@@ -5,6 +5,7 @@ import controller.utils.BaseServlet;
 import pojo.ResponseResult;
 import pojo.User;
 import service.impl.UploadAvatarServiceImpl;
+import utils.Constants;
 
 
 import javax.servlet.annotation.MultipartConfig;
@@ -33,7 +34,7 @@ public class AvatarController extends BaseServlet {
             if (filePart == null || filePart.getSize() == 0) {
                 System.out.println("未收到文件或文件为空");
                 response.getWriter().write(JSON.toJSONString(
-                        ResponseResult.error(400, "请选择有效的头像文件")));
+                        ResponseResult.error(Constants.RESPONSE_CODE_BAD_REQUEST, "请选择有效的头像文件")));
                 return;
             }
 
@@ -47,7 +48,7 @@ public class AvatarController extends BaseServlet {
             if (user == null) {
                 System.out.println("用户未登录");
                 response.getWriter().write(JSON.toJSONString(
-                        ResponseResult.error(401, "用户未登录")));
+                        ResponseResult.error(Constants.RESPONSE_CODE_UNAUTHORIZED, "用户未登录")));
                 return;
             }
 
@@ -61,7 +62,7 @@ public class AvatarController extends BaseServlet {
                 response.getWriter().write(json);
             } else {
                 String json = JSON.toJSONString(
-                        ResponseResult.error(500, "上传头像失败"));
+                        ResponseResult.error(Constants.RESPONSE_CODE_SERVER_ERROR, "上传头像失败"));
                 System.out.println("返回失败响应: " + json);
                 response.getWriter().write(json);
             }
@@ -69,7 +70,7 @@ public class AvatarController extends BaseServlet {
             System.out.println("上传过程中发生异常:");
             e.printStackTrace();
             response.getWriter().write(JSON.toJSONString(
-                    ResponseResult.error(500, "服务器内部错误")));
+                    ResponseResult.error(Constants.RESPONSE_CODE_SERVER_ERROR, "服务器内部错误")));
         }
     }
 
