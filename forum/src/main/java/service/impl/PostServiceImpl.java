@@ -1,17 +1,10 @@
 package service.impl;
 
-import dao.BoardDao;
-import dao.CollectDao;
-import dao.HistoryDao;
+import dao.*;
 import dao.impl.*;
-import dao.PostDao;
 
-import pojo.Collect;
-import pojo.History;
-import pojo.Post;
-import pojo.Subscription;
+import pojo.*;
 import service.PostService;
-import dao.SubscriptionDao;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -25,7 +18,15 @@ public class PostServiceImpl implements PostService {
     private SubscriptionDao subscriptionDao = new SubscriptionDaoImpl();
     private HistoryDao historyDao = new HistoryDaoImpl();
     private CollectDao collectDao = new CollectDaoImpl();
+    private UserDao userDao = new UserDaoImpl();
 
+
+    /*--------------------------------------------    发布帖子    --------------------------------------------*/
+    @Override
+    public void creatPost(Integer boardId, String title, String content, Integer userId) throws Exception {
+        User user = userDao.getUserById(userId);
+        postDao.creatPost(boardId, title, content, user);
+    }
 
 
     /*-----------------------------------------    取消收藏帖子    --------------------------------------------*/

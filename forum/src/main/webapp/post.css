@@ -342,3 +342,11 @@ textarea {
 .markdown-preview img {
     max-width: 100%;
 }
+
+/* 控制Markdown内容中的图片尺寸 */
+.markdown-body img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 10px auto;
+}

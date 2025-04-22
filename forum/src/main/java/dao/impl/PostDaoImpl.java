@@ -4,12 +4,23 @@ import dao.PostDao;
 import dao.utils.MySearch;
 import dao.utils.MyUpdate;
 import pojo.Post;
+import pojo.User;
 
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
 public class PostDaoImpl implements PostDao {
+
+    @Override
+    public void creatPost(Integer boardId, String title, String content, User user) throws Exception {
+        MyUpdate.update("INSERT INTO `forum`.`post` (`title`, `content`, `author_id`" +
+                ", `author_name`, `board_id`, `author_avatar`)" +
+                " VALUES (?, ?, ?, ?, ?, ?)"
+                , title, content
+                , user.getId(), user.getName()
+                , boardId, user.getAvatar());
+    }
 
 
     @Override

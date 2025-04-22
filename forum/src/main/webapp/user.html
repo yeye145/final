@@ -103,6 +103,7 @@
             <!-- 添加选择图片按钮 -->
             <button @click="triggerImageInput" class="follow-btn">选择图片上传</button>
             <hr>
+            <input class="search-bar" v-model="newPostTitle" placeholder="输入帖子的标题">
             <div class="markdown-editor">
                 <!-- 输入框 -->
                 <textarea
@@ -671,7 +672,8 @@
             thisPost: {},                       // 访问某个帖子
             allCommentInThisPost: [],           // 该帖子下的所有评论
             compiledMarkdown: '',               // 帖子内容
-            markdownText: '',
+            markdownText: '',                   // 发布帖子内容
+            newPostTitle: '',
 
             newComment: '',                     // 新的评论
             newCollectRemark: '',               // 新增收藏备注
@@ -714,12 +716,16 @@
         methods: {
             // 上传帖子
             createPost(){
+                if (!this.newPostTitle.trim()) {
+                    alert('帖子标题不能为空');
+                    return;
+                }
                 if (!this.markdownText.trim()) {
                     alert('帖子内容不能为空');
                     return;
                 }
                 axios.post('/post/creatPost', new URLSearchParams({
-                    title: this.newBoard.title,
+                    title: this.newPostTitle,
                     boardId: this.currentBoardId,
                     content: this.markdownText,
                 }), {
@@ -728,9 +734,7 @@
                     }
                 }).then(response => {
                     if (response.data.code === 200) {
-                        alert('帖子发布成功！快去叫你的好朋友来欣赏吧');
-
-
+                        alert('帖子发布成功！');
                     } else {
                         alert(response.data.message);
                     }

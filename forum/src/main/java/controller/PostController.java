@@ -18,6 +18,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import java.io.IOException;
 import java.util.List;
 
 @WebServlet("/post/*")
@@ -26,6 +27,27 @@ public class PostController extends BaseServlet {
 
     /*--------------------------------------------    私有变量    --------------------------------------------*/
     private PostService postService = new PostServiceImpl();
+
+
+    /*--------------------------------------------    发布帖子    --------------------------------------------*/
+    public void creatPost(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        Integer boardId = Integer.parseInt(request.getParameter("boardId"));
+        String title = request.getParameter("title");
+        String content = request.getParameter("content");
+        Integer userId = ControllerToolMethod.getUserId(request);
+        System.out.println("版块id:" + boardId + "下，用户id:"
+                + userId + "创建帖子，标题为：" + title + "\n帖子内容：" + content);
+
+        postService.creatPost(boardId, title, content, userId);
+
+        response.getWriter().write(
+                JSON.toJSONString(
+                        ResponseResult.success("收藏帖子成功！")
+                )
+        );
+
+        System.out.println("-->创建帖子成功！");
+    }
 
 
     /*--------------------------------------------    收藏这条帖子    -----------------------------------------*/
@@ -202,7 +224,6 @@ public class PostController extends BaseServlet {
     }
 
 
-
     /*---------------------------------    判断某条帖子，用户是否已经收藏   ---------------------------------------*/
     public void checkIfCollect(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
@@ -211,7 +232,7 @@ public class PostController extends BaseServlet {
         System.out.println("PostController.checkIfCollect" +
                 "，判断帖子是否收藏，帖子id" + postId + "，用户id：" + userId);
 
-        if (postService.checkIfCollect(postId,userId)) {
+        if (postService.checkIfCollect(postId, userId)) {
             // 返回已经收藏响应
             response.getWriter().write(
                     JSON.toJSONString(
@@ -230,10 +251,7 @@ public class PostController extends BaseServlet {
         }
 
 
-
-
     }
-
 
 
     /*-----------------------------------------    删除收藏这条帖子   ------------------------------------------*/
@@ -242,9 +260,9 @@ public class PostController extends BaseServlet {
         Integer postId = Integer.parseInt(request.getParameter("postId"));
         Integer userId = ControllerToolMethod.getUserId(request);
 
-        System.out.println("PostController，cancelCollectThisPost，取消收藏帖子id:"+ postId + ",用户id:" + userId);
+        System.out.println("PostController，cancelCollectThisPost，取消收藏帖子id:" + postId + ",用户id:" + userId);
 
-        postService.cancelCollectThisPost(postId,userId);
+        postService.cancelCollectThisPost(postId, userId);
 
         // 返回成功响应
         response.getWriter().write(

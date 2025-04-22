@@ -7,6 +7,8 @@ import java.util.Set;
 
 public interface UserDao {
 
+    User getUserById(Integer userId) throws SQLException;
+
     // 更新users表中的电话号码
     void updatePhoneInUser(String newPhone,String email) throws Exception;
 

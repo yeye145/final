@@ -10,6 +10,26 @@ import java.util.Set;
 
 public class UserDaoImpl implements UserDao {
 
+
+    @Override
+    public User getUserById(Integer userId) throws SQLException {
+        return MySearch.searchToOne(
+                "SELECT id, email, phone, password" +
+                        ", is_admin AS isAdmin" +
+                        ", name, grade, avatar" +
+                        ", if_receive_like AS ifReceiveLike" +
+                        ", receive_like_count AS receiveLikeCount" +
+                        ", fans_count AS fansCount" +
+                        ", post_count AS postCount" +
+                        ", receive_read_count AS receiveReadCount" +
+                        ", my_subscribe_count AS mySubscribeCount" +
+                        ", my_collect_count AS myCollectCount" +
+                        ", my_board_count AS myBoardCount" +
+                        " FROM `forum`.`User` WHERE `id` = ?", User.class, userId
+        );
+    }
+
+
     @Override
     public void updatePhoneInUser(String newPhone, String email) throws Exception {
         MyUpdate.update("UPDATE `forum`.`User` SET `phoneNumber` = ? " +
