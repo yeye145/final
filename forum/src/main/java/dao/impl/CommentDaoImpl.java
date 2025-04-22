@@ -2,6 +2,7 @@ package dao.impl;
 
 import dao.CommentDao;
 import dao.utils.MySearch;
+import dao.utils.MyUpdate;
 import pojo.Comment;
 
 import java.sql.SQLException;
@@ -17,6 +18,13 @@ public class CommentDaoImpl implements CommentDao {
                 ", user_name AS userName, user_avatar AS userAvatar " +
                 " FROM `forum`.`comment` WHERE post_id = ?" +
                 " ORDER BY parent_id ASC, time ASC", Comment.class, postId);
+    }
+
+
+    @Override
+    public void plusOneLikeCount(Integer commentId) throws Exception {
+        MyUpdate.update("UPDATE `forum`.`comment`" +
+                " SET like_count = like_count + 1 WHERE (`id` = ?)", commentId);
     }
 
 

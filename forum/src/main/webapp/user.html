@@ -241,7 +241,10 @@
                         </div>
                         <div class="comment-content" v-html="renderMarkdown(comment.content)"></div>
                         <div class="comment-actions">
-                            <button @click="likeComment(comment.id)">❤️ {{ comment.likeCount }}</button>
+                            <button
+                                    @click="likeComment(comment.id);
+                                    comment.likeCount = comment.likeCount + 1">❤️ {{ comment.likeCount }}
+                            </button>
                             <button @click="showReplyBox(comment.id)">回复</button>
                         </div>
                         <!-- 子评论区域：使用递归组件 -->
@@ -589,7 +592,9 @@
               <div class="comment-content" v-html="renderMarkdown('回复 @' + parentName + '：' + child.content)"></div>
               <!-- 操作按钮 -->
               <div class="comment-actions">
-                <button @click.stop="likeComment(child.id)">❤️ {{ child.likeCount }}</button>
+                <button @click.stop="likeComment(child.id);
+                  child.likeCount = child.likeCount + 1">❤️ {{ child.likeCount }}
+                </button>
                 <button @click.stop="showReplyBox(child.id)">回复</button>
               </div>
               <!-- 递归时继续传递方法，递归渲染子评论 -->
@@ -1126,12 +1131,13 @@
             },
             // 点赞评论
             likeComment(commentId) {
-                axios.post('/comment/like', new URLSearchParams({
+                axios.post('/comment/likeThisComment', new URLSearchParams({
                     commentId: commentId
                 })).then(response => {
                     if (response.data.code === 200) {
-                        const comment = this.allCommentInThisPost.find(c => c.id === commentId);
-                        if (comment) comment.likeCount++;
+                        console.log(response.data);
+                    } else {
+                        alert(response.data.message);
                     }
                 });
             },

@@ -45,5 +45,22 @@ public class CommentController extends BaseServlet {
         resultCommentList.forEach(System.out::println);
     }
 
+    /*------------------------------------------    为这条帖子点个赞    ----------------------------------------*/
+    public void likeThisComment(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        Integer commentId = Integer.parseInt(request.getParameter("commentId"));
+
+        System.out.println("CommentController.likeThisComment，为帖子点赞，评论id：" + commentId);
+
+        commentService.likeThisComment(commentId);
+
+        response.getWriter().write(
+                JSON.toJSONString(
+                        ResponseResult.success("点赞评论成功！")
+                )
+        );
+
+    }
+
+
 
 }

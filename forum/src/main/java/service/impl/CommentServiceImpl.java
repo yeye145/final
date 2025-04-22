@@ -48,4 +48,12 @@ public class CommentServiceImpl implements CommentService {
         return rootComment;
     }
 
+
+    /*-----------------------------------------    为评论点赞    ---------------------------------------------*/
+    @Override
+    public void likeThisComment(Integer commentId) throws Exception {
+        commentDao.plusOneLikeCount(commentId);
+    }
+
+
 }

@@ -206,7 +206,7 @@ public class PostController extends BaseServlet {
 
         response.getWriter().write(
                 JSON.toJSONString(
-                        ResponseResult.success("点赞成功！")
+                        ResponseResult.success("点赞帖子成功！")
                 )
         );
 
