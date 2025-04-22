@@ -157,11 +157,13 @@
                 <div class="fold-buttons">
                     <button @click="handleBoardSubscribeClick"
                             class="follow-btn"
-                    >{{ this.allPostInThisBoard.ifHadSubscribe ? '✔ 已关注' : '＋ 关注' }}</button>
+                    >{{ this.allPostInThisBoard.ifHadSubscribe ? '✔ 已关注' : '＋ 关注' }}
+                    </button>
                     <button @click="turnEditPost" class="follow-btn">＋ 发布帖子</button>
                 </div>
                 <!--渲染全部帖子信息，点击帖子切换到对应帖子内容-->
                 <div v-for="post in allPostInThisBoard"
+                     v-if="post.title && post.title.trim()!== ''"
                      :key="post.id"
                      class="post-card"
                      @click="turnThisPost(post.id, post.title)">
@@ -724,7 +726,7 @@
                     // 未关注状态,则关注
                     this.subscribeThisBoard();
                 }
-                this.turnAllPostInThisBoard(this.currentBoardId,this.currentPath[this.currentPath.length - 1]);
+                this.turnAllPostInThisBoard(this.currentBoardId, this.currentPath[this.currentPath.length - 1]);
             },
             // 取消收藏
             cancelSubscribeThisBoard() {
@@ -742,7 +744,7 @@
                 });
             },
             // 上传帖子
-            createPost(){
+            createPost() {
                 if (!this.newPostTitle.trim()) {
                     alert('帖子标题不能为空');
                     return;
@@ -1508,7 +1510,7 @@
                                 ifHadSubscribe: isSubscribe
                             };
                         });
-                        console.log("获取版块：" + board_title + "的所有帖子成功");
+                        console.log("获取版块：" + board_title + "的所有帖子成功,共有" + this.allPostInThisBoard.length + "条帖子");
                     }
                 })
                     .catch(error => {
