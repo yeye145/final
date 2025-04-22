@@ -735,6 +735,9 @@
                 }).then(response => {
                     if (response.data.code === 200) {
                         alert('帖子发布成功！');
+                        this.markdownText = '';
+                        this.newPostTitle = '';
+                        this.compiledMarkdown = '';
                     } else {
                         alert(response.data.message);
                     }
