@@ -40,8 +40,8 @@
                  @mouseleave="ifShowDropdown = false"
             >
                 <div class="dropdown-item" @click="turnMyInformation">个人信息</div>
-                <div class="dropdown-item" @click="">举报用户</div>
-                <div class="dropdown-item" @click="">举报帖子</div>
+                <div class="dropdown-item" @click="showReportUserModal = true">举报用户</div>
+                <div class="dropdown-item" @click="showReportPostModal = true">举报帖子</div>
                 <div class="dropdown-item" @click="exitLogin">退出登录</div>
             </div>
         </div>
@@ -556,6 +556,45 @@
             </div>
         </div>
 
+        <!-- 举报用户弹窗 -->
+        <div v-if="showReportUserModal" class="modal">
+            <div class="modal-content">
+                <h3>举报用户</h3>
+                <div class="form-group">
+                    <label>您要举报的用户的id:</label>
+                    <input v-model="reportUser.reportedThisUserId" type="text" placeholder="输入要举报的用户的id">
+                </div>
+                <div class="form-group">
+                    <label>举报原因:</label>
+                    <textarea v-model="reportUser.reason" placeholder="输入举报原因"></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button @click="submitReportUser">提交举报</button>
+                    <button @click="showReportUserModal = false">取消</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 举报帖子弹窗 -->
+        <div v-if="showReportPostModal" class="modal">
+            <div class="modal-content">
+                <h3>举报帖子</h3>
+                <div class="form-group">
+                    <label>要举报的帖子id:</label>
+                    <input v-model="reportPost.postId" type="text">
+                </div>
+                <div class="form-group">
+                    <label>举报原因:</label>
+                    <textarea v-model="reportPost.reason" placeholder="输入举报原因"></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button @click="submitReportPost">提交举报</button>
+                    <button @click="showReportPostModal = false">取消</button>
+                </div>
+            </div>
+        </div>
+
+
     </div>
 
 </div>
@@ -691,6 +730,16 @@
                 content: '',
                 boardId: '',
             },
+            showReportUserModal: false,    // 举报用户弹窗
+            showReportPostModal: false,    // 举报帖子弹窗
+            reportPost: {
+                postId: '',
+                reason: '',                // 举报原因
+            },
+            reportUser: {
+                reportedThisUserId: '',    // 被举报的用户的id
+                reason: '',                // 举报原因
+            },
             currentPath: ['QG技术论坛', '主页'],
 
             avatar: '/images/avatar/initAvatar.jpg',
@@ -745,6 +794,60 @@
             this.highlightAll();
         },
         methods: {
+            // 提交举报用户
+            submitReportUser() {
+                if (!this.reportUser.reason.trim()) {
+                    alert('请填写举报该用户的原因');
+                    return;
+                }
+                alert(this.reportUser.reason + '\n' + this.reportUser.reportedThisUserId)
+                axios.post('/user/reportUser', {
+                    reportedThisUserId : this.reportUser.reportedThisUserId,
+                    reason: this.reportUser.reason,
+                }, {
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+                }).then(response => {
+                    if (response.data.code === 200) {
+                        console.log(response.data);
+                        alert('举报已提交，管理员会尽快处理');
+                        this.showReportUserModal = false;
+                        this.reportUser = {
+                            reportedThisUserId : '',
+                            reason: '',
+                        };
+                    } else {
+                        alert(response.data.message);
+                        console.error(response.data.code + ' ' + response.data.message);
+                    }
+                });
+            },
+            // 提交举报帖子
+            submitReportPost() {
+                if (!this.reportPost.reason.trim()) {
+                    alert('请填写举报该帖子的原因');
+                    return;
+                }
+                alert(this.reportPost.reason + '\n' + this.reportPost.postId)
+                axios.post('/user/reportPost', {
+                    postId: this.reportPost.postId,
+                    reason: this.reportPost.reason,
+                }, {
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+                }).then(response => {
+                    if (response.data.code === 200) {
+                        console.log(response.data);
+                        alert('举报已提交，版主会尽快处理');
+                        this.showReportPostModal = false;
+                        this.reportUser = {
+                            postId : '',
+                            reason: '',
+                        };
+                    } else {
+                        alert(response.data.message);
+                        console.error(response.data.code + ' ' + response.data.message);
+                    }
+                });
+            },
             // 保存跟评
             saveComment() {
                 axios.post('/comment/creatCommentOnComment', new URLSearchParams({
