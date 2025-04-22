@@ -207,7 +207,7 @@
                     <button class="like-collect-item"
                             @click="handleUserSubscribeClick(thisPost.authorId)"
                             :class="{ 'collected': thisPost.ifHadSubscribeUser }">
-                        {{ thisPost.ifHadSubscribeUser ? '✅ 已关注' : '➕ 关注' }}
+                        {{ thisPost.ifHadSubscribeUser ? '✅ 已关注作者' : '➕ 关注作者' }}
                     </button>
                 </div>
             </div>
@@ -543,6 +543,19 @@
             </div>
         </div>
 
+        <!-- 回复评论——对评论进行跟评 -->
+        <div v-if="ifShowEditCommentBox" class="modal">
+            <div class="modal-content">
+                <h3>回复</h3>
+                <div class="form-group">
+                    <label>对帖子跟评</label>
+                    <textarea v-model="newCommentOnComment" placeholder="输入跟评内容"></textarea>
+                </div>
+                <button @click="saveComment">保存</button>
+                <button @click="ifShowEditCommentBox = false">取消</button>
+            </div>
+        </div>
+
     </div>
 
 </div>
@@ -635,6 +648,7 @@
             ifMyCollect: false,                 // 是否显示我的收藏
             ifDeleteMode: false,                // 是否进入帖子删除模式
             ifShowEditCollectRemark: false,     // 是否显示编辑收藏备注
+            ifShowEditCommentBox: false,            // 是否显示编辑评论
 
 
             showHistoryModal: false,            // 是否显示历史公告弹窗
@@ -689,6 +703,8 @@
             compiledMarkdown: '',               // 帖子内容
             markdownText: '',                   // 发布帖子内容
             newPostTitle: '',
+            newCommentOnComment: '',            // 对评论跟评
+            currentCommentId: '',               // 当前评论的id
 
             newComment: '',                     // 新的评论
             newCollectRemark: '',               // 新增收藏备注
@@ -729,6 +745,30 @@
             this.highlightAll();
         },
         methods: {
+            // 保存跟评
+            saveComment() {
+                axios.post('/comment/creatCommentOnComment', new URLSearchParams({
+                    postId: this.thisPost.id,
+                    boardId: this.currentBoardId,
+                    parentId: this.currentCommentId,
+                    content: this.newCommentOnComment,
+                }), {
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                }).then(response => {
+                    if (response.data.code === 200) {
+                        this.ifShowEditCommentBox = false;
+                        this.newCommentOnComment = '';
+                        this.fetchComment(this.thisPost.id);
+                        // 更新评论
+                        this.thisPost.commentCount++;
+                        console.log("评论成功");
+                    }
+                }).catch(error => {
+                    alert('评论失败: ' + error.message);
+                });
+            },
             // 订阅这个作者
             subscribeThisUser(authorId) {
                 axios.post('/user/subscribeThisUser', new URLSearchParams({
@@ -1102,7 +1142,8 @@
             },
             // 回复输入
             showReplyBox(commentId) {
-                // 实现回复框显示逻辑
+                this.ifShowEditCommentBox = true;
+                this.currentCommentId = commentId;
             },
             // 时间格式化
             formatTime(time) {

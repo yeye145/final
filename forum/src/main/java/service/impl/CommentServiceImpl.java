@@ -21,6 +21,24 @@ public class CommentServiceImpl implements CommentService {
     private BoardBanDao boardBanDao = new BoardBanDaoImpl();
     private UserDao userDao = new UserDaoImpl();
 
+    /*-----------------------------------------    在该评论下发表评论    --------------------------------------*/
+    @Override
+    public boolean creatCommentOnComment(Integer postId, Integer boardId, Integer parentId, Integer userId, String content) throws Exception {
+
+        System.out.println("CommentServiceImpl.creatCommentOnComment，发布评论的跟评，父评论id：" + parentId);
+
+        Set<BoardBan> allBanUserSet = boardBanDao.getAllBanUserSet();
+
+        for (BoardBan boardBan : allBanUserSet) {
+            if (boardBan.getBanId() == userId && boardBan.getBoardId().equals(boardId)) {
+                System.out.println("--X>发布失败，用户已在该版块被禁止发言");
+                return false;
+            }
+        }
+        commentDao.creatCommentOnComment(postId, parentId, userDao.getUserById(userId), content);
+        return true;
+    }
+
 
     /*-----------------------------------------    在该帖子下发表评论    --------------------------------------*/
     @Override

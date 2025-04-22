@@ -12,4 +12,6 @@ public interface CommentDao {
     void plusOneLikeCount(Integer commentId) throws Exception;
 
     void creatCommentOnPost(Integer postId, User user, String content) throws Exception;
+
+    void creatCommentOnComment(Integer postId, Integer parentId, User user, String content) throws Exception;
 }

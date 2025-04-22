@@ -36,4 +36,12 @@ public class CommentDaoImpl implements CommentDao {
     }
 
 
+    @Override
+    public void creatCommentOnComment(Integer postId, Integer parentId, User user, String content) throws Exception {
+        MyUpdate.update("INSERT INTO `forum`.`comment`" +
+                " (`post_id`, `content`, `user_id`, `user_name`, `user_avatar`, `parent_id`)" +
+                " VALUES (?, ?, ?, ?, ?, ?)", postId, content
+                , user.getId(), user.getName(), user.getAvatar(), parentId);
+    }
+
 }

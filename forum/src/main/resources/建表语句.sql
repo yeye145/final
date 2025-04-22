@@ -99,12 +99,11 @@ CREATE TABLE collect
 (
     id       INT PRIMARY KEY AUTO_INCREMENT,
     user_id  INT NOT NULL COMMENT '用户ID',
-    board_id INT NOT NULL COMMENT '版块ID',
     post_id  INT NOT NULL COMMENT '帖子ID',
-    remark   TEXT    NOT NULL COMMENT '收藏备注',
+    remark   TEXT COMMENT '收藏备注',
     time    DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '收藏时间',
+    UNIQUE KEY `unique_user_post` (`user_id`, `post_id`),
     FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE,
-    FOREIGN KEY (board_id) REFERENCES board (id) ON DELETE CASCADE,
     FOREIGN KEY (post_id) REFERENCES post (id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -173,6 +172,8 @@ CREATE TABLE subscription
     user_id               INT NOT NULL,
     subscribe_to_user_id  INT,
     subscribe_to_board_id INT,
+    UNIQUE KEY `unique_subscription_board` (user_id, subscribe_to_board_id),
+    UNIQUE KEY `unique_subscription_user` (user_id, subscribe_to_user_id),
     FOREIGN KEY (subscribe_to_user_id) REFERENCES user (id) ON DELETE CASCADE,
     FOREIGN KEY (subscribe_to_board_id) REFERENCES board (id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -463,3 +464,6 @@ INSERT INTO `forum`.`notice` (`board_id`, `content`) VALUES ('1', '这里是张�
 INSERT INTO `forum`.`notice` (`board_id`, `content`) VALUES ('1', '请大家不要发布无关内容，专注于学习交流');
 INSERT INTO `forum`.`notice` (`board_id`, `content`) VALUES ('2', 'B站关注我~');
 
+-- 生成收藏
+INSERT INTO `forum`.`collect` (`user_id`, `post_id`, `remark`) VALUES ('2', '2', '备注');
+INSERT INTO `forum`.`collect` (`user_id`, `post_id`, `remark`) VALUES ('2', '3', '备注3');

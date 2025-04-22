@@ -92,4 +92,36 @@ public class CommentController extends BaseServlet {
 
     }
 
+
+    /*------------------------------------------    对评论进行评论    ------------------------------------------*/
+    public void creatCommentOnComment(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        Integer postId = Integer.parseInt(request.getParameter("postId"));
+        Integer userId = ControllerToolMethod.getUserId(request);
+        Integer parentId = Integer.parseInt(request.getParameter("parentId"));
+        Integer boardId = Integer.parseInt(request.getParameter("boardId"));
+        String content = request.getParameter("content");
+
+
+        System.out.println("CommentController.creatCommentOnComment，对评论进行评论，父评论id：" + parentId);
+
+        if (commentService.creatCommentOnComment(postId, boardId, parentId, userId, content)) {
+            response.getWriter().write(
+                    JSON.toJSONString(
+                            ResponseResult.success("发表评论成功！")
+                    )
+            );
+            System.out.println("-->发表评论成功！");
+        } else {
+            response.getWriter().write(
+                    JSON.toJSONString(
+                            ResponseResult.error(Constants.RESPONSE_CODE_FORBIDDEN, "您已被禁止在该版块发布内容！")
+                    )
+            );
+            System.out.println("--X>发表评论失败");
+        }
+
+
+    }
+
+
 }
