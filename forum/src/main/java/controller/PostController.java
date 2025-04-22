@@ -38,15 +38,24 @@ public class PostController extends BaseServlet {
         System.out.println("版块id:" + boardId + "下，用户id:"
                 + userId + "创建帖子，标题为：" + title + "\n帖子内容：" + content);
 
-        postService.creatPost(boardId, title, content, userId);
+        if( postService.creatPost(boardId, title, content, userId) ){
+            response.getWriter().write(
+                    JSON.toJSONString(
+                            ResponseResult.success("发布帖子成功！")
+                    )
+            );
+            System.out.println("-->创建帖子成功！");
+        } else {
+            response.getWriter().write(
+                    JSON.toJSONString(
+                            ResponseResult.error(Constants.RESPONSE_CODE_FORBIDDEN,"您被禁止在该版块发帖子！")
+                    )
+            );
+            System.out.println("-->创建帖子失败！用户已被禁止在该版块发帖子");
+        }
 
-        response.getWriter().write(
-                JSON.toJSONString(
-                        ResponseResult.success("收藏帖子成功！")
-                )
-        );
 
-        System.out.println("-->创建帖子成功！");
+
     }
 
 

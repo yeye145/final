@@ -4,15 +4,17 @@ public class BoardBan {
     private Integer id;
     private Integer banId;
     private Integer boardId;
+    private String reason;
 
 
     public BoardBan() {
     }
 
-    public BoardBan(Integer id, Integer banId, Integer boardId) {
+    public BoardBan(Integer id, Integer banId, Integer boardId, String reason) {
         this.id = id;
         this.banId = banId;
         this.boardId = boardId;
+        this.reason = reason;
     }
 
     /**
@@ -63,7 +65,23 @@ public class BoardBan {
         this.boardId = boardId;
     }
 
+    /**
+     * 获取
+     * @return reason
+     */
+    public String getReason() {
+        return reason;
+    }
+
+    /**
+     * 设置
+     * @param reason
+     */
+    public void setReason(String reason) {
+        this.reason = reason;
+    }
+
     public String toString() {
-        return "BoardBan{id = " + id + ", banId = " + banId + ", boardId = " + boardId + "}";
+        return "BoardBan{id = " + id + ", banId = " + banId + ", boardId = " + boardId + ", reason = " + reason + "}";
     }
 }

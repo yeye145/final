@@ -9,7 +9,7 @@ import java.util.List;
 public interface PostService {
 
     /*--------------------------------------------    发布帖子    --------------------------------------------*/
-    void creatPost(Integer boardId, String title, String content, Integer userId) throws Exception;
+    boolean creatPost(Integer boardId, String title, String content, Integer userId) throws Exception;
 
     /*-----------------------------------------    取消收藏帖子    --------------------------------------------*/
     void cancelCollectThisPost(Integer postId, Integer userId) throws Exception;

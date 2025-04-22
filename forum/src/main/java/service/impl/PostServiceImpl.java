@@ -19,13 +19,25 @@ public class PostServiceImpl implements PostService {
     private HistoryDao historyDao = new HistoryDaoImpl();
     private CollectDao collectDao = new CollectDaoImpl();
     private UserDao userDao = new UserDaoImpl();
+    private BoardBanDao boardBanDao = new BoardBanDaoImpl();
 
 
     /*--------------------------------------------    发布帖子    --------------------------------------------*/
     @Override
-    public void creatPost(Integer boardId, String title, String content, Integer userId) throws Exception {
+    public boolean creatPost(Integer boardId, String title, String content, Integer userId) throws Exception {
+
+        Set<BoardBan> allBanUserSet = boardBanDao.getAllBanUserSet();
+
+        for (BoardBan boardBan : allBanUserSet) {
+            if (boardBan.getBanId() == userId && boardBan.getBoardId().equals(boardId)) {
+                return false;
+            }
+        }
+
         User user = userDao.getUserById(userId);
         postDao.creatPost(boardId, title, content, user);
+
+        return true;
     }
 
 
@@ -97,6 +109,7 @@ public class PostServiceImpl implements PostService {
         historyDao.recordHistory(postId, userId);
         return true;
     }
+
 
     /*-----------------------------------------    获得历史记录    --------------------------------------------*/
     @Override
