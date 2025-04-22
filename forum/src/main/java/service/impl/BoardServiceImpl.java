@@ -23,6 +23,29 @@ public class BoardServiceImpl implements BoardService {
     private NoticeDao noticeDao = new NoticeDaoImpl();
 
 
+    /*-----------------------------------------    取消关注版块    --------------------------------------------*/
+    @Override
+    public void cancelSubscribeThisBoard(Integer boardId, Integer userId) throws Exception {
+        subscriptionDao.cancelSubscribeThisBoard(boardId, userId);
+    }
+
+
+    /*--------------------------------    判断用户是否已经关注版块    --------------------------------------------*/
+    @Override
+    public boolean checkIfSubcribe(Integer boardId, Integer userId) throws Exception {
+        // 获取收藏记录列表
+        List<Subscription> subscriptionList = subscriptionDao.getOneSubscriptionList(userId);
+        for (Subscription subscription : subscriptionList) {
+            if (subscription.getSubscribeToBoardId() == (boardId)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+
+
     /*-------------------------------------------    订阅版块    ----------------------------------------------*/
     @Override
     public void subscribeThisBoard(Integer boardId, Integer userId) throws Exception {

@@ -23,5 +23,15 @@ public class SubscriptionDaoImpl implements SubscriptionDao {
     public void subscribeThisBoard(Integer boardId, Integer userId) throws Exception {
         MyUpdate.update("INSERT INTO `forum`.`subscription`" +
                 " (`user_id`, `subscribe_to_board_id`) VALUES (?, ?)", userId, boardId);
+
+
     }
+
+
+    @Override
+    public void cancelSubscribeThisBoard(Integer boardId, Integer userId) throws Exception {
+        MyUpdate.update("DELETE FROM `forum`.`subscription`" +
+                " WHERE (`user_id` = ? AND `subscribe_to_board_id` = ?)", userId, boardId);
+    }
+
 }

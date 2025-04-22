@@ -27,6 +27,60 @@ public class BoardController extends BaseServlet {
     private BoardService boardService = new BoardServiceImpl();
     private NoticeService noticeService = new NoticeServiceImpl();
 
+
+    /*---------------------------------    判断某个版块，用户是否已经关注   ---------------------------------------*/
+    public void checkIfHadSubscribeThisBoard(HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+        Integer boardId = Integer.parseInt(request.getParameter("boardId"));
+        Integer userId = ControllerToolMethod.getUserId(request);
+        System.out.println("BoardController.checkIfHadSubscribeThisBoard" +
+                "，判断版块是否收藏，版块id" + boardId + "，用户id：" + userId);
+
+        if (boardService.checkIfSubcribe(boardId, userId)) {
+            // 返回已经收藏响应
+            response.getWriter().write(
+                    JSON.toJSONString(
+                            ResponseResult.success("yes")
+                    )
+            );
+            System.out.println("-->已经关注");
+        } else {
+            // 返回已经收藏响应
+            response.getWriter().write(
+                    JSON.toJSONString(
+                            ResponseResult.success("no")
+                    )
+            );
+            System.out.println("-->还没有关注");
+        }
+
+
+    }
+
+
+    /*-----------------------------------------    取消关注这个版块    -----------------------------------------*/
+    public void cancelSubscribeThisBoard(HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+       Integer boardId = Integer.parseInt(request.getParameter("boardId"));
+        Integer userId = ControllerToolMethod.getUserId(request);
+
+        System.out.println("BoardController，cancelSubscribeThisBoard，取消关注版块id:" + boardId + ",用户id:" + userId);
+        boardService.cancelSubscribeThisBoard(boardId,userId);
+
+
+        // 返回成功响应
+        response.getWriter().write(
+                JSON.toJSONString(
+                        ResponseResult.success("取消关注版块成功！")
+                )
+        );
+
+        System.out.println("-->取消关注版块成功！");
+
+    }
+
+
+
     /*-------------------------------------------    获取我的版块    ------------------------------------------*/
     public void subscribeThisBoard(HttpServletRequest request, HttpServletResponse response) throws Exception {
         Integer userId = ControllerToolMethod.getUserId(request);

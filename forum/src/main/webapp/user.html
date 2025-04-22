@@ -155,7 +155,9 @@
                            @input="searchPost">
                 </div>
                 <div class="fold-buttons">
-                    <button @click="subscribeThisBoard" class="follow-btn">关注版块</button>
+                    <button @click="handleBoardSubscribeClick"
+                            class="follow-btn"
+                    >{{ this.allPostInThisBoard.ifHadSubscribe ? '✔ 已关注' : '＋ 关注' }}</button>
                     <button @click="turnEditPost" class="follow-btn">＋ 发布帖子</button>
                 </div>
                 <!--渲染全部帖子信息，点击帖子切换到对应帖子内容-->
@@ -714,6 +716,31 @@
             this.highlightAll();
         },
         methods: {
+            handleBoardSubscribeClick() {
+                if (this.allPostInThisBoard.ifHadSubscribe) {
+                    // 已关注状态：取消关注
+                    this.cancelSubscribeThisBoard();
+                } else {
+                    // 未关注状态,则关注
+                    this.subscribeThisBoard();
+                }
+                this.turnAllPostInThisBoard(this.currentBoardId,this.currentPath[this.currentPath.length - 1]);
+            },
+            // 取消收藏
+            cancelSubscribeThisBoard() {
+                axios.post('/board/cancelSubscribeThisBoard', new URLSearchParams({
+                    boardId: this.currentBoardId,
+                }), {
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                }).then(response => {
+                    if (response.data.code === 200) {
+                        this.allPostInThisBoard.ifHadSubscribe = false;
+                        alert('已取消关注');
+                    }
+                });
+            },
             // 上传帖子
             createPost(){
                 if (!this.newPostTitle.trim()) {
@@ -1475,6 +1502,12 @@
                         this.allPostInThisBoard = response.data.data;
                         this.originalAllPostInThisBoard = this.allPostInThisBoard;
                         this.currentPath = ['QG技术论坛', '版块：' + board_title, '所有帖子'];
+                        this.checkIfHadSubscribeThisBoard(board_id).then(isSubscribe => {
+                            this.allPostInThisBoard = {
+                                ...this.allPostInThisBoard,
+                                ifHadSubscribe: isSubscribe
+                            };
+                        });
                         console.log("获取版块：" + board_title + "的所有帖子成功");
                     }
                 })
@@ -1635,6 +1668,22 @@
                 try {
                     const response = await axios.post('/post/checkIfCollect', new URLSearchParams({
                         postId: postId,
+                    }), {
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        }
+                    });
+                    return response.data.data === "yes";
+                } catch (error) {
+                    console.error('检查收藏状态失败:', error);
+                    return false;
+                }
+            },
+            // 检查版块是否已经关注
+            async checkIfHadSubscribeThisBoard(boardId) {
+                try {
+                    const response = await axios.post('/board/checkIfHadSubscribeThisBoard', new URLSearchParams({
+                        boardId: boardId,
                     }), {
                         headers: {
                             'Content-Type': 'application/x-www-form-urlencoded'
