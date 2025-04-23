@@ -849,9 +849,9 @@
                 this.ifAllBoard = false;
                 this.ifAllPostInThisBoard = false;
                 this.ifMyHistory = false;
-                if (this.checkIfNewMessage()) {
-                    this.ifHadNewMessage = true;
-                }
+                this.checkIfNewMessage().then(isCollected => {
+                    this.ifHadNewMessage = isCollected;
+                });
             },
             // 切换我的消息通知
             turnMyMessage() {
