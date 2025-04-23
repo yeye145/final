@@ -104,8 +104,17 @@ public class CommentServiceImpl implements CommentService {
 
     /*-----------------------------------------    为评论点赞    ---------------------------------------------*/
     @Override
-    public void likeThisComment(Integer commentId) throws Exception {
+    public boolean likeThisComment(Integer commentId, Integer userId) throws Exception {
+        if (userId == null) return false;
         commentDao.plusOneLikeCount(commentId);
+        // 获得评论者user信息
+        User user = userDao.getUserById(userId);
+        // 获得评论信息
+        Comment comment = commentDao.getCommentById(commentId);
+        messageDao.creatMessage("用户：" + user.getName()
+                        + " 给您的评论“" + comment.getContent() + "”点了1个赞"
+                , comment.getUserId(), null, "评论回复");
+        return true;
     }
 
 

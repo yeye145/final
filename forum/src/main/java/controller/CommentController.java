@@ -50,16 +50,25 @@ public class CommentController extends BaseServlet {
     /*------------------------------------------    为这条评论点个赞    ----------------------------------------*/
     public void likeThisComment(HttpServletRequest request, HttpServletResponse response) throws Exception {
         Integer commentId = Integer.parseInt(request.getParameter("commentId"));
+        Integer userId = ControllerToolMethod.getUserId(request);
 
         System.out.println("CommentController.likeThisComment，为评论点赞，评论id：" + commentId);
 
-        commentService.likeThisComment(commentId);
+        if(commentService.likeThisComment(commentId,userId)){
+            response.getWriter().write(
+                    JSON.toJSONString(
+                            ResponseResult.success("点赞评论成功！")
+                    )
+            );
+        } else {
+            response.getWriter().write(
+                    JSON.toJSONString(
+                            ResponseResult.error(Constants.RESPONSE_CODE_UNAUTHORIZED, "非法点赞")
+                    )
+            );
+            System.out.println("--X>非法点赞，未登录");
+        }
 
-        response.getWriter().write(
-                JSON.toJSONString(
-                        ResponseResult.success("点赞评论成功！")
-                )
-        );
 
     }
 

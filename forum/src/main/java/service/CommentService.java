@@ -14,6 +14,7 @@ public interface CommentService {
 
     List<Comment> getAllCommentInThisPost(Integer postId) throws SQLException;
 
+
     /*-----------------------------------------    为评论点赞    ---------------------------------------------*/
-    void likeThisComment(Integer commentId) throws Exception;
+    boolean likeThisComment(Integer commentId, Integer userId) throws Exception;
 }
