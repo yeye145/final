@@ -8,7 +8,10 @@ import java.util.List;
 public interface MessageDao {
 
 
+    /*--------------------------------------    确认查收这条信息    ---------------------------------------------*/
+    void receiveThisMessage(Integer messageId) throws Exception;
+
     void creatMessage(String content, Integer userIdReceive, Integer userIdSend, String type) throws Exception;
-    
+
     List<Message> getOneMessageList(Integer userId) throws SQLException;
 }

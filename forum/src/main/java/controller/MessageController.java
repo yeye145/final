@@ -63,4 +63,14 @@ public class MessageController extends BaseServlet {
 
     }
 
+
+
+    /*--------------------------------------------    查收信息    ----------------------------------------------*/
+    public void receiveThisMessage(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        Integer messageId = Integer.parseInt(request.getParameter("messageId"));
+        System.out.println("MessageController，receiveThisMessage，查收信息" + messageId);
+        messageService.receiveThisMessage(messageId);
+    }
+
+
 }

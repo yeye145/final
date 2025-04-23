@@ -604,7 +604,9 @@
                 <!--渲染通知信息-->
                 <div v-for="message in myMessage"
                      :key="message.id"
-                     class="post-card">
+                     class="post-card"
+                     @click="receiveThisMessage(message)"
+                >
                     <span v-if="message.viewCount === 0" class="notification-badge"></span>
                     <div class="post-meta">
                         <img :src="message.userAvatarSend" class="author-avatar">
@@ -820,6 +822,21 @@
             this.highlightAll();
         },
         methods: {
+            // 查收信息
+            receiveThisMessage (message) {
+                if (message.viewCount >= 1) {
+                    return;
+                }
+                axios.post('/message/receiveThisMessage', {
+                    messageId: message.id,
+                }, {
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+                });
+                message.viewCount = 1;
+                this.checkIfNewMessage().then(isCollected => {
+                    this.ifHadNewMessage = isCollected;
+                });
+            },
             // 查看我是否有新的通知消息
             async checkIfNewMessage() {
                 try {

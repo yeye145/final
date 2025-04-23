@@ -12,4 +12,7 @@ public interface MessageService {
 
     /*--------------------------------------    查看是否有新的信息    -------------------------------------------*/
     boolean checkIfNewMessage(Integer userId) throws SQLException;
+
+    /*--------------------------------------    确认查收这条信息    ---------------------------------------------*/
+    void receiveThisMessage(Integer messageId) throws Exception;
 }

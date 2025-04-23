@@ -57,4 +57,11 @@ public class MessageServiceImpl implements MessageService {
         return false;
     }
 
+
+    /*--------------------------------------    确认查收这条信息    ---------------------------------------------*/
+    @Override
+    public void receiveThisMessage(Integer messageId) throws Exception {
+        messageDao.receiveThisMessage(messageId);
+    }
+
 }
