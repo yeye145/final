@@ -1,6 +1,7 @@
 package service.impl;
 
 import dao.impl.PostDaoImpl;
+import dao.impl.ReportDaoImpl;
 import dao.impl.SubscriptionDaoImpl;
 import dao.impl.UserDaoImpl;
 import pojo.Post;
@@ -16,6 +17,7 @@ public class UserServiceImpl implements UserService {
     private UserDaoImpl userDao = new UserDaoImpl();
     private SubscriptionDaoImpl subscriptionDao = new SubscriptionDaoImpl();
     private PostDaoImpl postDao = new PostDaoImpl();
+    private ReportDaoImpl reportDao = new ReportDaoImpl();
 
 
     /*-------------------------------------------    举报作者    ----------------------------------------------*/
@@ -25,11 +27,11 @@ public class UserServiceImpl implements UserService {
         User user = userDao.getUserById(reportedThisUserId);
 
         // 若找不到该用户
-        if (user.getId() == null) {
+        if (user == null) {
             return false;
         }
 
-        userDao.reportUser(reportedThisUserId, userId, reason);
+        reportDao.reportUser(reportedThisUserId, userId, reason);
 
         return true;
     }
@@ -42,11 +44,11 @@ public class UserServiceImpl implements UserService {
         Post thePostWhichBeReported = postDao.getThisPostById(postId);
 
         // 若找不到这条帖子，返回举报失败
-        if (thePostWhichBeReported.getBoardId() == null) {
+        if (thePostWhichBeReported == null) {
             return false;
         }
 
-        userDao.reportPost(postId, thePostWhichBeReported.getBoardId(), userId, reason);
+        reportDao.reportPost(postId, thePostWhichBeReported.getBoardId(), userId, reason);
         return true;
     }
 

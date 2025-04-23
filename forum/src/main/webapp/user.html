@@ -29,11 +29,10 @@
             {{ currentPath.join(' > ') }}
         </div>
         <div class="avatar"
-             @click="turnMyInformation"
              @mouseenter="ifShowDropdown = true"
              @mouseleave="ifShowDropdown = false"
         >
-            <img :src="avatar" class="avatar-img" alt="头像">
+            <img :src="avatar" class="avatar-img" alt="头像" @click="turnMyInformation">
             <div class="avatar-dropdown"
                  v-if="ifShowDropdown"
                  @mouseenter="ifShowDropdown = true"
@@ -800,7 +799,6 @@
                     alert('请填写举报该用户的原因');
                     return;
                 }
-                alert(this.reportUser.reason + '\n' + this.reportUser.reportedThisUserId)
                 axios.post('/user/reportUser', {
                     reportedThisUserId : this.reportUser.reportedThisUserId,
                     reason: this.reportUser.reason,
@@ -827,7 +825,6 @@
                     alert('请填写举报该帖子的原因');
                     return;
                 }
-                alert(this.reportPost.reason + '\n' + this.reportPost.postId)
                 axios.post('/user/reportPost', {
                     postId: this.reportPost.postId,
                     reason: this.reportPost.reason,

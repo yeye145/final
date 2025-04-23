@@ -28,7 +28,7 @@ public class UserController extends BaseServlet {
         Integer userId = ControllerToolMethod.getUserId(request);
         Integer reportedThisUserId = Integer.parseInt(request.getParameter("reportedThisUserId"));
         String reason = request.getParameter("reason");
-        System.out.println("UserController，用户id" + userId + "举报的作者id：" + reportedThisUserId);
+        System.out.println("UserController，reportUser,用户id" + userId + "举报的作者id：" + reportedThisUserId);
 
         if (userService.reportUser(reportedThisUserId, userId, reason)) {
             response.getWriter().write(
@@ -56,9 +56,9 @@ public class UserController extends BaseServlet {
         Integer userId = ControllerToolMethod.getUserId(request);
         Integer postId = Integer.parseInt(request.getParameter("postId"));
         String reason = request.getParameter("reason");
-        System.out.println("UserController，用户id" + userId + "举报的帖子id：" + postId);
+        System.out.println("UserController，reportPost，用户id" + userId + "举报的帖子id：" + postId);
 
-        if (userService.reportUser(postId, userId, reason)) {
+        if (userService.reportPost(postId, userId, reason)) {
             response.getWriter().write(
                     JSON.toJSONString(
                             ResponseResult.success("举报成功！版主会尽快处理")

@@ -69,9 +69,9 @@ CREATE TABLE report
 (
     id          INT PRIMARY KEY AUTO_INCREMENT,
     user_id     INT     NOT NULL COMMENT '举报者ID',
-    board_id    INT     NOT NULL COMMENT '版块ID',
-    post_id     INT     NOT NULL COMMENT '帖子ID',
-    reported_this_user_id INT     NOT NULL COMMENT '被举报者ID',
+    board_id    INT     COMMENT '版块ID',
+    post_id     INT     COMMENT '帖子ID',
+    reported_this_user_id INT  COMMENT '被举报者ID',
     judge       VARCHAR(255) NOT NULL COMMENT '举报受理对象',
     reason      TEXT    NOT NULL COMMENT '举报原因',
     # 1 -> 管理员，0 -> 版主
