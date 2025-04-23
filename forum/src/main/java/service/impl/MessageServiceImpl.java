@@ -28,8 +28,14 @@ public class MessageServiceImpl implements MessageService {
 
         // 获取头像和昵称信息，填充
         for (Message message : messageList) {
-            message.setUserAvatarSend(userMap.get(message.getId()).getAvatar());
-            message.setUserNameSend(userMap.get(message.getId()).getName());
+            Integer userIdSend = message.getUserIdSend();
+            if (userIdSend != null) {
+                message.setUserAvatarSend(userMap.get(userIdSend).getAvatar());
+                message.setUserNameSend(userMap.get(userIdSend).getName());
+            } else {
+                message.setUserNameSend("系统");
+                message.setUserAvatarSend("/images/avatar/systemAvatar.jpg");
+            }
         }
 
         return messageList;

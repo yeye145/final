@@ -546,7 +546,7 @@
                 </div>
             </div>
         </div>
-
+        
         <!-- 回复评论——对评论进行跟评 -->
         <div v-if="ifShowEditCommentBox" class="modal">
             <div class="modal-content">
@@ -598,7 +598,26 @@
             </div>
         </div>
 
-
+        <!-- 查看我的通知消息 -->
+        <div v-if="ifMyMessage" class="board-section">
+            <div class="post-list">
+                <!--渲染通知信息-->
+                <div v-for="message in myMessage"
+                     :key="message.id"
+                     class="post-card">
+                    <span v-if="message.viewCount === 0" class="notification-badge"></span>
+                    <div class="post-meta">
+                        <img :src="message.userAvatarSend" class="author-avatar">
+                        <span class="author">👤 {{ message.userNameSend }}</span>
+                        <span class="time">📅 {{ message.time }}</span>
+                    </div>
+                    <h4 class="post-title">消息类型： {{ message.type }}</h4>
+                    <div class="post-stats">
+                        <span>{{ message.content }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
 </div>
@@ -1249,18 +1268,7 @@
             },
             // 切换我的历史
             turnMyHistory() {
-                this.ifMyCollect = false;
-                this.ifDeleteMode = false;
-                this.ifMyInformation = false;
-                this.ifHomePage = false;
-                this.ifUploadMyAvatar = false;
-                this.ifEditName = false;
-                this.ifMyBoard = false;
-                this.ifShowDropdown = false;
-                this.ifAllBoard = false;
-                this.ifAllPostInMyBoard = false;
-                this.ifThisPost = false;
-                this.ifBoardNotice = false;
+                this.turnNothing();
                 this.fetchHistory();
                 this.ifMyHistory = true;
                 this.currentPath = ['QG技术论坛', '我的信息', '浏览历史'];
@@ -1466,6 +1474,7 @@
             // 切换该版块下所有帖子
             turnAllPostInThisBoard(board_id, board_title) {
                 this.turnNothing();
+                this.ifAllBoard = true;
                 this.ifAllPostInThisBoard = true;
                 this.currentBoardId = board_id;
                 this.fetchAllPostInThisBoard(board_id, board_title);
