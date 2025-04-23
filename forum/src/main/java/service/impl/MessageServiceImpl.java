@@ -64,4 +64,13 @@ public class MessageServiceImpl implements MessageService {
         messageDao.receiveThisMessage(messageId);
     }
 
+
+    /*--------------------------------------    清空所有已读信息    ---------------------------------------------*/
+    @Override
+    public void deleteAllReceiveMessage(Integer userId) throws Exception {
+        messageDao.deleteAllReceiveMessage(userId);
+    }
+
+
+
 }

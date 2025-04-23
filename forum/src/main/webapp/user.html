@@ -74,7 +74,7 @@
             <p>欢迎来到QG技术论坛！这里有最新技术动态和深度讨论。</p>
         </div>
 
-        <!--版块公告内容-->
+        <!-- 版块公告内容 -->
         <div class="content-section" v-if="ifBoardNotice">
             <h3>📌 公告
                 <button @click="showHistoryModal = true" class="history-btn">查看历史公告</button>
@@ -102,7 +102,7 @@
             </div>
         </div>
 
-        <!--编辑帖子-->
+        <!-- 编辑帖子 -->
         <div class="profile-section" v-if="showEditPostModal">
             <!-- 添加选择图片按钮 -->
             <button @click="triggerImageInput" class="follow-btn">选择图片上传</button>
@@ -187,7 +187,7 @@
             </div>
         </div>
 
-        <!--帖子具体内容-->
+        <!-- 帖子具体内容 -->
         <div v-if="ifThisPost" class="post-detail-section">
             <!-- 帖子标题和元信息 -->
             <div class="post-header">
@@ -546,7 +546,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- 回复评论——对评论进行跟评 -->
         <div v-if="ifShowEditCommentBox" class="modal">
             <div class="modal-content">
@@ -600,6 +600,11 @@
 
         <!-- 查看我的通知消息 -->
         <div v-if="ifMyMessage" class="board-section">
+            <button @click="deleteAllReceiveMessage"
+                    class="delete-post-btn">🗑️ 删除所有已读信息
+            </button>
+            <hr>
+            <br>
             <div class="post-list">
                 <!--渲染通知信息-->
                 <div v-for="message in myMessage"
@@ -608,14 +613,22 @@
                      @click="receiveThisMessage(message)"
                 >
                     <span v-if="message.viewCount === 0" class="notification-badge"></span>
-                    <div class="post-meta">
-                        <img :src="message.userAvatarSend" class="author-avatar">
-                        <span class="author">👤 {{ message.userNameSend }}</span>
-                        <span class="time">📅 {{ message.time }}</span>
+                    <div>
+                        <div class="post-meta">
+                            <img :src="message.userAvatarSend" class="author-avatar">
+                            <span class="author">👤 {{ message.userNameSend }}</span>
+                            <span class="time">📅 {{ message.time }}</span>
+                        </div>
+                        <h4 class="post-title">消息类型： {{ message.type }}</h4>
+                        <div class="post-stats">
+                            <span>{{ message.content }}</span>
+                        </div>
                     </div>
-                    <h4 class="post-title">消息类型： {{ message.type }}</h4>
-                    <div class="post-stats">
-                        <span>{{ message.content }}</span>
+                    <div class="board-actions">
+                        <button v-if="message.viewCount === 0"
+                                @click="receiveThisMessage(message)"
+                                class="follow-btn">点击本消息任意位置以确认已读
+                        </button>
                     </div>
                 </div>
             </div>
@@ -822,8 +835,20 @@
             this.highlightAll();
         },
         methods: {
+            // 删除所有已读信息
+            deleteAllReceiveMessage() {
+                axios.post('/message/deleteAllReceiveMessage')
+                    .then(response => {
+                        if (response.data.code === 200) {
+                            alert(response.data.message);
+                        } else {
+                            console.error('清除所有已读信息失败:', response.data.message);
+                        }
+                    })
+                this.turnMyMessage();
+            },
             // 查收信息
-            receiveThisMessage (message) {
+            receiveThisMessage(message) {
                 if (message.viewCount >= 1) {
                     return;
                 }

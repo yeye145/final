@@ -27,7 +27,7 @@ public class MessageDaoImpl implements MessageDao {
     }
 
 
-    /*--------------------------------------    获取一个人的所有信息    ------------------------------------------*/
+    /*--------------------------------------    获取一个人的所有消息    ------------------------------------------*/
     @Override
     public List<Message> getOneMessageList(Integer userId) throws SQLException {
         return MySearch.searchToList("SELECT id, content, type, time" +
@@ -35,8 +35,15 @@ public class MessageDaoImpl implements MessageDao {
                 ", user_id_send AS userIdSend" +
                 ", view_count AS viewCount " +
                 "FROM `forum`.`message` " +
-                "WHERE user_id_receive = ?", Message.class, userId);
+                "WHERE user_id_receive = ? ORDER BY time DESC", Message.class, userId);
 
+    }
+
+    /*--------------------------------------    清空所有已读信息    ---------------------------------------------*/
+    @Override
+    public void deleteAllReceiveMessage(Integer userId) throws Exception {
+        MyUpdate.update("DELETE FROM `forum`.`message`" +
+                " WHERE user_id_receive = ? AND view_count = 1", userId);
     }
 
 

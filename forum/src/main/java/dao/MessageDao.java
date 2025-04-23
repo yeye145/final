@@ -14,4 +14,7 @@ public interface MessageDao {
     void creatMessage(String content, Integer userIdReceive, Integer userIdSend, String type) throws Exception;
 
     List<Message> getOneMessageList(Integer userId) throws SQLException;
+
+    /*--------------------------------------    清空所有已读信息    ---------------------------------------------*/
+    void deleteAllReceiveMessage(Integer userId) throws Exception;
 }

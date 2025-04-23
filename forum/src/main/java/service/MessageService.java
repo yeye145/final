@@ -15,4 +15,7 @@ public interface MessageService {
 
     /*--------------------------------------    确认查收这条信息    ---------------------------------------------*/
     void receiveThisMessage(Integer messageId) throws Exception;
+
+    /*--------------------------------------    清空所有已读信息    ---------------------------------------------*/
+    void deleteAllReceiveMessage(Integer userId) throws Exception;
 }

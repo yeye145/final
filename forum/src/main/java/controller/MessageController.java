@@ -3,6 +3,7 @@ package controller;
 import com.alibaba.fastjson.JSON;
 import controller.utils.BaseServlet;
 import controller.utils.ControllerToolMethod;
+import dao.utils.MyUpdate;
 import pojo.ResponseResult;
 import service.MessageService;
 import service.impl.MessageServiceImpl;
@@ -71,6 +72,23 @@ public class MessageController extends BaseServlet {
         System.out.println("MessageController，receiveThisMessage，查收信息" + messageId);
         messageService.receiveThisMessage(messageId);
     }
+
+
+
+    /*--------------------------------------    清空所有已读信息    ---------------------------------------------*/
+    public void deleteAllReceiveMessage(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        Integer userId = ControllerToolMethod.getUserId(request);
+        System.out.println("MessageController.deleteAllReceiveMessage，清空所有已读信息，用户id：" + userId);
+        messageService.deleteAllReceiveMessage(userId);
+        // 返回信息集合
+        response.getWriter().write(
+                JSON.toJSONString(
+                        ResponseResult.success("清除成功")
+                )
+        );
+        System.out.println("---->清楚所有已读信息成功！用户id：" + userId);
+    }
+
 
 
 }
