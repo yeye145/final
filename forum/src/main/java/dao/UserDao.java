@@ -3,10 +3,13 @@ package dao;
 import pojo.User;
 
 import java.sql.SQLException;
+import java.util.Map;
 import java.util.Set;
 
 public interface UserDao {
 
+
+    Map<Integer, User> getUserMap() throws SQLException;
 
     User getUserById(Integer userId) throws SQLException;
 

@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="homepage.css"/>
+    <link rel="stylesheet" href="message.css"/>
     <link rel="stylesheet" href="myself.css"/>
     <link rel="stylesheet" href="board.css"/>
     <link rel="stylesheet" href="post.css"/>
@@ -27,6 +28,10 @@
     <div class="top-bar">
         <div class="current-location">
             {{ currentPath.join(' > ') }}
+        </div>
+        <div class="notification-icon" @click="turnMyMessage">
+            🔔
+            <div v-if="ifHadNewMessage" class="notification-badge"></div>
         </div>
         <div class="avatar"
              @mouseenter="ifShowDropdown = true"
@@ -686,7 +691,9 @@
             ifMyCollect: false,                 // 是否显示我的收藏
             ifDeleteMode: false,                // 是否进入帖子删除模式
             ifShowEditCollectRemark: false,     // 是否显示编辑收藏备注
-            ifShowEditCommentBox: false,            // 是否显示编辑评论
+            ifShowEditCommentBox: false,        // 是否显示编辑评论
+            ifHadNewMessage: false,             // 控制红点显示
+            ifMyMessage: false,                 // 是否显示我的通知信息
 
 
             showHistoryModal: false,            // 是否显示历史公告弹窗
@@ -758,6 +765,7 @@
             newCollectRemark: '',               // 新增收藏备注
 
             myHistoryReadPost: [],              // 我的历史浏览记录
+            myMessage: [],                      // 我的通知消息
 
 
         },
@@ -793,6 +801,60 @@
             this.highlightAll();
         },
         methods: {
+            // 查看我是否有新的通知消息
+            async checkIfNewMessage() {
+                try {
+                    const response = await axios.post('/message/checkIfNewMessage');
+                    return response.data.data === "yes";
+                } catch (error) {
+                    console.error('查看是否有新的通知消息失败:', error);
+                    return false;
+                }
+            },
+            // 全都不显示
+            turnNothing() {
+                this.ifMyMessage = false;
+                this.ifBoardNotice = false;
+                this.ifMyInformation = false;
+                this.ifHomePage = false;
+                this.ifUploadMyAvatar = false;
+                this.ifEditName = false;
+                this.ifMyBoard = false;
+                this.ifShowDropdown = false;
+                this.ifAllBoard = false;
+                this.ifAllPostInMyBoard = false;
+                this.ifThisPost = false;
+                this.showEditPostModal = false;
+                this.ifMyCollect = false;
+                this.ifDeleteMode = false;
+                this.ifAllBoard = false;
+                this.ifAllPostInThisBoard = false;
+                this.ifMyHistory = false;
+                if (this.checkIfNewMessage()) {
+                    this.ifHadNewMessage = true;
+                }
+            },
+            // 切换我的消息通知
+            turnMyMessage() {
+                this.turnNothing();
+                this.ifMyMessage = true;
+                this.fetchMyMessage();
+                this.currentPath = ['QG技术论坛', '我的消息'];
+            },
+            // 获取我的个人通知信息
+            fetchMyMessage() {
+                axios.post('/message/getAllMessage')
+                    .then(response => {
+                        if (response.data.code === 200) {
+                            this.myMessage = response.data.data;
+                        } else {
+                            console.error('获取我的通知消息:', response.data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('请求错误:', error);
+                    });
+            },
             // 提交举报用户
             submitReportUser() {
                 if (!this.reportUser.reason.trim()) {
@@ -800,7 +862,7 @@
                     return;
                 }
                 axios.post('/user/reportUser', {
-                    reportedThisUserId : this.reportUser.reportedThisUserId,
+                    reportedThisUserId: this.reportUser.reportedThisUserId,
                     reason: this.reportUser.reason,
                 }, {
                     headers: {'Content-Type': 'application/x-www-form-urlencoded'}
@@ -810,7 +872,7 @@
                         alert('举报已提交，管理员会尽快处理');
                         this.showReportUserModal = false;
                         this.reportUser = {
-                            reportedThisUserId : '',
+                            reportedThisUserId: '',
                             reason: '',
                         };
                     } else {
@@ -836,7 +898,7 @@
                         alert('举报已提交，版主会尽快处理');
                         this.showReportPostModal = false;
                         this.reportUser = {
-                            postId : '',
+                            postId: '',
                             reason: '',
                         };
                     } else {
@@ -968,16 +1030,10 @@
             },
             // 切换编辑帖子
             turnEditPost() {
+                this.turnNothing();
                 this.currentPath[this.currentPath.length - 1] = '发布帖子';
-                this.ifAllBoard = false;
-                this.ifMyBoard = false;
                 this.compiledMarkdown = '';
                 this.showEditPostModal = true;
-                this.ifAllPostInThisBoard = false;
-                this.ifBoardNotice = false;
-                this.ifMyInformation = false;
-                this.ifMyHistory = false;
-                this.ifMyCollect = false;
             },
             // 帖子图片上传
             triggerImageInput() {
@@ -1324,19 +1380,7 @@
             },
             // 显示某个具体帖子
             turnThisPost(post_id, post_title) {
-                this.showEditPostModal = false;
-                this.ifMyCollect = false;
-                this.ifDeleteMode = false;
-                this.ifBoardNotice = false;
-                this.ifMyInformation = false;
-                this.ifHomePage = false;
-                this.ifUploadMyAvatar = false;
-                this.ifEditName = false;
-                this.ifMyBoard = false;
-                this.ifShowDropdown = false;
-                this.ifAllBoard = false;
-                this.ifAllPostInMyBoard = false;
-                this.ifMyHistory = false;
+                this.turnNothing();
                 this.ifThisPost = true;
                 this.fetchThisPost(post_id, post_title);        // 抓取这个帖子的信息
                 this.fetchComment(post_id);                     // 抓取所有评论
@@ -1415,51 +1459,22 @@
             },
             // 切换回主页
             backHomePage() {
-                this.ifBoardNotice = false;
-                this.ifMyInformation = false;
+                this.turnNothing();
                 this.ifHomePage = true;
-                this.ifUploadMyAvatar = false;
-                this.ifEditName = false;
-                this.ifMyBoard = false;
-                this.ifShowDropdown = false;
-                this.ifAllBoard = false;
-                this.ifAllPostInMyBoard = false;
-                this.ifThisPost = false;
                 this.currentPath = ['QG技术论坛', '主页'];
             },
             // 切换该版块下所有帖子
             turnAllPostInThisBoard(board_id, board_title) {
-                this.showEditPostModal = false;
-                this.ifMyCollect = false;
-                this.ifDeleteMode = false;
-                this.ifBoardNotice = true;
-                this.ifAllPostInMyBoard = false;
+                this.turnNothing();
                 this.ifAllPostInThisBoard = true;
-                this.ifMyInformation = false;
-                this.ifHomePage = false;
-                this.ifUploadMyAvatar = false;
-                this.ifMyBoard = false;
-                this.ifShowDropdown = false;
-                this.ifThisPost = false;
-                this.ifMyHistory = false;
                 this.currentBoardId = board_id;
                 this.fetchAllPostInThisBoard(board_id, board_title);
                 this.fetchNotice(board_id);
             },
             // 切换我的版块下所有帖子
             turnAllPostInMyBoard(board_id, board_title) {
-                this.showEditPostModal = false;
-                this.ifMyCollect = false;
-                this.ifDeleteMode = false;
+                this.turnNothing();
                 this.ifBoardNotice = true;
-                this.ifAllPostInMyBoard = true;
-                this.ifAllPostInThisBoard = false;
-                this.ifMyInformation = false;
-                this.ifHomePage = false;
-                this.ifUploadMyAvatar = false;
-                this.ifShowDropdown = false;
-                this.ifThisPost = false;
-                this.ifMyHistory = false;
                 this.newNotice.boardId = board_id;
                 this.currentBoardId = board_id;
                 this.fetchAllPostInMyBoard(board_id, board_title);
@@ -1467,38 +1482,15 @@
             },
             // 切换所有版块
             turnAllBoard() {
-                this.showEditPostModal = false;
-                this.ifMyCollect = false;
-                this.ifDeleteMode = false;
-                this.ifBoardNotice = false;
-                this.ifMyInformation = false;
-                this.ifHomePage = false;
-                this.ifUploadMyAvatar = false;
-                this.ifEditName = false;
-                this.ifMyBoard = false;
-                this.ifShowDropdown = false;
+                this.turnNothing();
                 this.ifAllBoard = true;
-                this.ifAllPostInThisBoard = false;
-                this.ifAllPostInMyBoard = false;
-                this.ifThisPost = false;
-                this.ifMyHistory = false;
                 this.fetchAllBoard();
                 this.currentPath = ['QG技术论坛', '所有版块'];
             },
             // 切换我的版块
             turnMyBoard() {
-                this.showEditPostModal = false;
-                this.ifMyCollect = false;
-                this.ifDeleteMode = false;
-                this.ifBoardNotice = false;
-                this.ifAllPostInMyBoard = false;
-                this.ifMyInformation = false;
-                this.ifHomePage = false;
-                this.ifUploadMyAvatar = false;
+                this.turnNothing();
                 this.ifMyBoard = true;
-                this.ifShowDropdown = false;
-                this.ifThisPost = false;
-                this.ifMyHistory = false;
                 this.fetchMyBoard();
                 this.currentPath = ['QG技术论坛', '我的信息', '我的版块'];
             },
@@ -1543,18 +1535,8 @@
             },
             // 切换显示我的个人信息
             turnMyInformation() {
-                this.showEditPostModal = false;
-                this.ifMyCollect = false;
-                this.ifDeleteMode = false;
-                this.ifBoardNotice = false;
+                this.turnNothing();
                 this.ifMyInformation = true;
-                this.ifHomePage = false;
-                this.ifUploadMyAvatar = false;
-                this.ifMyBoard = false;
-                this.ifShowDropdown = false;
-                this.ifAllBoard = false;
-                this.ifThisPost = false;
-                this.ifMyHistory = false;
                 this.currentPath = ['QG技术论坛', '我的信息'];
             },
             // 获取我的个人信息
@@ -1574,6 +1556,7 @@
             },
             // 获取我的头像
             fetchUserAvatar() {
+                this.turnNothing();
                 axios.post('/user/avatar', {
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded'

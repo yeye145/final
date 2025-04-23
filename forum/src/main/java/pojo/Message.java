@@ -7,18 +7,23 @@ public class Message {
     private String content;
     private Integer userIdReceive;
     private Integer userIdSend;
+    private String userNameSend;
+    private String userAvatarSend;
+    private Integer viewCount;
     private String type;
     private LocalDateTime time;
-
 
     public Message() {
     }
 
-    public Message(Integer id, String content, Integer userIdReceive, Integer userIdSend, String type, LocalDateTime time) {
+    public Message(Integer id, String content, Integer userIdReceive, Integer userIdSend, String userNameSend, String userAvatarSend, Integer viewCount, String type, LocalDateTime time) {
         this.id = id;
         this.content = content;
         this.userIdReceive = userIdReceive;
         this.userIdSend = userIdSend;
+        this.userNameSend = userNameSend;
+        this.userAvatarSend = userAvatarSend;
+        this.viewCount = viewCount;
         this.type = type;
         this.time = time;
     }
@@ -89,6 +94,54 @@ public class Message {
 
     /**
      * 获取
+     * @return userNameSend
+     */
+    public String getUserNameSend() {
+        return userNameSend;
+    }
+
+    /**
+     * 设置
+     * @param userNameSend
+     */
+    public void setUserNameSend(String userNameSend) {
+        this.userNameSend = userNameSend;
+    }
+
+    /**
+     * 获取
+     * @return userAvatarSend
+     */
+    public String getUserAvatarSend() {
+        return userAvatarSend;
+    }
+
+    /**
+     * 设置
+     * @param userAvatarSend
+     */
+    public void setUserAvatarSend(String userAvatarSend) {
+        this.userAvatarSend = userAvatarSend;
+    }
+
+    /**
+     * 获取
+     * @return viewCount
+     */
+    public Integer getViewCount() {
+        return viewCount;
+    }
+
+    /**
+     * 设置
+     * @param viewCount
+     */
+    public void setViewCount(Integer viewCount) {
+        this.viewCount = viewCount;
+    }
+
+    /**
+     * 获取
      * @return type
      */
     public String getType() {
@@ -120,6 +173,6 @@ public class Message {
     }
 
     public String toString() {
-        return "Message{id = " + id + ", content = " + content + ", userIdReceive = " + userIdReceive + ", userIdSend = " + userIdSend + ", type = " + type + ", time = " + time + "}";
+        return "Message{id = " + id + ", content = " + content + ", userIdReceive = " + userIdReceive + ", userIdSend = " + userIdSend + ", userNameSend = " + userNameSend + ", userAvatarSend = " + userAvatarSend + ", viewCount = " + viewCount + ", type = " + type + ", time = " + time + "}";
     }
 }

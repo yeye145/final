@@ -6,6 +6,8 @@ import controller.utils.ControllerToolMethod;
 import pojo.ResponseResult;
 import pojo.User;
 
+import service.UpdateService;
+import service.UserService;
 import service.impl.UpdateServiceImpl;
 import service.impl.UserServiceImpl;
 import utils.Constants;
@@ -19,8 +21,8 @@ import javax.servlet.http.HttpServletResponse;
 public class UserController extends BaseServlet {
 
     /*--------------------------------------------    私有变量    --------------------------------------------*/
-    private UserServiceImpl userService = new UserServiceImpl();
-    private UpdateServiceImpl updateService = new UpdateServiceImpl();
+    private UserService userService = new UserServiceImpl();
+    private UpdateService updateService = new UpdateServiceImpl();
 
 
     /*-------------------------------------------    举报这个作者    ------------------------------------------*/

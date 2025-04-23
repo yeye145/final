@@ -150,6 +150,7 @@ CREATE TABLE message
     content TEXT NOT NULL COMMENT '通知内容',
     user_id_receive INT  NOT NULL COMMENT '接收该信息的用户ID',
     user_id_send INT COMMENT '发送信息的用户ID',
+    view_count INT NOT NULL DEFAULT 0,
     time    DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '发送时间',
     type	VARCHAR(255) NOT NULL COMMENT '通知类型',
     FOREIGN KEY (user_id_receive) REFERENCES user (id) ON DELETE CASCADE
