@@ -5,17 +5,21 @@ import java.time.LocalDateTime;
 public class Message {
     private Integer id;
     private String content;
-    private Integer userId;
+    private Integer userIdReceive;
+    private Integer userIdSend;
+    private String type;
     private LocalDateTime time;
 
 
     public Message() {
     }
 
-    public Message(Integer id, String content, Integer userId, LocalDateTime time) {
+    public Message(Integer id, String content, Integer userIdReceive, Integer userIdSend, String type, LocalDateTime time) {
         this.id = id;
         this.content = content;
-        this.userId = userId;
+        this.userIdReceive = userIdReceive;
+        this.userIdSend = userIdSend;
+        this.type = type;
         this.time = time;
     }
 
@@ -53,18 +57,50 @@ public class Message {
 
     /**
      * 获取
-     * @return userId
+     * @return userIdReceive
      */
-    public Integer getUserId() {
-        return userId;
+    public Integer getUserIdReceive() {
+        return userIdReceive;
     }
 
     /**
      * 设置
-     * @param userId
+     * @param userIdReceive
      */
-    public void setUserId(Integer userId) {
-        this.userId = userId;
+    public void setUserIdReceive(Integer userIdReceive) {
+        this.userIdReceive = userIdReceive;
+    }
+
+    /**
+     * 获取
+     * @return userIdSend
+     */
+    public Integer getUserIdSend() {
+        return userIdSend;
+    }
+
+    /**
+     * 设置
+     * @param userIdSend
+     */
+    public void setUserIdSend(Integer userIdSend) {
+        this.userIdSend = userIdSend;
+    }
+
+    /**
+     * 获取
+     * @return type
+     */
+    public String getType() {
+        return type;
+    }
+
+    /**
+     * 设置
+     * @param type
+     */
+    public void setType(String type) {
+        this.type = type;
     }
 
     /**
@@ -84,6 +120,6 @@ public class Message {
     }
 
     public String toString() {
-        return "Message{id = " + id + ", content = " + content + ", userId = " + userId + ", time = " + time + "}";
+        return "Message{id = " + id + ", content = " + content + ", userIdReceive = " + userIdReceive + ", userIdSend = " + userIdSend + ", type = " + type + ", time = " + time + "}";
     }
 }

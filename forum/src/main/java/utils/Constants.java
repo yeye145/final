@@ -6,7 +6,7 @@ public class Constants {
 
     public static final Integer RESPONSE_CODE_BAD_REQUEST = 400;            // 请求错误
     public static final Integer RESPONSE_CODE_UNAUTHORIZED = 401;           // 未认证
-    public static final Integer RESPONSE_CODE_FORBIDDEN = 403;
+    public static final Integer RESPONSE_CODE_FORBIDDEN = 403;              // 权限不足
     public static final Integer RESPONSE_CODE_NOT_FOUND = 404;              // 资源不存在
     public static final Integer RESPONSE_CODE_CONFLICT = 409;               // 资源冲突
 
@@ -16,7 +16,7 @@ public class Constants {
     // 过滤器白名单
     public static final String[] FREE_URLS = {"/login.html", ".css", ".png", ".js", ".images",
             "/login", "/user", "/admin", "/verify", "/forget", "/register",
-            "/avatar", "/user", "/board", "/post", "/comment"};
+            "/avatar", "/user", "/board", "/post", "/comment", "/message"};
 
     public static final String HOT = "view_count";
     public static final String NEW = "time";

@@ -71,8 +71,8 @@ CREATE TABLE report
     user_id     INT     NOT NULL COMMENT '举报者ID',
     board_id    INT     NOT NULL COMMENT '版块ID',
     post_id     INT     NOT NULL COMMENT '帖子ID',
-    reported_id INT     NOT NULL COMMENT '被举报者ID',
-    judge       BOOLEAN NOT NULL COMMENT '举报受理对象',
+    reported_this_user_id INT     NOT NULL COMMENT '被举报者ID',
+    judge       VARCHAR(255) NOT NULL COMMENT '举报受理对象',
     reason      TEXT    NOT NULL COMMENT '举报原因',
     # 1 -> 管理员，0 -> 版主
     FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE,
@@ -148,9 +148,11 @@ CREATE TABLE message
 (
     id      INT PRIMARY KEY AUTO_INCREMENT,
     content TEXT NOT NULL COMMENT '通知内容',
-    user_id INT  NOT NULL COMMENT '接收用户ID',
+    user_id_receive INT  NOT NULL COMMENT '接收该信息的用户ID',
+    user_id_send INT COMMENT '发送信息的用户ID',
     time    DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '发送时间',
-    FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE
+    type	VARCHAR(255) NOT NULL COMMENT '通知类型',
+    FOREIGN KEY (user_id_receive) REFERENCES user (id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- 日志表
