@@ -470,3 +470,7 @@ INSERT INTO `forum`.`notice` (`board_id`, `content`) VALUES ('2', 'B站关注我
 -- 生成收藏
 INSERT INTO `forum`.`collect` (`user_id`, `post_id`, `remark`) VALUES ('2', '2', '备注');
 INSERT INTO `forum`.`collect` (`user_id`, `post_id`, `remark`) VALUES ('2', '3', '备注3');
+
+
+INSERT INTO `forum`.`message` (`content`, `user_id_receive`, `view_count`, `type`) VALUES ('张三给你点了一个赞', '2', '0', '点赞');
+INSERT INTO `forum`.`message` (`content`, `user_id_receive`, `view_count`, `type`) VALUES ('李四关注了你', '2', '1', '关注');
