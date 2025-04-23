@@ -11,6 +11,24 @@ import java.util.Set;
 public class UserDaoImpl implements UserDao {
 
 
+    /*-------------------------------------------    举报帖子    ----------------------------------------------*/
+    @Override
+    public void reportPost(Integer postId, Integer boardId, Integer userId, String reason) throws Exception {
+        MyUpdate.update("INSERT INTO `forum`.`report`" +
+                " (`user_id`, `board_id`, `post_id`,`judge`, `reason`)" +
+                " VALUES (?, ?, ?, ?)", userId, boardId, postId, "host", reason);
+    }
+
+
+    /*-------------------------------------------    举报作者    ----------------------------------------------*/
+    @Override
+    public void reportUser(Integer reportedThisUserId, Integer userId, String reason) throws Exception {
+        MyUpdate.update("INSERT INTO `forum`.`report`" +
+                " (`user_id`, `reported_id`, `judge`, `reason`)" +
+                " VALUES (?, ?, ?, ?)", userId, reportedThisUserId, "admin", reason);
+    }
+
+
     @Override
     public User getUserById(Integer userId) throws SQLException {
         return MySearch.searchToOne(

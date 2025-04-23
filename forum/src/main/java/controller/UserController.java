@@ -23,6 +23,62 @@ public class UserController extends BaseServlet {
     private UpdateServiceImpl updateService = new UpdateServiceImpl();
 
 
+    /*-------------------------------------------    举报这个作者    ------------------------------------------*/
+    public void reportUser(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        Integer userId = ControllerToolMethod.getUserId(request);
+        Integer reportedThisUserId = Integer.parseInt(request.getParameter("reportedThisUserId"));
+        String reason = request.getParameter("reason");
+        System.out.println("UserController，用户id" + userId + "举报的作者id：" + reportedThisUserId);
+
+        if (userService.reportUser(reportedThisUserId, userId, reason)) {
+            response.getWriter().write(
+                    JSON.toJSONString(
+                            ResponseResult.success("举报成功！管理员会尽快处理")
+                    )
+            );
+
+            System.out.println("-->举报成功！管理员会尽快处理-----------------------------------------");
+        } else {
+            response.getWriter().write(
+                    JSON.toJSONString(
+                            ResponseResult.error(Constants.RESPONSE_CODE_NOT_FOUND, "举报失败，用户不存在！")
+                    )
+            );
+
+            System.out.println("-->举报失败，用户不存在-----------------------------------------");
+        }
+
+    }
+
+
+    /*-------------------------------------------    举报这条帖子    ------------------------------------------*/
+    public void reportPost(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        Integer userId = ControllerToolMethod.getUserId(request);
+        Integer postId = Integer.parseInt(request.getParameter("postId"));
+        String reason = request.getParameter("reason");
+        System.out.println("UserController，用户id" + userId + "举报的帖子id：" + postId);
+
+        if (userService.reportUser(postId, userId, reason)) {
+            response.getWriter().write(
+                    JSON.toJSONString(
+                            ResponseResult.success("举报成功！版主会尽快处理")
+                    )
+            );
+
+            System.out.println("-->举报成功！版主会尽快处理-----------------------------------------");
+        } else {
+            response.getWriter().write(
+                    JSON.toJSONString(
+                            ResponseResult.error(Constants.RESPONSE_CODE_NOT_FOUND, "举报失败，帖子不存在！")
+                    )
+            );
+
+            System.out.println("-->举报失败，帖子不存在-----------------------------------------");
+        }
+
+    }
+
+
     /*-------------------------------------------    关注这个作者    ------------------------------------------*/
     public void subscribeThisUser(HttpServletRequest request, HttpServletResponse response) throws Exception {
         Integer userId = ControllerToolMethod.getUserId(request);

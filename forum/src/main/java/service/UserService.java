@@ -5,6 +5,12 @@ import pojo.User;
 import java.sql.SQLException;
 
 public interface UserService {
+    /*-------------------------------------------    举报作者    ----------------------------------------------*/
+    boolean reportUser(Integer reportedThisUserId, Integer userId, String reason) throws Exception;
+
+    /*-------------------------------------------    举报帖子    ----------------------------------------------*/
+    boolean reportPost(Integer postId, Integer userId, String reason) throws Exception;
+
     /*-------------------------------------------    订阅作者    ----------------------------------------------*/
     void subscribeThisUser(Integer authorId, Integer userId) throws Exception;
 

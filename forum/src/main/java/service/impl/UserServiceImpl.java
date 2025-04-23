@@ -1,7 +1,9 @@
 package service.impl;
 
+import dao.impl.PostDaoImpl;
 import dao.impl.SubscriptionDaoImpl;
 import dao.impl.UserDaoImpl;
+import pojo.Post;
 import pojo.Subscription;
 import pojo.User;
 import service.UserService;
@@ -13,6 +15,41 @@ public class UserServiceImpl implements UserService {
 
     private UserDaoImpl userDao = new UserDaoImpl();
     private SubscriptionDaoImpl subscriptionDao = new SubscriptionDaoImpl();
+    private PostDaoImpl postDao = new PostDaoImpl();
+
+
+    /*-------------------------------------------    举报作者    ----------------------------------------------*/
+    @Override
+    public boolean reportUser(Integer reportedThisUserId, Integer userId, String reason) throws Exception {
+
+        User user = userDao.getUserById(reportedThisUserId);
+
+        // 若找不到该用户
+        if (user.getId() == null) {
+            return false;
+        }
+
+        userDao.reportUser(reportedThisUserId, userId, reason);
+
+        return true;
+    }
+
+
+    /*-------------------------------------------    举报帖子    ----------------------------------------------*/
+    @Override
+    public boolean reportPost(Integer postId, Integer userId, String reason) throws Exception {
+
+        Post thePostWhichBeReported = postDao.getThisPostById(postId);
+
+        // 若找不到这条帖子，返回举报失败
+        if (thePostWhichBeReported.getBoardId() == null) {
+            return false;
+        }
+
+        userDao.reportPost(postId, thePostWhichBeReported.getBoardId(), userId, reason);
+        return true;
+    }
+
 
     /*-------------------------------------------    订阅作者    ----------------------------------------------*/
     @Override
@@ -26,7 +63,6 @@ public class UserServiceImpl implements UserService {
     public void cancelSubscribeThisUser(Integer authorId, Integer userId) throws Exception {
         subscriptionDao.cancelSubscribeThisUser(authorId, userId);
     }
-
 
 
     /*-------------------------------    判断用户是否已经关注该作者    --------------------------------------------*/

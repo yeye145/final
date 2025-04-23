@@ -28,6 +28,7 @@ public class PostServiceImpl implements PostService {
 
         Set<BoardBan> allBanUserSet = boardBanDao.getAllBanUserSet();
 
+        // 查看用户是否被禁止发帖
         for (BoardBan boardBan : allBanUserSet) {
             if (boardBan.getBanId() == userId && boardBan.getBoardId().equals(boardId)) {
                 return false;

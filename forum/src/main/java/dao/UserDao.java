@@ -7,6 +7,12 @@ import java.util.Set;
 
 public interface UserDao {
 
+    /*-------------------------------------------    举报帖子    ----------------------------------------------*/
+    void reportPost(Integer postId, Integer boardId, Integer userId, String reason) throws Exception;
+
+    /*-------------------------------------------    举报作者    ----------------------------------------------*/
+    void reportUser(Integer reportedThisUserId, Integer userId, String reason) throws Exception;
+
     User getUserById(Integer userId) throws SQLException;
 
     // 更新users表中的电话号码

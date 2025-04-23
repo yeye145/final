@@ -6,13 +6,12 @@ public class Report {
     private Integer boardId;
     private Integer postId;
     private Integer reportedId;
-    private Boolean judge;
-
+    private String judge;
 
     public Report() {
     }
 
-    public Report(Integer id, Integer userId, Integer boardId, Integer postId, Integer reportedId, Boolean judge) {
+    public Report(Integer id, Integer userId, Integer boardId, Integer postId, Integer reportedId, String judge) {
         this.id = id;
         this.userId = userId;
         this.boardId = boardId;
@@ -105,7 +104,7 @@ public class Report {
      * 获取
      * @return judge
      */
-    public Boolean getJudge() {
+    public String getJudge() {
         return judge;
     }
 
@@ -113,7 +112,7 @@ public class Report {
      * 设置
      * @param judge
      */
-    public void setJudge(Boolean judge) {
+    public void setJudge(String judge) {
         this.judge = judge;
     }
 
