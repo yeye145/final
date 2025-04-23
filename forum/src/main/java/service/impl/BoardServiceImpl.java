@@ -143,6 +143,7 @@ public class BoardServiceImpl implements BoardService {
         return false;
     }
 
+
     @Override
     public void publishNewNotice(Integer boardId, String content) throws Exception {
         noticeDao.publishNewNotice(boardId, content);

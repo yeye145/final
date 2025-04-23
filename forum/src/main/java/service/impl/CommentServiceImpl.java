@@ -1,14 +1,12 @@
 package service.impl;
 
-import dao.BoardBanDao;
-import dao.CommentDao;
-import dao.UserDao;
-import dao.impl.BoardBanDaoImpl;
-import dao.impl.CommentDaoImpl;
-import dao.impl.UserDaoImpl;
+import dao.*;
+import dao.impl.*;
 import pojo.BoardBan;
 import pojo.Comment;
 
+import pojo.Post;
+import pojo.User;
 import service.CommentService;
 
 import java.sql.SQLException;
@@ -20,6 +18,9 @@ public class CommentServiceImpl implements CommentService {
     private CommentDao commentDao = new CommentDaoImpl();
     private BoardBanDao boardBanDao = new BoardBanDaoImpl();
     private UserDao userDao = new UserDaoImpl();
+    private MessageDao messageDao = new MessageDaoImpl();
+    private PostDao postDao = new PostDaoImpl();
+
 
     /*-----------------------------------------    在该评论下发表评论    --------------------------------------*/
     @Override
@@ -35,7 +36,14 @@ public class CommentServiceImpl implements CommentService {
                 return false;
             }
         }
-        commentDao.creatCommentOnComment(postId, parentId, userDao.getUserById(userId), content);
+        // 获得评论者user信息
+        User user = userDao.getUserById(userId);
+        // 获得父评论信息
+        Comment comment = commentDao.getCommentById(parentId);
+        commentDao.creatCommentOnComment(postId, parentId, user, content);
+        messageDao.creatMessage("用户：" + user.getName()
+                        + " 给您的评论“" + comment.getContent() + "”进行了跟评，内容如下：\n" + content
+                , comment.getUserId(), null, "评论回复");
         return true;
     }
 
@@ -55,6 +63,10 @@ public class CommentServiceImpl implements CommentService {
             }
         }
         commentDao.creatCommentOnPost(postId, userDao.getUserById(userId), content);
+        Post post = postDao.getThisPostById(postId);
+        messageDao.creatMessage("用户：" + userDao.getUserById(userId).getName()
+                        + " 给您的帖子“" + post.getTitle() + "”发布了一条评论，内容如下：\n" + content
+                , post.getAuthorId(), null, "帖子回复");
         return true;
     }
 

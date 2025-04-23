@@ -7,6 +7,8 @@ import java.sql.SQLException;
 import java.util.List;
 
 public interface CommentDao {
+    Comment getCommentById(Integer commentId) throws SQLException;
+
     List<Comment> getAllCommentInThisPost(Integer postId) throws SQLException;
 
     void plusOneLikeCount(Integer commentId) throws Exception;

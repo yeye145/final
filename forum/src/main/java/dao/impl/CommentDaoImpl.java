@@ -12,6 +12,16 @@ import java.util.List;
 public class CommentDaoImpl implements CommentDao {
 
     @Override
+    public Comment getCommentById(Integer commentId) throws SQLException {
+        return MySearch.searchToOne("SELECT id, content, time" +
+                ", post_id AS postId, user_id AS userId" +
+                ", parent_id AS parentId, like_count AS likeCount" +
+                ", user_name AS userName, user_avatar AS userAvatar " +
+                " FROM `forum`.`comment` WHERE id = ?", Comment.class, commentId);
+    }
+
+
+    @Override
     public List<Comment> getAllCommentInThisPost(Integer postId) throws SQLException {
         return MySearch.searchToList("SELECT id, content, time" +
                 ", post_id AS postId, user_id AS userId" +
@@ -39,8 +49,8 @@ public class CommentDaoImpl implements CommentDao {
     @Override
     public void creatCommentOnComment(Integer postId, Integer parentId, User user, String content) throws Exception {
         MyUpdate.update("INSERT INTO `forum`.`comment`" +
-                " (`post_id`, `content`, `user_id`, `user_name`, `user_avatar`, `parent_id`)" +
-                " VALUES (?, ?, ?, ?, ?, ?)", postId, content
+                        " (`post_id`, `content`, `user_id`, `user_name`, `user_avatar`, `parent_id`)" +
+                        " VALUES (?, ?, ?, ?, ?, ?)", postId, content
                 , user.getId(), user.getName(), user.getAvatar(), parentId);
     }
 
