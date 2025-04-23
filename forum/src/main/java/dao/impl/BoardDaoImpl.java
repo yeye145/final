@@ -12,6 +12,17 @@ import java.util.Set;
 public class BoardDaoImpl implements BoardDao {
 
 
+    @Override
+    public Board getBoardById(Integer boardId) throws SQLException {
+        return MySearch.searchToOne("SELECT id, title, type, `time`" +
+                ", host_id AS hostId" +
+                ", post_count AS postCount " +
+                ", view_count AS viewCount" +
+                ", host_avatar AS hostAvatar" +
+                ", host_name AS hostName " +
+                "FROM `forum`.`board` WHERE id = ?", Board.class, boardId);
+    }
+
 
     @Override
     public List<Board> getOneBoardList(Integer userId) throws SQLException {

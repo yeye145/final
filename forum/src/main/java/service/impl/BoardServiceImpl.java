@@ -21,6 +21,7 @@ public class BoardServiceImpl implements BoardService {
     private SubscriptionDao subscriptionDao = new SubscriptionDaoImpl();
     private UserDao userDao = new UserDaoImpl();
     private NoticeDao noticeDao = new NoticeDaoImpl();
+    private MessageDao messageDao = new MessageDaoImpl();
 
 
     /*-----------------------------------------    取消关注版块    --------------------------------------------*/
@@ -48,6 +49,10 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public void subscribeThisBoard(Integer boardId, Integer userId) throws Exception {
         subscriptionDao.subscribeThisBoard(boardId, userId);
+        User user = userDao.getUserById(userId);
+        Board board = boardDao.getBoardById(boardId);
+        messageDao.creatMessage("用户：" + user.getName() + " 刚刚关注了您的版块~"
+                , board.getHostId(), null, "版块关注通知");
     }
 
 
@@ -125,6 +130,9 @@ public class BoardServiceImpl implements BoardService {
             User user = matchedUser.get();
             try {
                 boardBanDao.banUserInThisBoard(boardId, user.getId(), reason);
+                Board board = boardDao.getBoardById(boardId);
+                messageDao.creatMessage("您已被禁止在版块《" + board.getTitle()
+                        + "》发布帖子/评论，原因为：\n" + reason, user.getId(), board.getHostId(), "违规封禁");
                 return true;
             } catch (Exception e) {
                 // 处理特定异常，例如数据库操作异常
