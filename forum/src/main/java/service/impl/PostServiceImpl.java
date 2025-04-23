@@ -20,6 +20,7 @@ public class PostServiceImpl implements PostService {
     private CollectDao collectDao = new CollectDaoImpl();
     private UserDao userDao = new UserDaoImpl();
     private BoardBanDao boardBanDao = new BoardBanDaoImpl();
+    private MessageDao messageDao = new MessageDaoImpl();
 
 
     /*--------------------------------------------    发布帖子    --------------------------------------------*/
@@ -63,7 +64,7 @@ public class PostServiceImpl implements PostService {
     }
 
 
-    /*-----------------------------------------    获得历史记录    --------------------------------------------*/
+    /*-----------------------------------------    获得收藏记录    --------------------------------------------*/
     @Override
     public List<Collect> getPostCollect(Integer userId) throws Exception {
 
@@ -96,10 +97,15 @@ public class PostServiceImpl implements PostService {
     }
 
 
-    /*-----------------------------------------    新增历史记录    --------------------------------------------*/
+    /*-----------------------------------------    收藏这条帖子    --------------------------------------------*/
     @Override
     public boolean collectThisPost(Integer postId, Integer userId, String remark) throws Exception {
         collectDao.collectThisPost(postId, userId, remark);
+        // 帖子被收藏，发出通知
+        Post post = postDao.getThisPostById(postId);
+        messageDao.creatMessage("您的帖子《" + post.getTitle() +
+                        "》被用户“" + userDao.getUserById(userId).getName() + "”收藏了！", post.getAuthorId()
+                , null, "帖子被收藏");
         return true;
     }
 
@@ -217,6 +223,11 @@ public class PostServiceImpl implements PostService {
         postIdAboutToDelete.forEach(postId -> {
             try {
                 postDao.deleteThisPost(postId);
+                // 帖子被删除，发布通知
+                Post post = postDao.getThisPostById(postId);
+                messageDao.creatMessage("您的帖子《" + post.getTitle() +
+                                "》已被删除，若非本人操作，则是因内容违规而被版主或管理员删除", post.getAuthorId()
+                        , null, "帖子被删除");
             } catch (Exception e) {
                 System.err.println("删除帖子时出现异常: " + e.getMessage());
             }
@@ -226,8 +237,18 @@ public class PostServiceImpl implements PostService {
 
     /*-----------------------------------------    为帖子点赞    ---------------------------------------------*/
     @Override
-    public void likeThisPost(Integer postId) throws Exception {
+    public boolean likeThisPost(Integer postId, Integer userId) throws Exception {
+        if (userId == null) return false;
+        // 执行点赞功能
         postDao.plusOneLikeCount(postId);
+        // 获得评论者user信息
+        User user = userDao.getUserById(userId);
+        // 获得评论信息
+        Post post = postDao.getThisPostById(postId);
+        messageDao.creatMessage("用户：" + user.getName()
+                        + " 给您的帖子《" + post.getTitle() + "》点了1个赞"
+                , post.getAuthorId(), null, "帖子被点赞");
+        return true;
     }
 
 

@@ -63,7 +63,7 @@ public class CommentController extends BaseServlet {
         } else {
             response.getWriter().write(
                     JSON.toJSONString(
-                            ResponseResult.error(Constants.RESPONSE_CODE_UNAUTHORIZED, "非法点赞")
+                            ResponseResult.error(Constants.RESPONSE_CODE_UNAUTHORIZED, "非法点赞，点赞无效")
                     )
             );
             System.out.println("--X>非法点赞，未登录");

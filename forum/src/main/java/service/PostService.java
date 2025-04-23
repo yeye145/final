@@ -17,10 +17,10 @@ public interface PostService {
     /*------------------------------------    判断帖子是否已收藏    --------------------------------------------*/
     boolean checkIfCollect(Integer postId, Integer userId) throws Exception;
 
-    /*-----------------------------------------    获得历史记录    --------------------------------------------*/
+    /*-----------------------------------------    获得收藏记录    --------------------------------------------*/
     List<Collect> getPostCollect(Integer userId) throws Exception;
 
-    /*-----------------------------------------    新增历史记录    --------------------------------------------*/
+    /*-----------------------------------------    收藏这条帖子    --------------------------------------------*/
     boolean collectThisPost(Integer postId, Integer userId, String remark) throws Exception;
 
     /*------------------------------------    记录帖子在历史记录    --------------------------------------------*/
@@ -29,7 +29,7 @@ public interface PostService {
     /*------------------------------------    获取帖子的历史记录    --------------------------------------------*/
     List<History> getPostHistory(Integer userId) throws Exception;
 
-    /*--------------------------------------------    获取帖子    --------------------------------------------*/
+    /*--------------------------------    获取帖子，优先考虑他关注的    ------------------------------------------*/
     List<Post> getAllPostInThisBoardPrioritizeUserLike(Integer userId, Integer boardId) throws Exception;
 
     /*--------------------------------------------    获取帖子    --------------------------------------------*/
@@ -39,5 +39,5 @@ public interface PostService {
     void deleteThesePost(List<Integer> postIdAboutToDelete);
 
     /*-----------------------------------------    为帖子点赞    ---------------------------------------------*/
-    void likeThisPost(Integer postId) throws Exception;
+    boolean likeThisPost(Integer postId, Integer userId) throws Exception;
 }

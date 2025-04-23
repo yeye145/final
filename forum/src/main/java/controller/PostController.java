@@ -199,16 +199,24 @@ public class PostController extends BaseServlet {
     /*------------------------------------------    为这条帖子点个赞    ----------------------------------------*/
     public void likeThisPost(HttpServletRequest request, HttpServletResponse response) throws Exception {
         Integer postId = Integer.parseInt(request.getParameter("postId"));
+        Integer userId = ControllerToolMethod.getUserId(request);
 
         System.out.println("PostController.likeThisPost，为帖子点赞，帖子id：" + postId);
 
-        postService.likeThisPost(postId);
-
-        response.getWriter().write(
-                JSON.toJSONString(
-                        ResponseResult.success("点赞帖子成功！")
-                )
-        );
+        if(postService.likeThisPost(postId, userId)){
+            response.getWriter().write(
+                    JSON.toJSONString(
+                            ResponseResult.success("点赞帖子成功！")
+                    )
+            );
+        } else {
+            response.getWriter().write(
+                    JSON.toJSONString(
+                            ResponseResult.error(Constants.RESPONSE_CODE_UNAUTHORIZED, "非法点赞，点赞无效")
+                    )
+            );
+            System.out.println("--X>非法点赞，未登录");
+        }
 
     }
 

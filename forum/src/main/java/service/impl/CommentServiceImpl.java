@@ -113,7 +113,7 @@ public class CommentServiceImpl implements CommentService {
         Comment comment = commentDao.getCommentById(commentId);
         messageDao.creatMessage("用户：" + user.getName()
                         + " 给您的评论“" + comment.getContent() + "”点了1个赞"
-                , comment.getUserId(), null, "评论回复");
+                , comment.getUserId(), null, "评论被点赞");
         return true;
     }
 
