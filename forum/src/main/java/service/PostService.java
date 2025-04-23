@@ -8,6 +8,9 @@ import java.util.List;
 
 public interface PostService {
 
+    /*----------------------------------------    获取我的帖子    --------------------------------------------*/
+    List<Post> getMyPost(Integer userId) throws Exception;
+
     /*--------------------------------------------    发布帖子    --------------------------------------------*/
     boolean creatPost(Integer boardId, String title, String content, Integer userId) throws Exception;
 

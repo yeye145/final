@@ -10,6 +10,8 @@ import java.util.Map;
 
 public interface PostDao {
 
+    List<Post> getMyPost(Integer userId) throws SQLException;
+
     void creatPost(Integer boardId, String title, String content, User user) throws Exception;
 
     List<Post> getAllPostInThisBoardList(Integer boardId) throws SQLException;

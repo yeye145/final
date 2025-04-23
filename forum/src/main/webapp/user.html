@@ -337,7 +337,7 @@
                     <div class="stat-value">{{ userInformation.myCollectCount }}</div>
                     <div class="stat-label">我的收藏</div>
                 </div>
-                <div class="stat-card">
+                <div class="stat-card" @click="turnMyPost">
                     <div class="stat-icon">📖</div>
                     <div class="stat-value">{{ userInformation.postCount }}</div>
                     <div class="stat-label">我的帖子</div>
@@ -634,6 +634,28 @@
             </div>
         </div>
 
+        <!-- 查看我发布的帖子 -->
+        <div v-if="ifMyPost" class="board-section">
+            <div class="post-list">
+                <!--渲染帖子信息-->
+                <div v-for="post in myPost"
+                     :key="post.id"
+                     class="post-card"
+                     @click="turnThisPost(post.id, post.title)">
+                    <div class="post-meta">
+                        <span class="author">👤 {{ post.authorName }}</span>
+                        <span class="time">📅 {{ post.time }}</span>
+                    </div>
+                    <h4 class="post-title">{{ post.title }}</h4>
+                    <div class="post-stats">
+                        <span>❤️ {{ post.likeCount }}</span>
+                        <span>💬 {{ post.commentCount }}</span>
+                        <span>👀 {{ post.viewCount }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
 </div>
@@ -729,6 +751,7 @@
             ifShowEditCommentBox: false,        // 是否显示编辑评论
             ifHadNewMessage: false,             // 控制红点显示
             ifMyMessage: false,                 // 是否显示我的通知信息
+            ifMyPost: false,                    // 是否显示我的帖子
 
 
             showHistoryModal: false,            // 是否显示历史公告弹窗
@@ -743,6 +766,7 @@
             allPostInMyBoard: [],
             deleteChosenPost: [],               // 存储待删除帖子ID
             postCollect: [],                    // 收藏的帖子
+            myPost: [],                         // 我的帖子
 
             boardSearchQuery: '',               // 版块关键字搜索
             originalAllBoard: [],
@@ -836,6 +860,24 @@
             this.highlightAll();
         },
         methods: {
+            // 获取我的个人通知信息
+            fetchMyPost() {
+                axios.post('/post/getMyPost')
+                    .then(response => {
+                        if (response.data.code === 200) {
+                            this.myPost = response.data.data;
+                        } else {
+                            console.error('获取我的帖子失败:', response.data.message);
+                        }
+                    })
+            },
+            // 切换显示我的帖子
+            turnMyPost() {
+                this.turnNothing();
+                this.ifMyPost = true;
+                this.fetchMyPost();
+                this.currentPath.push('我的帖子');
+            },
             // 删除所有已读信息
             deleteAllReceiveMessage() {
                 axios.post('/message/deleteAllReceiveMessage')
@@ -875,6 +917,7 @@
             },
             // 全都不显示
             turnNothing() {
+                this.ifMyPost = false;
                 this.ifMyMessage = false;
                 this.ifBoardNotice = false;
                 this.ifMyInformation = false;

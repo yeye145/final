@@ -13,6 +13,20 @@ import java.util.Map;
 public class PostDaoImpl implements PostDao {
 
     @Override
+    public List<Post> getMyPost(Integer userId) throws SQLException {
+        return MySearch.searchToList("SELECT id, title, content, time" +
+                ", author_id AS authorId" +
+                ", author_name AS authorName" +
+                ", author_avatar AS authorAvatar" +
+                ", board_id AS boardId" +
+                ", view_count AS viewCount" +
+                ", like_count AS likeCount" +
+                ", comment_count AS commentCount " +
+                "FROM `forum`.`post` WHERE author_id = ? ORDER BY time DESC", Post.class, userId);
+    }
+
+
+    @Override
     public void creatPost(Integer boardId, String title, String content, User user) throws Exception {
         MyUpdate.update("INSERT INTO `forum`.`post` (`title`, `content`, `author_id`" +
                 ", `author_name`, `board_id`, `author_avatar`)" +

@@ -29,6 +29,19 @@ public class PostController extends BaseServlet {
     private PostService postService = new PostServiceImpl();
 
 
+    /*-----------------------------------------    获取我的帖子    --------------------------------------------*/
+    public void getMyPost(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        Integer userId = ControllerToolMethod.getUserId(request);
+        System.out.println("PostController.getMyPost，用户id：" + userId);
+        response.getWriter().write(
+                JSON.toJSONString(
+                        ResponseResult.success(postService.getMyPost(userId))
+                )
+        );
+        System.out.println("-->获取我的帖子成功！");
+    }
+
+
     /*--------------------------------------------    发布帖子    --------------------------------------------*/
     public void creatPost(HttpServletRequest request, HttpServletResponse response) throws Exception {
         Integer boardId = Integer.parseInt(request.getParameter("boardId"));
@@ -203,7 +216,7 @@ public class PostController extends BaseServlet {
 
         System.out.println("PostController.likeThisPost，为帖子点赞，帖子id：" + postId);
 
-        if(postService.likeThisPost(postId, userId)){
+        if (postService.likeThisPost(postId, userId)) {
             response.getWriter().write(
                     JSON.toJSONString(
                             ResponseResult.success("点赞帖子成功！")

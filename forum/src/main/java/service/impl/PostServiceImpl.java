@@ -22,6 +22,12 @@ public class PostServiceImpl implements PostService {
     private BoardBanDao boardBanDao = new BoardBanDaoImpl();
     private MessageDao messageDao = new MessageDaoImpl();
 
+    /*----------------------------------------    获取我的帖子    --------------------------------------------*/
+    @Override
+    public List<Post> getMyPost(Integer userId) throws Exception {
+        return postDao.getMyPost(userId);
+    }
+
 
     /*--------------------------------------------    发布帖子    --------------------------------------------*/
     @Override
