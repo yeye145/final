@@ -1,9 +1,7 @@
 package service.impl;
 
-import dao.impl.PostDaoImpl;
-import dao.impl.ReportDaoImpl;
-import dao.impl.SubscriptionDaoImpl;
-import dao.impl.UserDaoImpl;
+import dao.*;
+import dao.impl.*;
 import pojo.Post;
 import pojo.Subscription;
 import pojo.User;
@@ -14,10 +12,11 @@ import java.util.List;
 
 public class UserServiceImpl implements UserService {
 
-    private UserDaoImpl userDao = new UserDaoImpl();
-    private SubscriptionDaoImpl subscriptionDao = new SubscriptionDaoImpl();
-    private PostDaoImpl postDao = new PostDaoImpl();
-    private ReportDaoImpl reportDao = new ReportDaoImpl();
+    private UserDao userDao = new UserDaoImpl();
+    private SubscriptionDao subscriptionDao = new SubscriptionDaoImpl();
+    private PostDao postDao = new PostDaoImpl();
+    private ReportDao reportDao = new ReportDaoImpl();
+    private MessageDao messageDao = new MessageDaoImpl();
 
 
     /*-------------------------------------------    举报作者    ----------------------------------------------*/
@@ -57,6 +56,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public void subscribeThisUser(Integer authorId, Integer userId) throws Exception {
         subscriptionDao.subscribeThisAuthor(authorId, userId);
+        User user = userDao.getUserById(userId);
+        messageDao.creatMessage("用户“" + user.getName() + "”刚刚关注了您！"
+                , authorId, null, "用户关注通知");
     }
 
 
