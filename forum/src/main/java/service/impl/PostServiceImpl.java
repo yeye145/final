@@ -22,6 +22,14 @@ public class PostServiceImpl implements PostService {
     private BoardBanDao boardBanDao = new BoardBanDaoImpl();
     private MessageDao messageDao = new MessageDaoImpl();
 
+
+    /*------------------------------    获取该版块的所有帖子，优先显示晚新发布的------------------------------------*/
+    @Override
+    public List<Post> getAllPostInThisBoardOrderByTimeDesc(Integer boardId) throws Exception {
+        return postDao.getAllPostInThisBoardList(boardId);
+    }
+
+
     /*----------------------------------------    获取我的帖子    --------------------------------------------*/
     @Override
     public List<Post> getMyPost(Integer userId) throws Exception {

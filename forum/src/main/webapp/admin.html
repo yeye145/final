@@ -674,7 +674,7 @@
             },
             // 获取该版块下的所有帖子
             fetchAllPostInThisBoard(board_id, board_title) {
-                axios.post('/post/getAllPostInThisBoard', new URLSearchParams({
+                axios.post('/post/getAllPostInThisBoardOrderByTimeDesc', new URLSearchParams({
                     boardId: board_id,
                 }), {
                     headers: {

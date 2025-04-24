@@ -29,6 +29,23 @@ public class PostController extends BaseServlet {
     private PostService postService = new PostServiceImpl();
 
 
+    /*---------------------------------    获取该版块的所有帖子，优先显示晚新发布的   -------------------------------*/
+    public void getAllPostInThisBoardOrderByTimeDesc(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        Integer boardId = Integer.parseInt(request.getParameter("boardId"));
+        System.out.println("PostController.getAllPostInThisBoardOrderByTimeDesc" +
+                "，获取版块id：" + boardId + "  下的全部帖子");
+
+        List<Post> resultPost = postService.getAllPostInThisBoardOrderByTimeDesc(boardId);
+
+        // 返回成功响应
+        response.getWriter().write(
+                JSON.toJSONString(
+                        ResponseResult.success(resultPost)
+                )
+        );
+
+        System.out.println("-->获取该版块的所有帖子，优先显示晚新发布的，成功！");
+    }
 
 
     /*-----------------------------------------    获取我的帖子    --------------------------------------------*/

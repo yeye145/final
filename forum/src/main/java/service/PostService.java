@@ -8,6 +8,9 @@ import java.util.List;
 
 public interface PostService {
 
+    /*------------------------------    获取该版块的所有帖子，优先显示晚新发布的------------------------------------*/
+    List<Post> getAllPostInThisBoardOrderByTimeDesc(Integer boardId) throws Exception;
+
     /*----------------------------------------    获取我的帖子    --------------------------------------------*/
     List<Post> getMyPost(Integer userId) throws Exception;
 

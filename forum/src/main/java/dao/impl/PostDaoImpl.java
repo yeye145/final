@@ -48,7 +48,7 @@ public class PostDaoImpl implements PostDao {
                 ", like_count AS likeCount" +
                 ", comment_count AS commentCount " +
                 "FROM `forum`.`post` WHERE board_id = ? ORDER BY time DESC", Post.class, boardId);
-    }
+}
 
     @Override
     public Post getThisPostById(Integer postId) throws Exception {
