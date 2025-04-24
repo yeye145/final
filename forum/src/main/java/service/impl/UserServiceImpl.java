@@ -2,7 +2,7 @@ package service.impl;
 
 import dao.*;
 import dao.impl.*;
-import pojo.Post;
+
 import pojo.Subscription;
 import pojo.User;
 import service.UserService;
@@ -12,44 +12,11 @@ import java.util.List;
 
 public class UserServiceImpl implements UserService {
 
+    /*--------------------------------------------    私有变量    --------------------------------------------*/
     private UserDao userDao = new UserDaoImpl();
     private SubscriptionDao subscriptionDao = new SubscriptionDaoImpl();
     private PostDao postDao = new PostDaoImpl();
-    private ReportDao reportDao = new ReportDaoImpl();
     private MessageDao messageDao = new MessageDaoImpl();
-
-
-    /*-------------------------------------------    举报作者    ----------------------------------------------*/
-    @Override
-    public boolean reportUser(Integer reportedThisUserId, Integer userId, String reason) throws Exception {
-
-        User user = userDao.getUserById(reportedThisUserId);
-
-        // 若找不到该用户
-        if (user == null) {
-            return false;
-        }
-
-        reportDao.reportUser(reportedThisUserId, userId, reason);
-
-        return true;
-    }
-
-
-    /*-------------------------------------------    举报帖子    ----------------------------------------------*/
-    @Override
-    public boolean reportPost(Integer postId, Integer userId, String reason) throws Exception {
-
-        Post thePostWhichBeReported = postDao.getThisPostById(postId);
-
-        // 若找不到这条帖子，返回举报失败
-        if (thePostWhichBeReported == null) {
-            return false;
-        }
-
-        reportDao.reportPost(postId, thePostWhichBeReported.getBoardId(), userId, reason);
-        return true;
-    }
 
 
     /*-------------------------------------------    订阅作者    ----------------------------------------------*/

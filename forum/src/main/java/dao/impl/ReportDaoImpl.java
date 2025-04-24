@@ -30,12 +30,33 @@ public class ReportDaoImpl implements ReportDao {
     /*-----------------------------------    获取版块下所有举报帖子的信息    --------------------------------------*/
     @Override
     public List<Report> getReportPostToMe(Integer boardId) throws Exception {
-        return MySearch.searchToList("SELECT id, judge, reason" +
+        return MySearch.searchToList("SELECT id, judge, reason, time" +
+                ", if_deal AS ifDeal" +
                 ", user_id AS userId" +
                 ", board_id AS boardId" +
                 ", post_id AS postId" +
-                ", reported_this_user_id AS reportedId" +
-                " WHERE board_id = ? AND judge = 'host'", Report.class, boardId);
+                ", reported_this_user_id AS reportedThisUserId" +
+                " FROM `forum`.`report` WHERE board_id = ? AND judge = 'host'", Report.class, boardId);
+    }
+
+
+    /*-----------------------------------     通过id获取对应的举报内容    --------------------------------------*/
+    @Override
+    public Report getReportById(Integer reportId) throws Exception{
+        return MySearch.searchToOne("SELECT id, judge, reason, time" +
+                ", if_deal AS ifDeal" +
+                ", user_id AS userId" +
+                ", board_id AS boardId" +
+                ", post_id AS postId" +
+                ", reported_this_user_id AS reportedThisUserId" +
+                " FROM `forum`.`report` WHERE id = ?", Report.class, reportId);
+    }
+
+
+    /*-----------------------------------------     举报已读    --------------------------------------------*/
+    @Override
+    public void hadKnowReport(Integer reportId) throws Exception{
+        MyUpdate.update("UPDATE `forum`.`report` SET if_deal = 1 WHERE id = ?", reportId);
     }
 
 

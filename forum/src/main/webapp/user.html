@@ -350,9 +350,18 @@
         <div v-if="ifMyBoard" class="board-section">
             <div class="board-header">
                 <h3>我的版块</h3>
-                <button v-if="!ifAllPostInMyBoard"
+                <button v-if="!ifAllPostInMyBoard && !ifReportPostToMe"
                         @click="showCreateBoardModal = true"
                         class="create-board-btn">+ 申请新增版块
+                </button>
+                <button @click=""
+                        class="delete-post-btn"
+                        v-if="ifReportPostToMe">
+                🗑️ 删除所有已处理举报
+                </button>
+                <button v-if="ifAllPostInMyBoard && !ifDeleteMode"
+                        @click="turnReportPostToMe"
+                        class="create-board-btn">查看用户的举报信息
                 </button>
                 <button v-if="ifAllPostInMyBoard && !ifDeleteMode"
                         @click="turnDeleteMode"
@@ -363,9 +372,7 @@
                         class="delete-post-btn">确认删除帖子
                 </button>
             </div>
-
-
-            <div class="board-list" v-if="!ifAllPostInMyBoard">
+            <div class="board-list" v-if="!ifAllPostInMyBoard && !ifReportPostToMe">
                 <!--展示我管理的全部版块-->
                 <div v-for="board in myBoard" :key="board.id" class="board-item">
                     <div class="board-info" @click="turnAllPostInMyBoard(board.id, board.title)">
@@ -405,6 +412,38 @@
                         <input type="checkbox"
                                v-model="deleteChosenPost"
                                :value="post.id">
+                    </div>
+                </div>
+            </div>
+            <div class="post-list" v-if="ifReportPostToMe">
+                <div class="post-list">
+                    <!--渲染向我举报的信息-->
+                    <div v-for="report in allReportPostToMe"
+                         :key="report.id"
+                         class="post-card">
+                        <span v-if="!report.ifDeal" class="notification-badge"></span>
+                        <div>
+                            <div class="post-meta">
+                                <span class="author">举报者id： {{ report.userId }}</span>
+                                <span class="time">举报时间： {{ report.time }}</span>
+                            </div>
+                            <h4 class="post-title" @click="turnThisPost(report.postId, '查看被举报的帖子')">
+                                举报的帖子id： {{ report.postId }}(👉点我跳转)
+                            </h4>
+                            <div class="post-stats">
+                                <span>举报原因： {{ report.reason }}</span>
+                            </div>
+                        </div>
+                        <div>
+                            <button v-if="!report.ifDeal"
+                                    @click="dealThisReport(report.id)"
+                                    class="follow-btn">举报属实，确认处理
+                            </button>
+                            <button v-if="!report.ifDeal"
+                                    @click="refuseThisReport(report.id)"
+                                    class="delete-post-btn">证据不足，拒绝处理
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -752,6 +791,7 @@
             ifHadNewMessage: false,             // 控制红点显示
             ifMyMessage: false,                 // 是否显示我的通知信息
             ifMyPost: false,                    // 是否显示我的帖子
+            ifReportPostToMe: false,            // 是否显示举报给版主的信息
 
 
             showHistoryModal: false,            // 是否显示历史公告弹窗
@@ -825,6 +865,7 @@
 
             myHistoryReadPost: [],              // 我的历史浏览记录
             myMessage: [],                      // 我的通知消息
+            allReportPostToMe: [],              // 向我举报的信息
 
 
         },
@@ -860,6 +901,62 @@
             this.highlightAll();
         },
         methods: {
+            // 拒绝处理举报
+            refuseThisReport(reportId) {
+                axios.post('/report/refuseThisReport', {
+                    reportId: reportId,
+                }, {
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+                }).then(response => {
+                    if (response.data.code === 200) {
+                        console.log(response.data);
+                        alert('已拒绝处理');
+                        this.turnReportPostToMe();
+                    } else {
+                        alert(response.data.message);
+                        console.error(response.data.code + ' ' + response.data.message);
+                    }
+                });
+            },
+            // 确认处理举报
+            dealThisReport(reportId) {
+                axios.post('/report/dealThisReport', {
+                    reportId: reportId,
+                }, {
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+                }).then(response => {
+                    if (response.data.code === 200) {
+                        console.log(response.data);
+                        alert('已确认处理');
+                        this.turnReportPostToMe();
+                    } else {
+                        alert(response.data.message);
+                        console.error(response.data.code + ' ' + response.data.message);
+                    }
+                });
+            },
+            // 显示用户举报给版主的所有信息
+            turnReportPostToMe() {
+                this.ifMyBoard = true;
+                this.ifAllPostInMyBoard = false;
+                this.ifReportPostToMe = true;
+                this.fetchReportPostToMe();
+            },
+            // 获取用户举报给版主的所有信息
+            fetchReportPostToMe() {
+                axios.post('/report/getReportPostToMe', {
+                    boardId: this.currentBoardId,
+                }, {
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+                })
+                    .then(response => {
+                        if (response.data.code === 200) {
+                            this.allReportPostToMe = response.data.data;
+                        } else {
+                            console.error('获取我的版块下的举报信息失败:', response.data.message);
+                        }
+                    })
+            },
             // 获取我的个人通知信息
             fetchMyPost() {
                 axios.post('/post/getMyPost')
@@ -887,7 +984,7 @@
                         } else {
                             console.error('清除所有已读信息失败:', response.data.message);
                         }
-                    })
+                    });
                 this.turnMyMessage();
             },
             // 查收信息
@@ -917,6 +1014,7 @@
             },
             // 全都不显示
             turnNothing() {
+                this.ifReportPostToMe = false;
                 this.ifMyPost = false;
                 this.ifMyMessage = false;
                 this.ifBoardNotice = false;
@@ -966,7 +1064,7 @@
                     alert('请填写举报该用户的原因');
                     return;
                 }
-                axios.post('/user/reportUser', {
+                axios.post('/report/reportUser', {
                     reportedThisUserId: this.reportUser.reportedThisUserId,
                     reason: this.reportUser.reason,
                 }, {
@@ -992,7 +1090,7 @@
                     alert('请填写举报该帖子的原因');
                     return;
                 }
-                axios.post('/user/reportPost', {
+                axios.post('/report/reportPost', {
                     postId: this.reportPost.postId,
                     reason: this.reportPost.reason,
                 }, {
@@ -1061,6 +1159,7 @@
                     // 未关注状态,则关注
                     this.subscribeThisUser(authorId);
                 }
+                this.currentPath = ['QG技术论坛', this.currentPath[1], '所有帖子'];
                 this.turnThisPost(this.thisPost.id, this.thisPost.title);
             },
             // 取消收藏
@@ -1564,15 +1663,19 @@
                 this.ifAllPostInThisBoard = true;
                 this.currentBoardId = board_id;
                 this.fetchAllPostInThisBoard(board_id, board_title);
+                this.currentBoardId = board_id;
                 this.fetchNotice(board_id);
             },
             // 切换我的版块下所有帖子
             turnAllPostInMyBoard(board_id, board_title) {
                 this.turnNothing();
+                this.ifMyBoard = true;
+                this.ifAllPostInMyBoard = true;
                 this.ifBoardNotice = true;
                 this.newNotice.boardId = board_id;
                 this.currentBoardId = board_id;
                 this.fetchAllPostInMyBoard(board_id, board_title);
+                this.currentBoardId = board_id;
                 this.fetchNotice(board_id);
             },
             // 切换所有版块

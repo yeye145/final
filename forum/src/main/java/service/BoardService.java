@@ -8,24 +8,25 @@ import java.util.List;
 
 public interface BoardService {
 
-    /*-----------------------------------    获取我的版块的举报信息    ------------------------------------------*/
-    List<Report> getReportPostToMe(Integer boardId) throws Exception;
-
     /*-----------------------------------------    取消关注版块    --------------------------------------------*/
     void cancelSubscribeThisBoard(Integer boardId, Integer userId) throws Exception;
 
-    /*--------------------------------    判断用户是否已经关注版块    --------------------------------------------*/
+    /*------------------------------------    判断用户是否已经关注版块    ----------------------------------------*/
     boolean checkIfSubcribe(Integer boardId, Integer userId) throws Exception;
 
     /*-------------------------------------------    订阅版块    ----------------------------------------------*/
     void subscribeThisBoard(Integer boardId, Integer userId) throws Exception;
 
+    /*------------------------------------    获取我的版块，通过用户id    ----------------------------------------*/
     List<Board> getMyBoard(Integer userId) throws SQLException;
 
+    /*-----------------------------------------    获取热门的版块    --------------------------------------------*/
     List<Board> getHotBoard() throws Exception;
 
+    /*-----------------------------------------    获取最新的版块    --------------------------------------------*/
     List<Board> getNewBoard() throws Exception;
 
+    /*----------------------------------    获取所有版块，优先显示用户关注的    -------------------------------------*/
     List<Board> getAllBoardPrioritizeUserLike(Integer userId) throws SQLException;
 
     /*-------------------------------------------    新增版块    -----------------------------------------------*/

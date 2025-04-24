@@ -13,4 +13,10 @@ public interface ReportDao {
 
     /*-----------------------------------    获取版块下所有举报帖子的信息    --------------------------------------*/
     List<Report> getReportPostToMe(Integer boardId) throws Exception;
+
+    /*-----------------------------------     通过id获取对应的举报内容    --------------------------------------*/
+    Report getReportById(Integer reportId) throws Exception;
+
+    /*-----------------------------------------     举报已读    --------------------------------------------*/
+    void hadKnowReport(Integer reportId) throws Exception;
 }

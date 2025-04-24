@@ -8,8 +8,10 @@ import pojo.Notice;
 import pojo.ResponseResult;
 import service.BoardService;
 import service.NoticeService;
+import service.ReportService;
 import service.impl.BoardServiceImpl;
 import service.impl.NoticeServiceImpl;
+import service.impl.ReportServiceImpl;
 import utils.Constants;
 
 import javax.servlet.ServletException;
@@ -26,21 +28,6 @@ public class BoardController extends BaseServlet {
     /*--------------------------------------------    私有变量    --------------------------------------------*/
     private BoardService boardService = new BoardServiceImpl();
     private NoticeService noticeService = new NoticeServiceImpl();
-
-    /*------------------------------    获取我的版块下的举报帖子信息    ------------------------------------------*/
-    public void getReportPostToMe(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        Integer boardId = Integer.parseInt(request.getParameter("boardId"));
-        System.out.println("BoardController，获取我的版块下的举报信息，版块id" + boardId);
-
-        // 获取版块信息
-        response.getWriter().write(
-                JSON.toJSONString(
-                        ResponseResult.success(boardService.getReportPostToMe(boardId))
-                )
-        );
-
-        System.out.println("-->获取版块下的举报信息成功！--" );
-    }
 
 
     /*---------------------------------    判断某个版块，用户是否已经关注   ---------------------------------------*/

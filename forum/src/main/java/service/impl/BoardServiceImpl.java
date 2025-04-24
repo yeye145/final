@@ -23,13 +23,6 @@ public class BoardServiceImpl implements BoardService {
     private UserDao userDao = new UserDaoImpl();
     private NoticeDao noticeDao = new NoticeDaoImpl();
     private MessageDao messageDao = new MessageDaoImpl();
-    private ReportDao reportDao = new ReportDaoImpl();
-
-    /*-----------------------------------    获取我的版块的举报信息    ------------------------------------------*/
-    @Override
-    public List<Report> getReportPostToMe(Integer boardId) throws Exception {
-        return reportDao.getReportPostToMe(boardId);
-    }
 
 
     /*-----------------------------------------    取消关注版块    --------------------------------------------*/
@@ -126,6 +119,7 @@ public class BoardServiceImpl implements BoardService {
         boardApplyDao.applyNewBoard(userId, title, type, notice);
     }
 
+
     /*--------------------------------------    版块封禁用户发帖    ----------------------------------------------*/
     @Override
     public boolean banUserInThisBoard(Integer boardId, String userName, String reason) throws SQLException {
@@ -152,6 +146,7 @@ public class BoardServiceImpl implements BoardService {
     }
 
 
+    /*------------------------------------    发布新的版块公告    ----------------------------------------------*/
     @Override
     public void publishNewNotice(Integer boardId, String content) throws Exception {
         noticeDao.publishNewNotice(boardId, content);

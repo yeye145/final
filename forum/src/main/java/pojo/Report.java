@@ -1,23 +1,31 @@
 package pojo;
 
+import java.time.LocalDateTime;
+
 public class Report {
     private Integer id;
     private Integer userId;
     private Integer boardId;
     private Integer postId;
-    private Integer reportedId;
+    private Integer reportedThisUserId;
+    private Boolean ifDeal;
+    private String reason;
     private String judge;
+    private LocalDateTime time;
 
     public Report() {
     }
 
-    public Report(Integer id, Integer userId, Integer boardId, Integer postId, Integer reportedId, String judge) {
+    public Report(Integer id, Integer userId, Integer boardId, Integer postId, Integer reportedThisUserId, Boolean ifDeal, String reason, String judge, LocalDateTime time) {
         this.id = id;
         this.userId = userId;
         this.boardId = boardId;
         this.postId = postId;
-        this.reportedId = reportedId;
+        this.reportedThisUserId = reportedThisUserId;
+        this.ifDeal = ifDeal;
+        this.reason = reason;
         this.judge = judge;
+        this.time = time;
     }
 
     /**
@@ -86,18 +94,50 @@ public class Report {
 
     /**
      * 获取
-     * @return reportedId
+     * @return reportedThisUserId
      */
-    public Integer getReportedId() {
-        return reportedId;
+    public Integer getReportedThisUserId() {
+        return reportedThisUserId;
     }
 
     /**
      * 设置
-     * @param reportedId
+     * @param reportedThisUserId
      */
-    public void setReportedId(Integer reportedId) {
-        this.reportedId = reportedId;
+    public void setReportedThisUserId(Integer reportedThisUserId) {
+        this.reportedThisUserId = reportedThisUserId;
+    }
+
+    /**
+     * 获取
+     * @return ifDeal
+     */
+    public Boolean getIfDeal() {
+        return ifDeal;
+    }
+
+    /**
+     * 设置
+     * @param ifDeal
+     */
+    public void setIfDeal(Boolean ifDeal) {
+        this.ifDeal = ifDeal;
+    }
+
+    /**
+     * 获取
+     * @return reason
+     */
+    public String getReason() {
+        return reason;
+    }
+
+    /**
+     * 设置
+     * @param reason
+     */
+    public void setReason(String reason) {
+        this.reason = reason;
     }
 
     /**
@@ -116,7 +156,23 @@ public class Report {
         this.judge = judge;
     }
 
+    /**
+     * 获取
+     * @return time
+     */
+    public LocalDateTime getTime() {
+        return time;
+    }
+
+    /**
+     * 设置
+     * @param time
+     */
+    public void setTime(LocalDateTime time) {
+        this.time = time;
+    }
+
     public String toString() {
-        return "Report{id = " + id + ", userId = " + userId + ", boardId = " + boardId + ", postId = " + postId + ", reportedId = " + reportedId + ", judge = " + judge + "}";
+        return "Report{id = " + id + ", userId = " + userId + ", boardId = " + boardId + ", postId = " + postId + ", reportedThisUserId = " + reportedThisUserId + ", ifDeal = " + ifDeal + ", reason = " + reason + ", judge = " + judge + ", time = " + time + "}";
     }
 }
