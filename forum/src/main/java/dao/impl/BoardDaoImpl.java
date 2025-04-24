@@ -13,6 +13,17 @@ public class BoardDaoImpl implements BoardDao {
 
 
     @Override
+    public List<Board> getAllBoardOrderById() throws SQLException {
+        return MySearch.searchToList("SELECT id, title, type, `time`" +
+                ", host_id AS hostId" +
+                ", post_count AS postCount " +
+                ", view_count AS viewCount" +
+                ", host_avatar AS hostAvatar" +
+                ", host_name AS hostName " +
+                "FROM `forum`.`board`", Board.class);
+    }
+
+    @Override
     public Board getBoardById(Integer boardId) throws SQLException {
         return MySearch.searchToOne("SELECT id, title, type, `time`" +
                 ", host_id AS hostId" +

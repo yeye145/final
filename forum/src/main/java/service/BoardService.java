@@ -9,6 +9,9 @@ import java.util.List;
 public interface BoardService {
 
     /*-----------------------------------------    取消关注版块    --------------------------------------------*/
+    List<Board> getAllBoardOrderById() throws Exception;
+
+    /*-----------------------------------------    取消关注版块    --------------------------------------------*/
     void cancelSubscribeThisBoard(Integer boardId, Integer userId) throws Exception;
 
     /*------------------------------------    判断用户是否已经关注版块    ----------------------------------------*/

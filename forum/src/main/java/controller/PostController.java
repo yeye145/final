@@ -29,6 +29,8 @@ public class PostController extends BaseServlet {
     private PostService postService = new PostServiceImpl();
 
 
+
+
     /*-----------------------------------------    获取我的帖子    --------------------------------------------*/
     public void getMyPost(HttpServletRequest request, HttpServletResponse response) throws Exception {
         Integer userId = ControllerToolMethod.getUserId(request);

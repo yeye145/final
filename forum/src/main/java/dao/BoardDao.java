@@ -9,6 +9,8 @@ import java.util.Set;
 public interface BoardDao {
 
 
+    List<Board> getAllBoardOrderById() throws SQLException;
+
     Board getBoardById(Integer boardId) throws SQLException;
 
     List<Board> getOneBoardList(Integer userId) throws SQLException;

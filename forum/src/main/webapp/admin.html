@@ -86,7 +86,7 @@
                 <div v-for="board in allBoard" :key="board.id" class="board-item">
                     <div class="board-info" @click="turnAllPostInThisBoard(board.id, board.title)">
                         <img :src="board.hostAvatar" class="host-avatar">
-                        <h4>{{ board.title }}</h4>
+                        <h4>id: {{ board.id }} | {{ board.title }}</h4>
                         <p>类型: {{ board.type }} | 帖子数: {{ board.postCount }} | 浏览数: {{ board.viewCount }}</p>
                         <p>版主: {{ board.hostName }} | 版主id: {{ board.hostId }} | 创建时间：{{ board.time }}</p>
                     </div>
@@ -635,7 +635,7 @@
             },
             // 获取全部版块
             fetchAllBoard() {
-                axios.post('/board/getAllBoard')
+                axios.post('/board/getAllBoardOrderById')
                     .then(response => {
                         if (response.data.code === 200) {
                             this.allBoard = response.data.data;

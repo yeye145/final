@@ -3,7 +3,6 @@ package service.impl;
 import dao.*;
 import dao.impl.*;
 import pojo.Board;
-import pojo.Report;
 import pojo.Subscription;
 import pojo.User;
 import service.BoardService;
@@ -23,6 +22,14 @@ public class BoardServiceImpl implements BoardService {
     private UserDao userDao = new UserDaoImpl();
     private NoticeDao noticeDao = new NoticeDaoImpl();
     private MessageDao messageDao = new MessageDaoImpl();
+
+
+    /*-----------------------------------------    取消关注版块    --------------------------------------------*/
+    @Override
+    public List<Board> getAllBoardOrderById() throws Exception {
+        return boardDao.getAllBoardOrderById();
+    }
+
 
 
     /*-----------------------------------------    取消关注版块    --------------------------------------------*/

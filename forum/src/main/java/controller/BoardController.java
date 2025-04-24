@@ -29,6 +29,23 @@ public class BoardController extends BaseServlet {
     private BoardService boardService = new BoardServiceImpl();
     private NoticeService noticeService = new NoticeServiceImpl();
 
+    /*---------------------------------------    获取按id排序的版块   ------------------------------------------*/
+    public void getAllBoardOrderById(HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+        System.out.println("BoardController，获取按id排序的版块");
+
+        List<Board> resultBoard = boardService.getAllBoardOrderById();
+
+        // 获取版块信息
+        response.getWriter().write(
+                JSON.toJSONString(
+                        ResponseResult.success(resultBoard)
+                )
+        );
+
+        System.out.println("-获取按id排序的版块成功！");
+    }
+
 
     /*---------------------------------    判断某个版块，用户是否已经关注   ---------------------------------------*/
     public void checkIfHadSubscribeThisBoard(HttpServletRequest request, HttpServletResponse response) throws Exception {
