@@ -1,11 +1,15 @@
 package service;
 
 import pojo.Board;
+import pojo.Report;
 
 import java.sql.SQLException;
 import java.util.List;
 
 public interface BoardService {
+
+    /*-----------------------------------    获取我的版块的举报信息    ------------------------------------------*/
+    List<Report> getReportPostToMe(Integer boardId) throws Exception;
 
     /*-----------------------------------------    取消关注版块    --------------------------------------------*/
     void cancelSubscribeThisBoard(Integer boardId, Integer userId) throws Exception;

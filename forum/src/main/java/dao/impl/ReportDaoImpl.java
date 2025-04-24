@@ -1,7 +1,11 @@
 package dao.impl;
 
 import dao.ReportDao;
+import dao.utils.MySearch;
 import dao.utils.MyUpdate;
+import pojo.Report;
+
+import java.util.List;
 
 public class ReportDaoImpl implements ReportDao {
 
@@ -21,5 +25,18 @@ public class ReportDaoImpl implements ReportDao {
                 " (`user_id`, `reported_this_user_id`, `judge`, `reason`)" +
                 " VALUES (?, ?, ?, ?)", userId, reportedThisUserId, "admin", reason);
     }
+
+
+    /*-----------------------------------    获取版块下所有举报帖子的信息    --------------------------------------*/
+    @Override
+    public List<Report> getReportPostToMe(Integer boardId) throws Exception {
+        return MySearch.searchToList("SELECT id, judge, reason" +
+                ", user_id AS userId" +
+                ", board_id AS boardId" +
+                ", post_id AS postId" +
+                ", reported_this_user_id AS reportedId" +
+                " WHERE board_id = ? AND judge = 'host'", Report.class, boardId);
+    }
+
 
 }

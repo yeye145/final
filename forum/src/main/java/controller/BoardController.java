@@ -27,6 +27,21 @@ public class BoardController extends BaseServlet {
     private BoardService boardService = new BoardServiceImpl();
     private NoticeService noticeService = new NoticeServiceImpl();
 
+    /*------------------------------    获取我的版块下的举报帖子信息    ------------------------------------------*/
+    public void getReportPostToMe(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        Integer boardId = Integer.parseInt(request.getParameter("boardId"));
+        System.out.println("BoardController，获取我的版块下的举报信息，版块id" + boardId);
+
+        // 获取版块信息
+        response.getWriter().write(
+                JSON.toJSONString(
+                        ResponseResult.success(boardService.getReportPostToMe(boardId))
+                )
+        );
+
+        System.out.println("-->获取版块下的举报信息成功！--" );
+    }
+
 
     /*---------------------------------    判断某个版块，用户是否已经关注   ---------------------------------------*/
     public void checkIfHadSubscribeThisBoard(HttpServletRequest request, HttpServletResponse response) throws Exception {
