@@ -75,6 +75,8 @@ CREATE TABLE report
     judge       VARCHAR(255) NOT NULL COMMENT '举报受理对象',
     reason      TEXT    NOT NULL COMMENT '举报原因',
     # 1 -> 管理员，0 -> 版主
+    if_deal     BOOLEAN NOT NULL DEFAULT 0,
+    time          DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE,
     FOREIGN KEY (board_id) REFERENCES board (id) ON DELETE CASCADE,
     FOREIGN KEY (post_id) REFERENCES post (id) ON DELETE CASCADE

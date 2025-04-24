@@ -6,542 +6,731 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="homepage.css"/>
+    <link rel="stylesheet" href="message.css"/>
+    <link rel="stylesheet" href="myself.css"/>
+    <link rel="stylesheet" href="board.css"/>
+    <link rel="stylesheet" href="post.css"/>
+    <!-- 引入代码高亮库 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.7.0/styles/github.min.css">
+    <!-- 加载 marked -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
 <div id="app">
+    <!-- 顶部导航栏 -->
     <div class="top-bar">
-        <h2 class="top-bar-title"
-            @click="turnInit"
-            style="cursor: pointer;"
-            :title="'清空右侧区域'"
-        >{{whatAreYouDo}}
-        </h2>
+        <div class="current-location">
+            {{ currentPath.join(' > ') }}
+        </div>
     </div>
+
+    <!-- 左侧功能导航 -->
     <div class="left-column">
-        <!-- 功能区域 -->
-        <h2 style="text-align: center;" title="管理员登录">——学生信息管理——</h2>
+        <h2 style="text-align: center;">——功能导航——</h2>
         <hr>
-        <br>
-        <div class="left-column-work" @dblclick="exitLogin">🚶‍♂️ 双击退出</div>
-        <br>
-        <div class="left-column-work" @click="turnInsertCourse">➕ 增设课程</div>
-        <br>
-        <div class="left-column-work" @click="turnAllStudent">🔎 学生查询</div>
-        <br>
-        <div class="left-column-work" @click="turnAllCourse">🔍 课程查询</div>
-        <br>
-        <div v-if="ifAllCourses" class="left-column-work" @click="turnDeleteCourse">❌ 删除课程</div>
-        <br>
-
+        <div class="nav-item" @click="backHomePage">🏠 回到主页</div>
+        <div class="nav-item" @click="turnAllBoard">🧩 全部版块</div>
+        <div class="nav-item" @click="turnMyMessage">🔔 全部消息
+            <div v-if="ifHadNewMessage" class="notification-badge"></div>
+        </div>
+        <hr>
+        <div class="nav-item" @click="exitLogin">🚪 退出登录</div>
     </div>
 
+    <!-- 右侧内容区域 -->
     <div class="right-column">
-        <!--增设课程-->
-        <div v-if="ifInsertCourse" class="insert-course-form">
-            <form @submit.prevent="submitNewCourse">
-                <div class="form-group">
-                    <label>课程名称：<br>
-                        <input type="text" v-model="newCourseName" required maxlength="15">
-                    </label>
-                </div>
-                <div class="form-group">
-                    <label>课程学分：<br>
-                        <input type="number"
-                               v-model="newCourseScore"
-                               placeholder="正整数"
-                               required>
-                    </label>
-                </div>
-                <div class="form-group">
-                    <label>最大可选人数：<br>
-                        <input type="number" v-model="newCourseMaxStudents" required></label>
-                </div>
 
-                <div class="form-group">
-                    <label>上课地点：</label>
-                    <div class="location-select">
-                        <select v-model="newCourseBuilding" required>
-                            <option value="">选择教学楼</option>
-                            <option v-for="n in 6" :value=n>教学楼{{n}}</option>
-                        </select>
+        <!-- 主页内容 -->
+        <div v-if="ifHomePage" class="content-section">
+            <h3>📌 最新公告</h3>
+            <p>欢迎来到QG技术论坛！这里有最新技术动态和深度讨论。</p>
+        </div>
 
-                        <select v-model="newCourseFloor" required>
-                            <option value="">选择楼层</option>
-                            <option v-for="n in 6" :value=n>{{n}}楼</option>
-                        </select>
-                        <br>
-                        <input type="number" v-model="newCourseRoomNumber"
-                               placeholder="教室编号"
-                               pattern="\d{2}"
-                               title="请输入两位数字"
-                               required>
+        <!-- 版块公告内容 -->
+        <div class="content-section" v-if="ifBoardNotice">
+            <h3>📌 公告
+                <button @click="showHistoryModal = true" class="history-btn">查看历史公告</button>
+            </h3>
+            <p class="notice-content">{{ currentNotice.content }}</p>
+            <p class="notice-time">📅 发布时间：{{ currentNotice.time }}</p>
+            <!-- 历史公告弹窗 -->
+            <div v-if="showHistoryModal" class="modal">
+                <!--点击外侧区域关闭弹窗-->
+                <div v-if="showHistoryModal" class="modal" @click.self="showHistoryModal = false">
+                    <div class="modal-content">
+                        <h3>历史公告（点击弹窗外区域以关闭）</h3>
+                        <div class="history-notice-list">
+                            <div v-for="(eachNotice, index) in notice"
+                                 @click="switchNotice(index)"> <!-- 点击切换 -->
+                                <span>📅 {{ eachNotice.time }}</span>
+                                <p>{{ eachNotice.content }}</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label>上课时间：</label>
-                    <div class="location-select">
-                        <select v-model="newCourseWeekday" required>
-                            <option value="">选择日期</option>
-                            <option v-for="n in 7" :value=n>周{{n}}</option>
-                        </select>
-                        <select v-model="newCourseStart" required>
-                            <option value="">第几节开始</option>
-                            <option v-for="n in 8" :value=n>第{{n}}节</option>
-                        </select>
-                        <select v-model="newCourseEnd" required>
-                            <option value="">第几节结束</option>
-                            <option v-for="n in 8" :value=n>第{{n}}节</option>
-                        </select>
+            </div>
+        </div>
+
+        <!-- 全部版块 -->
+        <div v-if="ifAllBoard" class="profile-section">
+            <div class="board-list" v-if="!ifAllPostInThisBoard">
+                <div class="search-bar">
+                    <input type="text" v-model="boardSearchQuery"
+                           placeholder="输入版主昵称或版块名称以搜索"
+                           @input="searchBoard">
+                </div>
+                <div class="filter-buttons">
+                    <button @click="fetchNewBoard" class="filter-btn">最新版块</button>
+                    <button @click="fetchHotBoard" class="filter-btn">最热门版块</button>
+                </div>
+                <div v-for="board in allBoard" :key="board.id" class="board-item">
+                    <div class="board-info" @click="turnAllPostInThisBoard(board.id, board.title)">
+                        <img :src="board.hostAvatar" class="host-avatar">
+                        <h4>{{ board.title }}</h4>
+                        <p>类型: {{ board.type }} | 帖子数: {{ board.postCount }} | 浏览数: {{ board.viewCount }}</p>
+                        <p>版主: {{ board.hostName }} | 版主id: {{ board.hostId }} | 创建时间：{{ board.time }}</p>
                     </div>
                 </div>
-                <div class="form-actions">
-                    <button type="submit">提交</button>
-                    <button type="button" @click="cancelInsert">取消</button>
+            </div>
+            <div class="post-list" v-if="ifAllPostInThisBoard">
+                <div class="search-bar">
+                    <input type="text" v-model="postSearchQuery"
+                           placeholder="输入发帖用户昵称或帖子名称以搜索"
+                           @input="searchPost">
                 </div>
-            </form>
+                <!--渲染全部帖子信息，点击帖子切换到对应帖子内容-->
+                <div v-for="post in allPostInThisBoard"
+                     v-if="post.title && post.title.trim()!== ''"
+                     :key="post.id"
+                     class="post-card"
+                     @click="turnThisPost(post.id, post.title)">
+                    <!--显示帖子信息-->
+                    <div class="post-meta">
+                        <img :src="post.authorAvatar" class="author-avatar">
+                        <span class="author">👤 {{ post.authorName }} | 用户id: {{ post.authorId }} </span>
+                        <span class="time">📅 {{ post.time }}</span>
+                    </div>
+                    <h4 class="post-title">帖子id: {{ post.id }} | {{ post.title }}</h4>
+                    <div class="post-stats">
+                        <span>❤️ {{ post.likeCount }}</span>
+                        <span>💬 {{ post.commentCount }}</span>
+                        <span>👀 {{ post.viewCount }}</span>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <!--课程搜索框-->
-        <div class="search-bar" v-if="ifAllCourses">
-            <input type="text" v-model="courseSearchQuery"
-                   placeholder="输入课程名称或信息搜索"
-                   @input="searchCourses">
-        </div>
-        <!--搜索学生的框-->
-        <div class="search-bar" v-if="ifAllStudents && !ifWhoSelectIt">
-            <input type="text" v-model="studentSearchQuery"
-                   placeholder="输入学生姓名、手机号或邮箱搜索"
-                   @input="searchStudents">
-        </div>
-        <table v-if="ifAllCourses">
-            <tr>
-                <th>课程序号</th>
-                <th>课程名称</th>
-                <th>课程信息</th>
-                <th>课程学分</th>
-                <th>是否可选</th>
-                <th>最大可选</th>
-                <th>当前已选</th>
-                <th v-if="ifDeleteCourse">勾选删除</th>
-            </tr>
-            <tr v-for="ac in allCourses">
-                <td class="left-column-work" @click="turnWhoSelectIt(ac.courseName)">{{ac.key}}</td>
-                <td class="left-column-work" @click="turnWhoSelectIt(ac.courseName)">{{ac.courseName}}</td>
-                <td class="left-column-work" @click="turnWhoSelectIt(ac.courseName)">{{ac.information}}</td>
-                <td @dblclick="editScore(ac)">
-                    <!--编辑学分-->
-                    <span v-if="!ac._editingScore">{{ac.score}}</span>
-                    <input v-else
-                           v-model="ac._newScore"
-                           @blur="saveScore(ac)"
-                           @keyup.enter="saveScore(ac)"
-                           type="number"
-                           min="0"
-                           step="1">
-                </td>
-                <td>{{ac.ifCanChoose}}</td>
-                <td>{{ac.numberCanChoose}}</td>
-                <td class="left-column-work" @click="turnWhoSelectIt(ac.courseName)">{{ac.numberChoose}}</td>
-                <td v-if="ifDeleteCourse">
-                    <button class="custom-select-btn"
-                            :class="{selected: ac._ifBeChosenToDelete}"
-                            @click="chooseCourseToDelete(ac)"></button>
-                </td>
-            </tr>
-        </table>
-        <div v-if="ifDeleteCourse && ifAllCourses && deleteChosenCourse.length > 0" class="delete-confirm">
-            <button @click="confirmDeleteCourse">确认删除选中课程</button>
+        <!-- 帖子具体内容 -->
+        <div v-if="ifThisPost" class="post-detail-section">
+            <!-- 帖子标题和元信息 -->
+            <div class="post-header">
+                <h2 class="post-title">帖子id: {{ thisPost.id }} | {{ thisPost.title }}</h2>
+                <div class="post-meta">
+                    <img :src="thisPost.authorAvatar" class="author-avatar">
+                    <span class="author">👤 {{ thisPost.authorName }} | 用户id: {{ thisPost.authorId }} </span>
+                    <span class="time">📅 {{ thisPost.time }}</span>
+                    <span class="views">👀 {{ thisPost.viewCount }} 浏览</span>
+                    <span class="likes">❤️ {{ thisPost.likeCount }} 点赞</span>
+                </div>
+            </div>
+
+            <!-- 水平分割线 -->
+            <hr class="post-divider">
+
+            <!-- 帖子内容(Markdown渲染区域) -->
+            <div class="post-content markdown-body" v-html="compiledMarkdown"></div>
+
+            <!-- 水平分割线 -->
+            <hr class="post-divider">
+
+            <!-- 评论区域 -->
+            <div class="comment-section">
+                <h3>评论 ({{ thisPost.commentCount }})</h3>
+
+
+                <!-- 评论列表 -->
+                <div class="comment-list">
+                    <div v-for="comment in allCommentInThisPost" :key="comment.id" class="comment-item">
+                        <div class="comment-header">
+                            <img :src="comment.userAvatar" class="comment-avatar">
+                            <span class="comment-author">{{ comment.userName }}</span>
+                            <span class="comment-time">{{ formatTime(comment.time) }}</span>
+                        </div>
+                        <div class="comment-content" v-html="renderMarkdown(comment.content)"></div>
+
+                        <!-- 子评论区域：使用递归组件 -->
+                        <div class="child-comments">
+                            <comment-tree
+                                    :comments="comment.childComment"
+                                    :parent-name="comment.userName"
+                                    :format-time="formatTime"
+                                    :render-markdown="renderMarkdown"
+                            ></comment-tree>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
-        <table v-if="ifAllStudents">
-            <tr>
-                <th>学生序号</th>
-                <th>学生姓名</th>
-                <th>手机号码</th>
-                <th>邮箱</th>
-                <th>已选课程名称</th>
-                <th>已选课程总数</th>
-                <th>性别</th>
-            </tr>
-            <tr v-for="s in allStudents" v-if="!ifWhoSelectIt">
-                <td>{{s.id}}</td>
-                <td>{{s.name}}</td>
-                <td @dblclick="editPhone(s)">
-                    <!--编辑手机号-->
-                    <span v-if="!s._editingPhone">{{s.phoneNumber}}</span>
-                    <input v-else
-                           v-model="s._newPhone"
-                           @blur="savePhone(s)"
-                           @keyup.enter="savePhone(s)"
-                           type="number">
-                </td>
-                <td>{{s.email}}</td>
-                <td>{{s.classHadSelected}}</td>
-                <td>{{s.classNumber}}</td>
-                <td>{{s.gender}}</td>
-            </tr>
-            <!--查询某门课程有哪些学生选-->
-            <tr v-for="s in whoSelectIt" v-if="ifWhoSelectIt">
-                <td>{{s.id}}</td>
-                <td>{{s.name}}</td>
-                <td>{{s.phoneNumber}}</td>
-                <td>{{s.email}}</td>
-                <td>{{s.classHadSelected}}</td>
-                <td>{{s.classNumber}}</td>
-                <td>{{s.gender}}</td>
-            </tr>
-        </table>
+        <!-- 查看我的通知消息 -->
+        <div v-if="ifMyMessage" class="board-section">
+            <button @click="deleteAllReceiveMessage"
+                    class="delete-post-btn">🗑️ 删除所有已读信息
+            </button>
+            <hr>
+            <br>
+            <div class="post-list">
+                <!--渲染通知信息-->
+                <div v-for="message in myMessage"
+                     :key="message.id"
+                     class="post-card"
+                     @click="receiveThisMessage(message)"
+                >
+                    <span v-if="message.viewCount === 0" class="notification-badge"></span>
+                    <div>
+                        <div class="post-meta">
+                            <img :src="message.userAvatarSend" class="author-avatar">
+                            <span class="author">👤 {{ message.userNameSend }}</span>
+                            <span class="time">📅 {{ message.time }}</span>
+                        </div>
+                        <h4 class="post-title">消息类型： {{ message.type }}</h4>
+                        <div class="post-stats">
+                            <span>{{ message.content }}</span>
+                        </div>
+                    </div>
+                    <div class="board-actions">
+                        <button v-if="message.viewCount === 0"
+                                @click="receiveThisMessage(message)"
+                                class="follow-btn">点击本消息任意位置以确认已读
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
     </div>
+
 </div>
 
+<!--加载axios-->
 <script src="https://cdn.bootcdn.net/ajax/libs/axios/1.6.7/axios.min.js"></script>
+<!--加载vue-->
 <script src="https://cdn.bootcdn.net/ajax/libs/vue/2.6.14/vue.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/c.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/java.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/cpp.min.js"></script>
+
+<script>
+    hljs.configure({
+        ignoreUnescapedHTML: true
+    });
+    hljs.highlightAll();
+</script>
+
+<!--循环渲染评论的组件注册-->
+<script>
+    Vue.component('comment-tree', {
+        // 定义组件接收的属性
+        props: [
+            'comments',
+            'parentName',
+            'formatTime',
+            'renderMarkdown',
+
+        ],
+        // 定义组件的模板
+        template: `
+          <div>
+            <div v-for="child in comments" :key="child.id" class="child-comment">
+              <div class="comment-header">
+                <img :src="child.userAvatar" class="comment-avatar">
+                <span class="comment-author">{{ child.userName }}</span>
+                <!-- 使用props传递的方法 -->
+                <span class="comment-time">{{ formatTime(child.time) }}</span>
+              </div>
+              <!-- 使用props传递的方法 -->
+              <div class="comment-content" v-html="renderMarkdown('回复 @' + parentName + '：' + child.content)"></div>
+              <!-- 递归时继续传递方法，递归渲染子评论 -->
+              <comment-tree
+                  v-if="child.childComment && child.childComment.length"
+                  :comments="child.childComment"
+                  :parent-name="child.userName"
+                  :format-time="formatTime"
+                  :render-markdown="renderMarkdown"
+              ></comment-tree>
+            </div>
+          </div>
+        `
+    });
+</script>
 
 <script>
     new Vue({
         el: '#app',
         data: {
-            whatAreYouDo: "学生管理系统",
-            ifAllCourses: false,
-            ifAllStudents: false,
-            ifWhoSelectIt: false,
-            ifDeleteCourse: false,
-            ifInsertCourse: false,
-            allCourses: [],
-            allStudents: [],
-            whoSelectIt: [],
-
-            courseSearchQuery: '', // 课程关键字搜索
-            originalCourses: [], // 用于存储原始课程数据
-            studentSearchQuery: '', // 学生关键字搜索
-            originalStudents: [], // 保存原始学生数据
-            deleteChosenCourse: [],// 存储要删除的课程
+            ifHomePage: true,                   // 显示主页
+            ifAllBoard: false,                  // 显示所有版块
+            ifAllPostInThisBoard: false,        // 显示该版块所有帖子
+            ifAllPostInMyBoard: false,          // 显示我的版块的所有帖子
+            ifThisPost: false,                  // 显示该帖子
+            ifBoardNotice: false,               // 显示版块公告
+            ifHadNewMessage: false,             // 控制红点显示
+            ifMyMessage: false,                 // 是否显示我的通知信息
 
 
-            newCourseName: '',
-            newCourseScore: '',
-            newCourseMaxStudents: '',
-            newCourseBuilding: '',
-            newCourseFloor: '',
-            newCourseRoomNumber: '',
-            newCourseWeekday: '',
-            newCourseStart: '',
-            newCourseEnd: '',
+            showHistoryModal: false,            // 是否显示历史公告弹窗
+            currentBoardId: null,
+            allBoard: [],
+            allPostInThisBoard: [],
 
+            boardSearchQuery: '',               // 版块关键字搜索
+            originalAllBoard: [],
+            postSearchQuery: '',                // 帖子关键字搜索
+            originalAllPostInThisBoard: [],
+            originalAllPostInMyBoard: [],
 
+            notice: [],                         // 存储所有公告
+            currentNotice: {                    // 当前展示的公告
+                time: '',
+                content: '当前暂无公告',
+            },
+            currentPath: ['QG技术论坛', '主页'],
+            avatar: '/images/avatar/initAvatar.jpg',
+
+            thisPost: {},                       // 访问某个帖子
+            allCommentInThisPost: [],           // 该帖子下的所有评论
+            compiledMarkdown: '',               // 帖子内容
+            markdownText: '',                   // 发布帖子内容
+            newPostTitle: '',
+
+            currentCommentId: '',               // 当前评论的id
+            myMessage: [],                      // 我的通知消息
+            allReportPostToMe: [],              // 向我举报的信息
         },
         mounted() {
-            this.refresh();
+
+            // 确保库已加载
+            if (typeof hljs === 'undefined' || typeof marked === 'undefined') {
+                console.error('库加载失败!');
+                return;
+            }
+
+            // 配置marked
+            marked.setOptions({
+                breaks: true,
+                highlight: function (code, lang) {
+                    if (lang && hljs.getLanguage(lang)) {
+                        try {
+                            return hljs.highlight(code, {language: lang}).value;
+                        } catch (e) {
+                            console.warn(`Failed to highlight ${lang} code:`, e);
+                        }
+                    }
+                    return hljs.highlightAuto(code).value;
+                }
+            });
+
+            // 初始高亮
+            this.highlightAll();
         },
         methods: {
-            exitLogin(){
-                axios.post('/other/exitLogin');
-                window.location.href = 'vueLogin.html';
-            },
-            refresh() {
-                let that = this;
-                axios.post('/admin/coursesLook').then(response => {
-                    if (response.data.code === 401) {
+            // 清空所有已处理的举报
+            deleteAllDealReport() {
+                axios.post('/report/deleteAllDealReport', {
+                    boardId: this.currentBoardId,
+                }, {
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+                }).then(response => {
+                    if (response.data.code === 200) {
+                        console.log(response.data);
+                        alert('清空所有已处理的举报');
+                        this.turnReportPostToMe();
+                    } else {
                         alert(response.data.message);
-                        window.location.href = '/vueLogin.html';
+                        console.error(response.data.code + ' ' + response.data.message);
                     }
-                    // 保存原始课程数据
-                    that.originalCourses = response.data;
-                    that.allCourses = response.data.map(course => ({
-                        ...course,
-                        _editingScore: false, // 临时变量，是否编辑学分
-                        _newScore: course.score, // 临时变量，编辑后的新学分
-                        _ifBeChosenToDelete: false, // 临时变量，是否被选中进批量删除
-                        ifCanChoose: course.ifCanChoose === 1 ? "是" : "否"
-                    }));
-
                 });
-                axios.post('/admin/studentsLook').then(response => {
-                    // 保存原始学生数据
-                    that.originalStudents = response.data;
-                    that.allStudents = response.data.map(student => ({
-                        // 使用扩展运算符(...)复制原有的学生对象属性，并添加两个临时新属性用于修改手机号码
-                        ...student,
-                        _editingPhone: false,
-                        _newPhone: student.phoneNumber
-                    }));
+            },
+            // 拒绝处理举报
+            refuseThisReport(reportId) {
+                axios.post('/report/refuseThisReport', {
+                    reportId: reportId,
+                }, {
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+                }).then(response => {
+                    if (response.data.code === 200) {
+                        console.log(response.data);
+                        alert('已拒绝处理');
+                        this.turnReportPostToMe();
+                    } else {
+                        alert(response.data.message);
+                        console.error(response.data.code + ' ' + response.data.message);
+                    }
+                });
+            },
+            // 确认处理举报
+            dealThisReport(reportId) {
+                axios.post('/report/dealThisReport', {
+                    reportId: reportId,
+                }, {
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+                }).then(response => {
+                    if (response.data.code === 200) {
+                        console.log(response.data);
+                        alert('已确认处理');
+                        this.turnReportPostToMe();
+                    } else {
+                        alert(response.data.message);
+                        console.error(response.data.code + ' ' + response.data.message);
+                    }
+                });
+            },
+            // 显示用户举报给版主的所有信息
+            turnReportPostToMe() {
+                this.ifMyBoard = true;
+                this.ifAllPostInMyBoard = false;
+                this.ifReportPostToMe = true;
+                this.fetchReportPostToMe();
+            },
+            // 获取用户举报给版主的所有信息
+            fetchReportPostToMe() {
+                axios.post('/report/getReportPostToMe', {
+                    boardId: this.currentBoardId,
+                }, {
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded'}
                 })
+                    .then(response => {
+                        if (response.data.code === 200) {
+                            this.allReportPostToMe = response.data.data;
+                        } else {
+                            console.error('获取我的版块下的举报信息失败:', response.data.message);
+                        }
+                    })
             },
-            // 查看所有课程
-            turnInit() {
-                this.whatAreYouDo = "学生管理系统";
-                this.ifAllCourses = false;
-                this.ifAllStudents = false;
-                this.ifWhoSelectIt = false;
-                this.ifDeleteCourse = false;
-                this.ifInsertCourse = false;
+            // 获取我的个人通知信息
+            fetchMyPost() {
+                axios.post('/post/getMyPost')
+                    .then(response => {
+                        if (response.data.code === 200) {
+                            this.myPost = response.data.data;
+                        } else {
+                            console.error('获取我的帖子失败:', response.data.message);
+                        }
+                    })
             },
-            turnAllCourse() {
-                this.refresh();
-                this.ifAllCourses = true;
-                this.ifAllStudents = false;
-                this.ifDeleteCourse = false;
-                this.ifInsertCourse = false;
-                this.whatAreYouDo = "查询课程";
+            // 删除所有已读信息
+            deleteAllReceiveMessage() {
+                axios.post('/message/deleteAllReceiveMessage')
+                    .then(response => {
+                        if (response.data.code === 200) {
+                            alert(response.data.message);
+                        } else {
+                            console.error('清除所有已读信息失败:', response.data.message);
+                        }
+                    });
+                this.turnMyMessage();
             },
-            // 查看所有学生
-            turnAllStudent() {
-                this.refresh();
-                this.ifAllCourses = false;
-                this.ifAllStudents = true;
-                this.ifWhoSelectIt = false;
-                this.ifDeleteCourse = false;
-                this.ifInsertCourse = false;
-                this.whatAreYouDo = "查询学生";
+            // 查收信息
+            receiveThisMessage(message) {
+                if (message.viewCount >= 1) {
+                    return;
+                }
+                axios.post('/message/receiveThisMessage', {
+                    messageId: message.id,
+                }, {
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+                });
+                message.viewCount = 1;
+                this.checkIfNewMessage().then(isCollected => {
+                    this.ifHadNewMessage = isCollected;
+                });
             },
-            // 查看某门课程有谁选了
-            turnWhoSelectIt(cName) {
-                this.refresh();
-                this.ifAllCourses = false;
-                this.ifInsertCourse = false;
-                this.ifAllStudents = true;
-                this.ifWhoSelectIt = true;
-                this.whatAreYouDo = "查询选择课程“" + cName + "”的学生";
-                let that = this;
-                axios.post('/admin/whoSelect', new URLSearchParams({
-                    cName: cName
+            // 查看我是否有新的通知消息
+            async checkIfNewMessage() {
+                try {
+                    const response = await axios.post('/message/checkIfNewMessage');
+                    return response.data.data === "yes";
+                } catch (error) {
+                    console.error('查看是否有新的通知消息失败:', error);
+                    return false;
+                }
+            },
+            // 全都不显示
+            turnNothing() {
+                this.ifReportPostToMe = false;
+                this.ifMyPost = false;
+                this.ifMyMessage = false;
+                this.ifBoardNotice = false;
+                this.ifMyInformation = false;
+                this.ifHomePage = false;
+                this.ifUploadMyAvatar = false;
+                this.ifEditName = false;
+                this.ifMyBoard = false;
+                this.ifShowDropdown = false;
+                this.ifAllBoard = false;
+                this.ifAllPostInMyBoard = false;
+                this.ifThisPost = false;
+                this.showEditPostModal = false;
+                this.ifMyCollect = false;
+                this.ifDeleteMode = false;
+                this.ifAllBoard = false;
+                this.ifAllPostInThisBoard = false;
+                this.ifMyHistory = false;
+                this.checkIfNewMessage().then(isCollected => {
+                    this.ifHadNewMessage = isCollected;
+                });
+            },
+            // 切换我的消息通知
+            turnMyMessage() {
+                this.turnNothing();
+                this.ifMyMessage = true;
+                this.fetchMyMessage();
+                this.currentPath = ['QG技术论坛', '我的消息'];
+            },
+            // 获取我的个人通知信息
+            fetchMyMessage() {
+                axios.post('/message/getAllMessage')
+                    .then(response => {
+                        if (response.data.code === 200) {
+                            this.myMessage = response.data.data;
+                        } else {
+                            console.error('获取我的通知消息:', response.data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('请求错误:', error);
+                    });
+            },
+            // 时间格式化
+            formatTime(time) {
+                return new Date(time).toLocaleString();
+            },
+            // 获取该帖子的所有评论
+            fetchComment(post_id) {
+                axios.post('/comment/getAllCommentInThisPost', new URLSearchParams({
+                    postId: post_id,
                 }), {
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded'
                     }
                 }).then(response => {
-                    that.whoSelectIt = response.data;
-                })
-            },
-            // 增设课程
-            turnInsertCourse() {
-                this.ifInsertCourse = !this.ifInsertCourse;
-                this.ifAllCourses = false;
-                this.ifAllStudents = false;
-                this.ifWhoSelectIt = false;
-                if (this.ifInsertCourse) {
-                    this.whatAreYouDo = "增设课程";
-                } else {
-                    this.whatAreYouDo = "学生管理系统";
-                }
-            },
-            // 显示课程删除按钮
-            turnDeleteCourse() {
-                this.ifAllStudents = false;
-                this.ifWhoSelectIt = false;
-                this.ifDeleteCourse = !this.ifDeleteCourse;
-                this.whatAreYouDo = "批量删除课程";
-            },
-            // 编辑手机号
-            editPhone(student) {
-                student._editingPhone = true;
-                student._newPhone = student.phoneNumber;
-                // 自动聚焦输入框
-                this.$nextTick(() => {
-                    const input = this.$el.querySelector('input[v-model="s._newPhone"]');
-                    if (input) input.focus();
-                });
-            },
-            // 保存手机号
-            savePhone(student) {
-                const phoneRegex = /^1[3-9]\d{9}$/;
-                if (phoneRegex.test(student._newPhone)) {
-                    student.phoneNumber = student._newPhone;
-                    axios.post('/admin/updatePhone', new URLSearchParams({
-                        email: student.email,
-                        newPhone: student._newPhone
-                    }), {
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded'
-                        }
-                    }).then(response => {
-                        if (response.data.code !== 200) {
-                            alert("更新手机号失败");
-                        }
-                    }).catch(error => {
-                        alert("请求错误: " + error.message);
-                    });
-                }
-                student._editingPhone = false;
-            },
-            // 学分编辑
-            editScore(course) {
-                course._editingScore = true;
-                course._newScore = course.score;
-                this.$nextTick(() => {
-                    const input = this.$el.querySelector('input[v-model="ac._newScore"]');
-                    if (input) input.focus();
-                });
-            },
-            // 保存学分
-            saveScore(course) {
-                const newScore = parseInt(course._newScore);
-                if (newScore > 0) {
-                    axios.post('/admin/updateScore', new URLSearchParams({
-                        courseName: course.courseName,
-                        newScore: newScore
-                    }), {
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded'
-                        }
-                    }).then(response => {
-                        if (response.data.code === 200) {
-                            course.score = newScore;
-                        } else {
-                            alert("更新学分失败");
-                        }
-                    }).catch(error => {
-                        alert("请求错误: " + error.message);
-                    });
-                }
-                course._editingScore = false;
-            },
-            // 课程搜索
-            searchCourses() {
-                if (this.courseSearchQuery.trim() === '') {
-                    // 清空搜索时恢复原始数据
-                    this.allCourses = this.originalCourses.map(course => ({
-                        ...course,
-                        _editingScore: false, // 临时变量，是否编辑学分
-                        _newScore: course.score, // 临时变量，编辑后的新学分
-                        _ifBeChosenToDelete: false, // 临时变量，是否被选中进批量删除
-                        ifCanChoose: course.ifCanChoose === 1 ? "是" : "否"
-                    }));
-                    return;
-                }
-
-                // 将查询的字符串转化为小写
-                const query = this.courseSearchQuery.toLowerCase();
-
-                this.allCourses = this.originalCourses
-                    .filter(course =>
-                        // 将课程名称转化为小写，如果包含这个课程名称，则储存
-                        course.courseName.toLowerCase().includes(query) ||
-                        course.information.toLowerCase().includes(query)
-                    )
-                    .map(course => ({
-                        ...course,
-                        _editingScore: false, // 临时变量，是否编辑学分
-                        _newScore: course.score, // 临时变量，编辑后的新学分
-                        _ifBeChosenToDelete: false, // 临时变量，是否被选中进批量删除
-                        ifCanChoose: course.ifCanChoose === 1 ? "是" : "否"
-                    }));
-            },
-            // 学生搜索
-            searchStudents() {
-                if (this.studentSearchQuery.trim() === '') {
-                    // 清空搜索时恢复原始数据
-                    this.allStudents = this.originalStudents.map(student => ({
-                        ...student,
-                        _editingPhone: false,
-                        _newPhone: student.phoneNumber
-                    }));
-                    return;
-                }
-
-                // 将查询的字符串转化为小写
-                const query = this.studentSearchQuery.toLowerCase();
-                this.allStudents = this.originalStudents
-                    .filter(student =>
-                        student.name.toLowerCase().includes(query) ||     // 按姓名搜索
-                        student.phoneNumber.includes(query) ||            // 按手机号搜索
-                        student.email.toLowerCase().includes(query)       // 按邮箱搜索
-                    )
-                    .map(student => ({
-                        ...student,
-                        _editingPhone: false,
-                        _newPhone: student.phoneNumber
-                    }));
-            },
-
-            chooseCourseToDelete(course) {
-                // 更改选中状态
-                course._ifBeChosenToDelete = !course._ifBeChosenToDelete;
-                // 如果被选中，加入数组
-                if (course._ifBeChosenToDelete) {
-                    this.deleteChosenCourse.push(course.courseName);
-                } else {
-                    // 若取消选中，从数组中移除
-                    this.deleteChosenCourse = this.deleteChosenCourse.filter(cName => cName !== course.courseName);
-                }
-            },
-            confirmDeleteCourse() {
-                let that = this;
-                axios.post('/admin/deleteCourse', {
-                    deleteTheseCourse: this.deleteChosenCourse,
-                }, {
-                    headers: {
-                        'Content-Type': 'application/json'
+                    if (response.data.code === 200) {
+                        this.allCommentInThisPost = response.data.data;
                     }
-                }).then(response => {
-                        if (response.data.code === 200) {
-                            alert("删除成功！")
-                            that.deleteChosenCourse = [];
-                            that.refresh();
-                        } else {
-                            alert("删除失败: " + response.data.message);
-                        }
-                    }
-                ).catch(error => {
-                    alert("请求错误: " + error.message);
+                }).catch(error => {
+                    console.error("获取评论失败", error);
                 });
             },
+            // 渲染 Markdown 内容
+            renderMarkdown(content) {
+                if (typeof marked === 'undefined') {
+                    console.error('marked is not available');
+                    return content;
+                }
+                const html = marked.parse(content || '');
+                this.$nextTick(() => {
+                    // 渲染后重新高亮
+                    this.highlightAll();
+                });
+                return html;
+            },
+            // 高亮所有代码块
+            highlightAll() {
+                document.querySelectorAll('pre code').forEach((block) => {
+                    hljs.highlightElement(block);
+                });
+            },
+            // 显示某个具体帖子
+            turnThisPost(post_id, post_title) {
+                this.turnNothing();
+                this.ifThisPost = true;
+                this.fetchThisPost(post_id, post_title);        // 抓取这个帖子的信息
+                this.fetchComment(post_id);                     // 抓取所有评论
 
-            submitNewCourse() {
-                // 验证教室编号
-                if (!/^\d{2}$/.test(this.newCourseRoomNumber)) {
-                    alert("教室编号必须是两位数字");
-                    return;
-                }
-                if (this.newCourseEnd < this.newCourseStart) {
-                    alert("课不能往前上")
-                    return;
-                }
-                let that = this;
-                axios.post('/admin/insertCourse', {
-                    newCourseName: that.newCourseName,
-                    newCourseScore: that.newCourseScore,
-                    newCourseMaxStudents: that.newCourseMaxStudents,
-                    newCourseBuilding: that.newCourseBuilding,
-                    newCourseFloor: that.newCourseFloor,
-                    newCourseRoomNumber: that.newCourseRoomNumber,
-                    newCourseWeekday: that.newCourseWeekday,
-                    newCourseStart: that.newCourseStart,
-                    newCourseEnd: that.newCourseEnd,
-                }, {
+            },
+            // 获取公告
+            fetchNotice(board_id) {
+                axios.post('/board/getNotice', new URLSearchParams({
+                    boardId: board_id,
+                }), {
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded'
                     }
                 }).then(response => {
                     if (response.data.code === 200) {
-                        alert("课程添加成功");
-                        this.initNewCourse();
-                        this.refresh();
-                    } else {
-                        alert("添加失败: " + response.data.message);
+                        this.notice = response.data.data;
+                        // 默认显示最新公告
+                        if (this.notice.length > 0) {
+                            this.currentNotice = this.notice[0];
+                        }
                     }
-                }).catch(error => {
-                    alert("请求错误: " + error.message);
+                })
+                    .catch(error => {
+                        console.error('获取公告失败:', error);
+                    });
+            },
+            // 切换公告
+            switchNotice(index) {
+                this.currentNotice = this.notice[index];
+                this.showHistoryModal = false; // 点击后关闭弹窗
+            },
+            // 全部版块中，帖子关键字搜索版块
+            searchPost() {
+                if (this.postSearchQuery.trim() === '') {
+                    // 清空搜索时恢复原始数据
+                    this.allPostInThisBoard = this.originalAllPostInThisBoard;
+                    return;
+                }
+
+                // 将查询的字符串转化为小写
+                const query = this.postSearchQuery.toLowerCase();
+                this.allPostInThisBoard = this.originalAllPostInThisBoard.filter(post =>
+                    // 将名称转化为小写，如果包含作者名称或标题，则储存
+                    post.authorName.toLowerCase().includes(query) ||
+                    post.title.toLowerCase().includes(query))
+            },
+            // 版块关键字搜索版块
+            searchBoard() {
+                if (this.boardSearchQuery.trim() === '') {
+                    // 清空搜索时恢复原始数据
+                    this.allBoard = this.originalAllBoard;
+                    return;
+                }
+
+                // 将查询的字符串转化为小写
+                const query = this.boardSearchQuery.toLowerCase();
+                this.allBoard = this.originalAllBoard.filter(board =>
+                    // 将课程名称转化为小写，如果包含这个课程名称，则储存
+                    board.hostName.toLowerCase().includes(query) ||
+                    board.title.toLowerCase().includes(query))
+            },
+            // 切换回主页
+            backHomePage() {
+                this.turnNothing();
+                this.ifHomePage = true;
+                this.currentPath = ['QG技术论坛', '主页'];
+            },
+            // 切换该版块下所有帖子
+            turnAllPostInThisBoard(board_id, board_title) {
+                this.turnNothing();
+                this.ifAllBoard = true;
+                this.ifAllPostInThisBoard = true;
+                this.currentBoardId = board_id;
+                this.fetchAllPostInThisBoard(board_id, board_title);
+                this.currentBoardId = board_id;
+                this.fetchNotice(board_id);
+            },
+            // 切换所有版块
+            turnAllBoard() {
+                this.turnNothing();
+                this.ifAllBoard = true;
+                this.fetchAllBoard();
+                this.currentPath = ['QG技术论坛', '所有版块'];
+            },
+            // 获取全部版块
+            fetchAllBoard() {
+                axios.post('/board/getAllBoard')
+                    .then(response => {
+                        if (response.data.code === 200) {
+                            this.allBoard = response.data.data;
+                            this.originalAllBoard = this.allBoard;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('获取版块失败:', error);
+                    });
+            },
+            // 获取热门版块
+            fetchHotBoard() {
+                axios.post('/board/getHotBoard')
+                    .then(response => {
+                        if (response.data.code === 200) {
+                            this.allBoard = response.data.data;
+                            this.originalAllBoard = this.allBoard;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('获取版块失败:', error);
+                    });
+            },
+            // 获取最新版块
+            fetchNewBoard() {
+                axios.post('/board/getNewBoard')
+                    .then(response => {
+                        if (response.data.code === 200) {
+                            this.allBoard = response.data.data;
+                            this.originalAllBoard = this.allBoard;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('获取版块失败:', error);
+                    });
+            },
+            // 获取该版块下的所有帖子
+            fetchAllPostInThisBoard(board_id, board_title) {
+                axios.post('/post/getAllPostInThisBoard', new URLSearchParams({
+                    boardId: board_id,
+                }), {
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                }).then(response => {
+                    if (response.data.code !== 200) {
+                        alert(response.data.message);
+                    } else {
+                        this.allPostInThisBoard = response.data.data;
+                        this.originalAllPostInThisBoard = this.allPostInThisBoard;
+                        this.currentPath = ['QG技术论坛', '版块：' + board_title, '所有帖子'];
+                        console.log("获取版块：" + board_title + "的所有帖子成功,共有" + this.allPostInThisBoard.length + "条帖子");
+                    }
+                })
+                    .catch(error => {
+                        console.error("获取版块：" + board_title + "的所有帖子失败", error);
+                    });
+            },
+            // 获取该帖子的所有内容
+            fetchThisPost(post_id, post_title) {
+                axios.post('/post/getThisPost', new URLSearchParams({
+                    postId: post_id,
+                }), {
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                }).then(response => {
+                    if (response.data.code !== 200) {
+                        alert(response.data.message);
+                    } else {
+                        this.thisPost = response.data.data;
+                        // 渲染 Markdown 内容
+                        this.compiledMarkdown = this.renderMarkdown(this.thisPost.content);
+                        // 把当前帖子加入路径中显示在左上角
+                        this.currentPath.push(post_title);
+                        console.log("获取帖子：" + post_title + "成功");
+                    }
+                })
+                    .catch(error => {
+                        console.error("获取帖子：" + post_title + "失败", error);
+                    });
+                // 确保内容渲染后高亮
+                this.$nextTick(() => {
+                    document.querySelectorAll('pre code').forEach((block) => {
+                        hljs.highlightElement(block);
+                    });
                 });
             },
-
-            initNewCourse() {
-                this.newCourseName = '';
-                this.newCourseScore = '';
-                this.newCourseBuilding = '';
-                this.newCourseFloor = '';
-                this.newCourseRoomNumber = '';
-                this.newCourseWeekday = '';
-                this.newCourseStart = '';
-                this.newCourseEnd = '';
-                this.newCourseMaxStudents = '';
+            // 退出登录
+            exitLogin() {
+                axios.post('/login/exitLogin');
+                window.location.href = '/login.html';
             },
-
-            cancelInsert() {
-                this.ifInsertCourse = false;
-                this.initNewCourse();
-            }
         }
+
     })
 </script>
 </body>
