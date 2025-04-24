@@ -148,7 +148,7 @@
                         <img :src="board.hostAvatar" class="host-avatar">
                         <h4>{{ board.title }}</h4>
                         <p>类型: {{ board.type }} | 帖子数: {{ board.postCount }} | 浏览数: {{ board.viewCount }}</p>
-                        <p>版主: {{board.hostName}} | 创建时间：{{ board.time }}</p>
+                        <p>版主: {{ board.hostName }} | 版主id: {{ board.hostId }}  | 创建时间：{{ board.time }}</p>
                     </div>
                 </div>
             </div>
@@ -174,10 +174,10 @@
                     <!--显示帖子信息-->
                     <div class="post-meta">
                         <img :src="post.authorAvatar" class="author-avatar">
-                        <span class="author">👤 {{ post.authorName }}</span>
+                        <span class="author">👤 {{ post.authorName }} | 用户id: {{ post.authorId }} </span>
                         <span class="time">📅 {{ post.time }}</span>
                     </div>
-                    <h4 class="post-title">{{ post.title }}</h4>
+                    <h4 class="post-title">帖子id: {{ post.id }} | {{ post.title }}</h4>
                     <div class="post-stats">
                         <span>❤️ {{ post.likeCount }}</span>
                         <span>💬 {{ post.commentCount }}</span>
@@ -191,10 +191,10 @@
         <div v-if="ifThisPost" class="post-detail-section">
             <!-- 帖子标题和元信息 -->
             <div class="post-header">
-                <h2 class="post-title">{{ thisPost.title }}</h2>
+                <h2 class="post-title">帖子id: {{ thisPost.id }} | {{ thisPost.title }}</h2>
                 <div class="post-meta">
                     <img :src="thisPost.authorAvatar" class="author-avatar">
-                    <span class="author">👤 {{ thisPost.authorName }}</span>
+                    <span class="author">👤 {{ thisPost.authorName }} | 用户id: {{ thisPost.authorId }} </span>
                     <span class="time">📅 {{ thisPost.time }}</span>
                     <span class="views">👀 {{ thisPost.viewCount }} 浏览</span>
                     <span class="likes">❤️ {{ thisPost.likeCount }} 点赞</span>
@@ -289,7 +289,7 @@
                                class="name-input">
                     </div>
                     <!--其他信息展示-->
-                    <div class="user-level">等级：Lv{{ userInformation.grade }}</div>
+                    <div class="user-level">等级：Lv{{ userInformation.grade }} | 我的id: {{ userInformation.id }} </div>
                     <div class="profile-stats">
                         <span>❤️ {{ userInformation.receiveLikeCount }} 收获点赞</span>
                         <span>👀 {{ userInformation.receiveReadCount }} 被阅读数</span>
@@ -398,10 +398,10 @@
                      :key="post.id"
                      class="post-card">
                     <div class="post-meta" @click="turnThisPost(post.id, post.title)">
-                        <span class="author">👤 {{ post.authorName }}</span>
+                        <span class="author">👤 {{ post.authorName }} | 用户id: {{ post.authorId }} </span>
                         <span class="time">📅 {{ post.time }}</span>
                     </div>
-                    <h4 class="post-title" @click="turnThisPost(post.id, post.title)">{{ post.title }}</h4>
+                    <h4 class="post-title" @click="turnThisPost(post.id, post.title)">帖子id: {{ post.id }} | {{ post.title }}</h4>
                     <div class="post-stats">
                         <span>❤️ {{ post.likeCount }}</span>
                         <span>💬 {{ post.commentCount }}</span>
@@ -543,10 +543,10 @@
                      class="post-card"
                      @click="turnThisPost(postHistory.post.id, postHistory.post.title)">
                     <div class="post-meta">
-                        <span class="author">👤 {{ postHistory.post.authorName }}</span>
+                        <span class="author">👤 {{ postHistory.post.authorName }} | 用户id: {{ postHistory.post.authorId }} </span>
                         <span class="time">📅 {{ postHistory.post.time }}</span>
                     </div>
-                    <h4 class="post-title">{{ postHistory.post.title }}</h4>
+                    <h4 class="post-title">帖子id: {{ postHistory.post.id }} | {{ postHistory.post.title }}</h4>
                     <div class="post-stats">
                         <span>❤️ {{ postHistory.post.likeCount }}</span>
                         <span>💬 {{ postHistory.post.commentCount }}</span>
@@ -572,10 +572,10 @@
                      class="post-card"
                      @click="turnThisPost(postCollect.post.id, postCollect.post.title)">
                     <div class="post-meta">
-                        <span class="author">👤 {{ postCollect.post.authorName }}</span>
+                        <span class="author">👤 {{ postCollect.post.authorName }} | 用户id: {{ postCollect.post.authorId }} </span>
                         <span class="time">📅 {{ postCollect.post.time }}</span>
                     </div>
-                    <h4 class="post-title">{{ postCollect.post.title }}</h4>
+                    <h4 class="post-title">帖子id: {{ postCollect.post.id }} | {{ postCollect.post.title }}</h4>
                     <div class="post-stats">
                         <span>❤️ {{ postCollect.post.likeCount }}</span>
                         <span>💬 {{ postCollect.post.commentCount }}</span>
@@ -682,10 +682,10 @@
                      class="post-card"
                      @click="turnThisPost(post.id, post.title)">
                     <div class="post-meta">
-                        <span class="author">👤 {{ post.authorName }}</span>
+                        <span class="author">👤 {{ post.authorName }} | 用户id: {{ post.authorId }} </span>
                         <span class="time">📅 {{ post.time }}</span>
                     </div>
-                    <h4 class="post-title">{{ post.title }}</h4>
+                    <h4 class="post-title">帖子id: {{ post.id }} | {{ post.title }}</h4>
                     <div class="post-stats">
                         <span>❤️ {{ post.likeCount }}</span>
                         <span>💬 {{ post.commentCount }}</span>
