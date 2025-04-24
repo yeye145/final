@@ -15,7 +15,6 @@ public class UserServiceImpl implements UserService {
     /*--------------------------------------------    私有变量    --------------------------------------------*/
     private UserDao userDao = new UserDaoImpl();
     private SubscriptionDao subscriptionDao = new SubscriptionDaoImpl();
-    private PostDao postDao = new PostDaoImpl();
     private MessageDao messageDao = new MessageDaoImpl();
 
 
@@ -33,6 +32,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void cancelSubscribeThisUser(Integer authorId, Integer userId) throws Exception {
         subscriptionDao.cancelSubscribeThisUser(authorId, userId);
+        userDao.lossOneSubscription(authorId);
     }
 
 

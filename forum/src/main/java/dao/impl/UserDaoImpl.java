@@ -11,6 +11,22 @@ import java.util.Set;
 
 public class UserDaoImpl implements UserDao {
 
+
+    @Override
+    public void receiveOneLike(Integer useId) throws Exception {
+        MyUpdate.update("UPDATE `forum`.`User` SET receive_like_count = receive_like_count + 1 " +
+                "WHERE (`id` = ?);", useId);
+    }
+
+
+
+    @Override
+    public void lossOneSubscription(Integer useId) throws Exception {
+        MyUpdate.update("UPDATE `forum`.`User` SET fans_count = fans_count - 1 " +
+                "WHERE (`id` = ?);", useId);
+    }
+
+
     @Override
     public Map<Integer, User> getUserMap() throws SQLException {
         return MySearch.searchToMap("SELECT id, email, phone, password" +
@@ -47,12 +63,6 @@ public class UserDaoImpl implements UserDao {
     }
 
 
-    @Override
-    public void updatePhoneInUser(String newPhone, String email) throws Exception {
-        MyUpdate.update("UPDATE `forum`.`User` SET `phoneNumber` = ? " +
-                "WHERE (`email` = ?);", newPhone, email);
-    }
-
     // 获取新的sql.User信息，用于操作
     @Override
     public Set<User> getUserSet() throws SQLException {
@@ -72,11 +82,13 @@ public class UserDaoImpl implements UserDao {
         );
     }
 
+
     @Override
     public void insertUser(String phone, String email, String password) throws Exception {
         MyUpdate.update("INSERT INTO `forum`.`User` (`phone`, `password`," +
                 " `is_admin`, `email`, `name`) VALUES (?, ?, 0, ?, ?);", phone, password, email, "用户" + phone);
     }
+
 
     @Override
     public void updatePassword(String password, Integer id) throws Exception {

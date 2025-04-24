@@ -114,6 +114,7 @@ public class CommentServiceImpl implements CommentService {
         messageDao.creatMessage("用户：" + user.getName()
                         + " 给您的评论“" + comment.getContent() + "”点了1个赞"
                 , comment.getUserId(), null, "评论被点赞");
+        userDao.receiveOneLike(comment.getUserId());
         return true;
     }
 

@@ -254,6 +254,8 @@ public class PostServiceImpl implements PostService {
         messageDao.creatMessage("用户：" + user.getName()
                         + " 给您的帖子《" + post.getTitle() + "》点了1个赞"
                 , post.getAuthorId(), null, "帖子被点赞");
+        // 作者点赞数加一
+        userDao.receiveOneLike(post.getAuthorId());
         return true;
     }
 

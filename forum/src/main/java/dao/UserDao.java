@@ -9,12 +9,14 @@ import java.util.Set;
 public interface UserDao {
 
 
+    void receiveOneLike(Integer useId) throws Exception;
+
+    void lossOneSubscription(Integer useId) throws Exception;
+
     Map<Integer, User> getUserMap() throws SQLException;
 
     User getUserById(Integer userId) throws SQLException;
 
-    // 更新users表中的电话号码
-    void updatePhoneInUser(String newPhone,String email) throws Exception;
 
     // 获取新的sql.users信息，用于操作
     Set<User> getUserSet() throws SQLException;
