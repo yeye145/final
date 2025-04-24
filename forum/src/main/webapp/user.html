@@ -354,10 +354,10 @@
                         @click="showCreateBoardModal = true"
                         class="create-board-btn">+ 申请新增版块
                 </button>
-                <button @click=""
+                <button @click="deleteAllDealReport"
                         class="delete-post-btn"
                         v-if="ifReportPostToMe">
-                🗑️ 删除所有已处理举报
+                    🗑️ 删除所有已处理举报
                 </button>
                 <button v-if="ifAllPostInMyBoard && !ifDeleteMode"
                         @click="turnReportPostToMe"
@@ -901,6 +901,23 @@
             this.highlightAll();
         },
         methods: {
+            // 清空所有已处理的举报
+            deleteAllDealReport() {
+                axios.post('/report/deleteAllDealReport', {
+                    boardId: this.currentBoardId,
+                }, {
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+                }).then(response => {
+                    if (response.data.code === 200) {
+                        console.log(response.data);
+                        alert('清空所有已处理的举报');
+                        this.turnReportPostToMe();
+                    } else {
+                        alert(response.data.message);
+                        console.error(response.data.code + ' ' + response.data.message);
+                    }
+                });
+            },
             // 拒绝处理举报
             refuseThisReport(reportId) {
                 axios.post('/report/refuseThisReport', {

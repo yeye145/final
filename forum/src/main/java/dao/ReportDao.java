@@ -19,4 +19,7 @@ public interface ReportDao {
 
     /*-----------------------------------------     举报已读    --------------------------------------------*/
     void hadKnowReport(Integer reportId) throws Exception;
+
+    /*--------------------------------    清空所有已处理的举报    ---------------------------------------------*/
+    void deleteAllDealReport(Integer boardId) throws Exception;
 }

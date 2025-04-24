@@ -19,4 +19,7 @@ public interface ReportService {
 
     /*--------------------------------------    拒绝处理对帖子的举报    -----------------------------------------*/
     void refuseThisReport(Integer reportId) throws Exception;
+
+    /*--------------------------------    清空所有已处理的举报    ---------------------------------------------*/
+    void deleteAllDealReport(Integer boardId) throws Exception;
 }

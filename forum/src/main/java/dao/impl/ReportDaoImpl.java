@@ -60,4 +60,12 @@ public class ReportDaoImpl implements ReportDao {
     }
 
 
+    /*--------------------------------    清空所有已处理的举报    ---------------------------------------------*/
+    @Override
+    public void deleteAllDealReport(Integer boardId) throws Exception {
+        MyUpdate.update("DELETE FROM `forum`.`report`" +
+                " WHERE board_id = ? AND if_deal = 1", boardId);
+    }
+
+
 }

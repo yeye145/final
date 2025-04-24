@@ -85,4 +85,11 @@ public class ReportServiceImpl implements ReportService {
         reportDao.hadKnowReport(reportId);
     }
 
+
+    /*--------------------------------    清空所有已处理的举报    ---------------------------------------------*/
+    @Override
+    public void deleteAllDealReport(Integer boardId) throws Exception {
+        reportDao.deleteAllDealReport(boardId);
+    }
+
 }
