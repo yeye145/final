@@ -184,16 +184,6 @@ CREATE TABLE subscription
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
--- 登录封禁表
-CREATE TABLE login_ban
-(
-    id         INT PRIMARY KEY AUTO_INCREMENT COMMENT '封禁记录ID',
-    user_id    INT      NOT NULL COMMENT '被封禁用户ID',
-    reason   TEXT NOT NULL COMMENT '封禁原因',
-    FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE,
-    INDEX idx_user_id (user_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户登录封禁记录表';
-
 -- 表列名扩展 -- 开始 ----------------------------------------------------------------------------------
 ALTER TABLE `forum`.`user`
     ADD COLUMN `receive_like_count` INT NULL DEFAULT '0' AFTER `if_ban_login`,

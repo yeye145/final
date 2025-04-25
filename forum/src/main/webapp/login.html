@@ -297,7 +297,7 @@
                             password: that.loginPassword,
                         }));
                         if (response.data.code === 200) {
-                            window.location.href = response.data.message === "admin"
+                            window.location.href = response.data.data === 'admin'
                                 ? 'admin.html'
                                 : 'user.html';
                         } else {
