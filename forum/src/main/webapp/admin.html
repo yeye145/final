@@ -31,7 +31,7 @@
         <div class="nav-item" @click="backHomePage">🏠 回到主页</div>
         <div class="nav-item" @click="turnAllBoard">🧩 全部版块</div>
         <div class="nav-item" @click="turnAllBoardApply">🔔 创建版块申请
-            <div v-if="ifHadNewMessage" class="notification-badge"></div>
+            <div v-if="ifHadNewMessage" class="left-column-notification-badge"></div>
         </div>
         <hr>
         <div class="nav-item" @click="exitLogin">🚪 退出登录</div>
@@ -200,6 +200,7 @@
                             <span>申请理由：{{ apply.notice }}</span>
                         </div>
                     </div>
+                    <hr>
                     <div class="board-actions">
                         <button v-if="!apply.ifDeal"
                                 @click="agreeThisApply(apply)"
@@ -344,6 +345,7 @@
             // 初始高亮
             this.highlightAll();
 
+            this.turnAllBoardApply();
             this.turnNothing();
             this.ifHomePage = true;
         },
@@ -467,7 +469,7 @@
                             console.error('清除所有已处理版块失败:', response.data.message);
                         }
                     });
-                this.turnMyMessage();
+                this.turnAllBoardApply();
             },
             // 查看我是否有新的通知消息
             async checkIfNewBoardApply() {
@@ -488,6 +490,7 @@
                 this.ifThisPost = false;
                 this.ifAllBoard = false;
                 this.ifAllPostInThisBoard = false;
+                this.ifAllBoardApply = false;
                 this.checkIfNewBoardApply().then(isCollected => {
                     this.ifHadNewMessage = isCollected;
                 });
