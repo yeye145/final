@@ -175,6 +175,7 @@
 
         <!-- 查看所有版块申请 -->
         <div v-if="ifAllBoardApply" class="board-section">
+            <h2>审核：用户申请创建版块</h2>
             <hr>
             <br>
             <div class="post-list">
@@ -193,7 +194,7 @@
                         </div>
                         <h4 class="post-title">版块类型： {{ apply.type }}</h4>
                         <div class="post-stats">
-                            <span>版块公告：{{ apply.notice }}</span>
+                            <span>申请理由：{{ apply.notice }}</span>
                         </div>
                     </div>
                     <div class="board-actions">
@@ -484,14 +485,14 @@
                     headers: {'Content-Type': 'application/x-www-form-urlencoded'}
                 });
                 message.viewCount = 1;
-                this.checkIfNewMessage().then(isCollected => {
+                this.checkIfNewBoardApply().then(isCollected => {
                     this.ifHadNewMessage = isCollected;
                 });
             },
             // 查看我是否有新的通知消息
-            async checkIfNewMessage() {
+            async checkIfNewBoardApply() {
                 try {
-                    const response = await axios.post('/message/checkIfNewMessage');
+                    const response = await axios.post('/message/checkIfNewBoardApply');
                     return response.data.data === "yes";
                 } catch (error) {
                     console.error('查看是否有新的通知消息失败:', error);
@@ -507,16 +508,16 @@
                 this.ifThisPost = false;
                 this.ifAllBoard = false;
                 this.ifAllPostInThisBoard = false;
-                this.checkIfNewMessage().then(isCollected => {
+                this.checkIfNewBoardApply().then(isCollected => {
                     this.ifHadNewMessage = isCollected;
                 });
             },
-            // 切换我的消息通知
+            // 切换所有版块的申请
             turnAllBoardApply() {
                 this.turnNothing();
                 this.ifAllBoardApply = true;
                 this.fetchAllBoardApply();
-                this.currentPath = ['QG技术论坛', '我的消息'];
+                this.currentPath = ['QG技术论坛', '审核版块申请'];
             },
             // 获取所有版块申请
             fetchAllBoardApply() {

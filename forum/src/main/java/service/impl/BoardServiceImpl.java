@@ -24,6 +24,7 @@ public class BoardServiceImpl implements BoardService {
     private NoticeDao noticeDao = new NoticeDaoImpl();
     private MessageDao messageDao = new MessageDaoImpl();
 
+
     /*------------------------------------    拒绝创建版块的申请    --------------------------------------------*/
     @Override
     public void refuseApplyNewBoard(Integer applyId) throws Exception {
@@ -49,10 +50,12 @@ public class BoardServiceImpl implements BoardService {
         apply.setGrade(user.getGrade());
         apply.setHostAvatar(user.getAvatar());
         apply.setHostName(user.getName());
+
+        // 创建版块
+        boardDao.creatNewBoard(apply);
         // 通知用户
         messageDao.creatMessage("您申请创建版块：" + apply.getTitle() + " 成功！快去查看属于你的版块吧"
                 , apply.getHostId(), null, "版块申请创建结果");
-        boardDao.creatNewBoard(apply);
     }
 
 
