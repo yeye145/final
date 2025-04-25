@@ -9,6 +9,12 @@ import java.util.List;
 
 public interface BoardService {
 
+    /*--------------------------------------    删除所有已处理的版块申请    -------------------------------------*/
+    void deleteAllDealApply() throws Exception;
+
+    /*------------------------------------    查看是否有新的版块申请    ------------------------------------------*/
+    boolean checkIfNewBoardApply() throws Exception;
+
     /*------------------------------------    拒绝创建版块的申请    --------------------------------------------*/
     void refuseApplyNewBoard(Integer applyId) throws Exception;
 

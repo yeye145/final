@@ -29,6 +29,53 @@ public class BoardController extends BaseServlet {
     private BoardService boardService = new BoardServiceImpl();
     private NoticeService noticeService = new NoticeServiceImpl();
 
+
+    /*--------------------------------------    删除所有已处理的版块申请    -------------------------------------*/
+    public void deleteAllDealApply(HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+        System.out.println("MessageController,deleteAllDealApply，删除所有已处理的版块申请");
+
+        boardService.deleteAllDealApply();
+
+        response.getWriter().write(
+                JSON.toJSONString(
+                        ResponseResult.success("已删除所有已处理的版块申请")
+                )
+        );
+
+        System.out.println("---->删除所有已处理的版块申请！");
+
+    }
+
+
+    /*----------------------------------------    是否有新的版块申请    ----------------------------------------*/
+    public void checkIfNewBoardApply(HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+        System.out.println("MessageController,checkIfNewBoardApply，查看是否有新的版块申请");
+
+        if (boardService.checkIfNewBoardApply()) {
+            // 有新的通知
+            response.getWriter().write(
+                    JSON.toJSONString(
+                            ResponseResult.success("yes")
+                    )
+            );
+
+            System.out.println("---->有新的申请！");
+        } else {
+            // 没有新的通知
+            response.getWriter().write(
+                    JSON.toJSONString(
+                            ResponseResult.success("no")
+                    )
+            );
+
+            System.out.println("---->《没》有新的申请");
+        }
+
+    }
+
+
     /*---------------------------------------    拒绝创建版块的申请   ------------------------------------------*/
     public void refuseThisApply(HttpServletRequest request, HttpServletResponse response) throws Exception {
 

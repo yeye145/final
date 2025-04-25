@@ -2,10 +2,7 @@ package service.impl;
 
 import dao.*;
 import dao.impl.*;
-import pojo.Board;
-import pojo.BoardApply;
-import pojo.Subscription;
-import pojo.User;
+import pojo.*;
 import service.BoardService;
 import dao.SubscriptionDao;
 import utils.Constants;
@@ -23,6 +20,29 @@ public class BoardServiceImpl implements BoardService {
     private UserDao userDao = new UserDaoImpl();
     private NoticeDao noticeDao = new NoticeDaoImpl();
     private MessageDao messageDao = new MessageDaoImpl();
+
+
+    /*--------------------------------------    删除所有已处理的版块申请    -------------------------------------*/
+    @Override
+    public void deleteAllDealApply() throws Exception {
+        boardApplyDao.deleteAllDealApply();
+    }
+
+
+    /*------------------------------------    查看是否有新的版块申请    ------------------------------------------*/
+    @Override
+    public boolean checkIfNewBoardApply() throws Exception {
+        List<BoardApply> applyList = boardApplyDao.getAllApplyNewBoard();
+
+        // 查看是否有未处理的申请
+        for (BoardApply apply : applyList) {
+            if (!apply.getIfDeal()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 
 
     /*------------------------------------    拒绝创建版块的申请    --------------------------------------------*/

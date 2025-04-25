@@ -35,7 +35,7 @@ public class BoardApplyDaoImpl implements BoardApplyDao {
     /*------------------------------------    清空所有已处理的请求    ---------------------------------------------*/
     @Override
     public void deleteAllDealApply() throws Exception {
-        MyUpdate.update("DELETE FROM `forum`.`board_apply` WHERE if_deal = 1");
+        MyUpdate.update("DELETE FROM `forum`.`board_apply` WHERE if_deal = 1 ");
     }
 
 

@@ -42,7 +42,7 @@ public class MessageController extends BaseServlet {
         Integer userId = ControllerToolMethod.getUserId(request);
         System.out.println("MessageController,checkIfNewMessage，查看是否有新的信息，用户id：" + userId);
 
-        if(messageService.checkIfNewMessage(userId)) {
+        if (messageService.checkIfNewMessage(userId)) {
             // 有新的通知
             response.getWriter().write(
                     JSON.toJSONString(
@@ -65,7 +65,6 @@ public class MessageController extends BaseServlet {
     }
 
 
-
     /*--------------------------------------------    查收信息    ----------------------------------------------*/
     public void receiveThisMessage(HttpServletRequest request, HttpServletResponse response) throws Exception {
         Integer messageId = Integer.parseInt(request.getParameter("messageId"));
@@ -74,8 +73,7 @@ public class MessageController extends BaseServlet {
     }
 
 
-
-    /*--------------------------------------    清空所有已读信息    ---------------------------------------------*/
+    /*-----------------------------------------    清空所有已读信息    -------------------------------------------*/
     public void deleteAllReceiveMessage(HttpServletRequest request, HttpServletResponse response) throws Exception {
         Integer userId = ControllerToolMethod.getUserId(request);
         System.out.println("MessageController.deleteAllReceiveMessage，清空所有已读信息，用户id：" + userId);
@@ -88,7 +86,6 @@ public class MessageController extends BaseServlet {
         );
         System.out.println("---->清楚所有已读信息成功！用户id：" + userId);
     }
-
 
 
 }

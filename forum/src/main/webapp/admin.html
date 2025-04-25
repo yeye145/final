@@ -176,6 +176,9 @@
         <!-- 查看所有版块申请 -->
         <div v-if="ifAllBoardApply" class="board-section">
             <h2>审核：用户申请创建版块</h2>
+            <button @click="deleteAllDealApply" class="delete-post-btn">
+                删除所有已处理的申请
+            </button>
             <hr>
             <br>
             <div class="post-list">
@@ -340,6 +343,9 @@
 
             // 初始高亮
             this.highlightAll();
+
+            this.turnNothing();
+            this.ifHomePage = true;
         },
         methods: {
             // 同意版块申请
@@ -451,48 +457,22 @@
                         }
                     })
             },
-            // 获取我的个人通知信息
-            fetchMyPost() {
-                axios.post('/post/getMyPost')
-                    .then(response => {
-                        if (response.data.code === 200) {
-                            this.myPost = response.data.data;
-                        } else {
-                            console.error('获取我的帖子失败:', response.data.message);
-                        }
-                    })
-            },
             // 删除所有已读信息
-            deleteAllReceiveMessage() {
-                axios.post('/message/deleteAllReceiveMessage')
+            deleteAllDealApply() {
+                axios.post('/board/deleteAllDealApply')
                     .then(response => {
                         if (response.data.code === 200) {
                             alert(response.data.message);
                         } else {
-                            console.error('清除所有已读信息失败:', response.data.message);
+                            console.error('清除所有已处理版块失败:', response.data.message);
                         }
                     });
-                this.turnAllBoardApply();
-            },
-            // 查收信息
-            receiveThisMessage(message) {
-                if (message.viewCount >= 1) {
-                    return;
-                }
-                axios.post('/message/receiveThisMessage', {
-                    messageId: message.id,
-                }, {
-                    headers: {'Content-Type': 'application/x-www-form-urlencoded'}
-                });
-                message.viewCount = 1;
-                this.checkIfNewBoardApply().then(isCollected => {
-                    this.ifHadNewMessage = isCollected;
-                });
+                this.turnMyMessage();
             },
             // 查看我是否有新的通知消息
             async checkIfNewBoardApply() {
                 try {
-                    const response = await axios.post('/message/checkIfNewBoardApply');
+                    const response = await axios.post('/board/checkIfNewBoardApply');
                     return response.data.data === "yes";
                 } catch (error) {
                     console.error('查看是否有新的通知消息失败:', error);
