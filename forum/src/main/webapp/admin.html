@@ -30,7 +30,7 @@
         <hr>
         <div class="nav-item" @click="backHomePage">🏠 回到主页</div>
         <div class="nav-item" @click="turnAllBoard">🧩 全部版块</div>
-        <div class="nav-item" @click="turnMyMessage">🔔 全部消息
+        <div class="nav-item" @click="turnAllBoardApply">🔔 创建版块申请
             <div v-if="ifHadNewMessage" class="notification-badge"></div>
         </div>
         <hr>
@@ -173,36 +173,37 @@
 
         </div>
 
-        <!-- 查看我的通知消息 -->
-        <div v-if="ifMyMessage" class="board-section">
-            <button @click="deleteAllReceiveMessage"
-                    class="delete-post-btn">🗑️ 删除所有已读信息
-            </button>
+        <!-- 查看所有版块申请 -->
+        <div v-if="ifAllBoardApply" class="board-section">
             <hr>
             <br>
             <div class="post-list">
-                <!--渲染通知信息-->
-                <div v-for="message in myMessage"
-                     :key="message.id"
-                     class="post-card"
-                     @click="receiveThisMessage(message)"
-                >
-                    <span v-if="message.viewCount === 0" class="notification-badge"></span>
+                <!--渲染申请信息-->
+                <div v-for="apply in allBoardApply"
+                     :key="apply.id"
+                     class="post-card">
+                    <span v-if="!apply.ifDeal" class="notification-badge"></span>
                     <div>
                         <div class="post-meta">
-                            <img :src="message.userAvatarSend" class="author-avatar">
-                            <span class="author">👤 {{ message.userNameSend }}</span>
-                            <span class="time">📅 {{ message.time }}</span>
+                            <img :src="apply.hostAvatar" class="author-avatar">
+                            <span class="author">👤 {{ apply.hostName }}
+                                | 用户uid：{{ apply.hostId }}
+                                | 用户等级：{{ apply.grade }}</span>
+                            <span class="time">📅 {{ apply.time }}</span>
                         </div>
-                        <h4 class="post-title">消息类型： {{ message.type }}</h4>
+                        <h4 class="post-title">版块类型： {{ apply.type }}</h4>
                         <div class="post-stats">
-                            <span>{{ message.content }}</span>
+                            <span>版块公告：{{ apply.notice }}</span>
                         </div>
                     </div>
                     <div class="board-actions">
-                        <button v-if="message.viewCount === 0"
-                                @click="receiveThisMessage(message)"
-                                class="follow-btn">点击本消息任意位置以确认已读
+                        <button v-if="!apply.ifDeal"
+                                @click="agreeThisApply(apply)"
+                                class="follow-btn">同意申请
+                        </button>
+                        <button v-if="!apply.ifDeal"
+                                @click="refuseThisApply(apply)"
+                                class="delete-post-btn">拒绝申请
                         </button>
                     </div>
                 </div>
@@ -281,7 +282,7 @@
             ifThisPost: false,                  // 显示该帖子
             ifBoardNotice: false,               // 显示版块公告
             ifHadNewMessage: false,             // 控制红点显示
-            ifMyMessage: false,                 // 是否显示我的通知信息
+            ifAllBoardApply: false,                 // 是否显示我的通知信息
 
 
             showHistoryModal: false,            // 是否显示历史公告弹窗
@@ -310,7 +311,7 @@
             newPostTitle: '',
 
             currentCommentId: '',               // 当前评论的id
-            myMessage: [],                      // 我的通知消息
+            allBoardApply: [],                      // 我的通知消息
             allReportPostToMe: [],              // 向我举报的信息
         },
         mounted() {
@@ -340,6 +341,42 @@
             this.highlightAll();
         },
         methods: {
+            // 同意版块申请
+            agreeThisApply(apply) {
+                axios.post('/board/agreeThisApply', {
+                    applyId: apply.id,
+                }, {
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+                }).then(response => {
+                    if (response.data.code === 200) {
+                        console.log(response.data);
+                        alert('同意创建');
+                        apply.ifDeal = true;
+                        this.turnAllBoardApply();
+                    } else {
+                        alert(response.data.message);
+                        console.error(response.data.code + ' ' + response.data.message);
+                    }
+                });
+            },
+            // 拒绝版块申请
+            refuseThisApply(apply) {
+                axios.post('/board/refuseThisApply', {
+                    applyId: apply.id,
+                }, {
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+                }).then(response => {
+                    if (response.data.code === 200) {
+                        console.log(response.data);
+                        alert('拒绝申请');
+                        apply.ifDeal = true;
+                        this.turnAllBoardApply();
+                    } else {
+                        alert(response.data.message);
+                        console.error(response.data.code + ' ' + response.data.message);
+                    }
+                });
+            },
             // 清空所有已处理的举报
             deleteAllDealReport() {
                 axios.post('/report/deleteAllDealReport', {
@@ -434,7 +471,7 @@
                             console.error('清除所有已读信息失败:', response.data.message);
                         }
                     });
-                this.turnMyMessage();
+                this.turnAllBoardApply();
             },
             // 查收信息
             receiveThisMessage(message) {
@@ -463,42 +500,30 @@
             },
             // 全都不显示
             turnNothing() {
-                this.ifReportPostToMe = false;
-                this.ifMyPost = false;
-                this.ifMyMessage = false;
                 this.ifBoardNotice = false;
-                this.ifMyInformation = false;
                 this.ifHomePage = false;
-                this.ifUploadMyAvatar = false;
-                this.ifEditName = false;
-                this.ifMyBoard = false;
-                this.ifShowDropdown = false;
                 this.ifAllBoard = false;
                 this.ifAllPostInMyBoard = false;
                 this.ifThisPost = false;
-                this.showEditPostModal = false;
-                this.ifMyCollect = false;
-                this.ifDeleteMode = false;
                 this.ifAllBoard = false;
                 this.ifAllPostInThisBoard = false;
-                this.ifMyHistory = false;
                 this.checkIfNewMessage().then(isCollected => {
                     this.ifHadNewMessage = isCollected;
                 });
             },
             // 切换我的消息通知
-            turnMyMessage() {
+            turnAllBoardApply() {
                 this.turnNothing();
-                this.ifMyMessage = true;
-                this.fetchMyMessage();
+                this.ifAllBoardApply = true;
+                this.fetchAllBoardApply();
                 this.currentPath = ['QG技术论坛', '我的消息'];
             },
-            // 获取我的个人通知信息
-            fetchMyMessage() {
-                axios.post('/message/getAllMessage')
+            // 获取所有版块申请
+            fetchAllBoardApply() {
+                axios.post('/board/getAllApplyNewBoard')
                     .then(response => {
                         if (response.data.code === 200) {
-                            this.myMessage = response.data.data;
+                            this.allBoardApply = response.data.data;
                         } else {
                             console.error('获取我的通知消息:', response.data.message);
                         }

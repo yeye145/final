@@ -29,6 +29,58 @@ public class BoardController extends BaseServlet {
     private BoardService boardService = new BoardServiceImpl();
     private NoticeService noticeService = new NoticeServiceImpl();
 
+    /*---------------------------------------    拒绝创建版块的申请   ------------------------------------------*/
+    public void refuseThisApply(HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+        Integer applyId = Integer.parseInt(request.getParameter("applyId"));
+        System.out.println("BoardController.agreeThisApply，拒绝创建版块的申请,apply申请id：" + applyId);
+
+        boardService.refuseApplyNewBoard(applyId);
+        // 获取版块信息
+        response.getWriter().write(
+                JSON.toJSONString(
+                        ResponseResult.success("拒绝创建申请")
+                )
+        );
+
+        System.out.println("-->拒绝创建版块的申请！");
+    }
+
+
+    /*---------------------------------------    同意创建版块的申请   ------------------------------------------*/
+    public void agreeThisApply(HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+        Integer applyId = Integer.parseInt(request.getParameter("applyId"));
+        System.out.println("BoardController.agreeThisApply，同意创建版块的申请,apply申请id：" + applyId);
+
+        boardService.agreeApplyNewBoard(applyId);
+        // 获取版块信息
+        response.getWriter().write(
+                JSON.toJSONString(
+                        ResponseResult.success("同意创建申请")
+                )
+        );
+
+        System.out.println("-->同意创建版块的申请！");
+    }
+
+
+    /*---------------------------------------    获取创建版块的申请   ------------------------------------------*/
+    public void getAllApplyNewBoard(HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+        System.out.println("BoardController.getAllApplyNewBoard，获取创建版块的申请");
+
+        // 获取版块信息
+        response.getWriter().write(
+                JSON.toJSONString(
+                        ResponseResult.success(boardService.getAllApplyNewBoard())
+                )
+        );
+
+        System.out.println("-->获取创建版块的申请成功！");
+    }
+
+
     /*---------------------------------------    获取按id排序的版块   ------------------------------------------*/
     public void getAllBoardOrderById(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
@@ -80,11 +132,11 @@ public class BoardController extends BaseServlet {
     /*-----------------------------------------    取消关注这个版块    -----------------------------------------*/
     public void cancelSubscribeThisBoard(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
-       Integer boardId = Integer.parseInt(request.getParameter("boardId"));
+        Integer boardId = Integer.parseInt(request.getParameter("boardId"));
         Integer userId = ControllerToolMethod.getUserId(request);
 
         System.out.println("BoardController，cancelSubscribeThisBoard，取消关注版块id:" + boardId + ",用户id:" + userId);
-        boardService.cancelSubscribeThisBoard(boardId,userId);
+        boardService.cancelSubscribeThisBoard(boardId, userId);
 
 
         // 返回成功响应

@@ -3,6 +3,7 @@ package service.impl;
 import dao.*;
 import dao.impl.*;
 import pojo.Board;
+import pojo.BoardApply;
 import pojo.Subscription;
 import pojo.User;
 import service.BoardService;
@@ -23,13 +24,58 @@ public class BoardServiceImpl implements BoardService {
     private NoticeDao noticeDao = new NoticeDaoImpl();
     private MessageDao messageDao = new MessageDaoImpl();
 
+    /*------------------------------------    拒绝创建版块的申请    --------------------------------------------*/
+    @Override
+    public void refuseApplyNewBoard(Integer applyId) throws Exception {
+        // 把这个申请标记为已读
+        boardApplyDao.hadReadThisApply(applyId);
+        BoardApply apply = boardApplyDao.getBoardApplyById(applyId);
+        // 通知用户
+        messageDao.creatMessage("您申请创建版块：" + apply.getTitle() + " 已被管理员拒绝！"
+                , apply.getHostId(), null, "版块申请创建结果");
+    }
+
+
+    /*------------------------------------    同意创建版块的申请    --------------------------------------------*/
+    @Override
+    public void agreeApplyNewBoard(Integer applyId) throws Exception {
+        // 把这个申请标记为已读
+        boardApplyDao.hadReadThisApply(applyId);
+        BoardApply apply = boardApplyDao.getBoardApplyById(applyId);
+
+        // 填充用户信息
+        Map<Integer, User> userMap = userDao.getUserMap();
+        User user = userMap.get(apply.getHostId());
+        apply.setGrade(user.getGrade());
+        apply.setHostAvatar(user.getAvatar());
+        apply.setHostName(user.getName());
+        // 通知用户
+        messageDao.creatMessage("您申请创建版块：" + apply.getTitle() + " 成功！快去查看属于你的版块吧"
+                , apply.getHostId(), null, "版块申请创建结果");
+        boardDao.creatNewBoard(apply);
+    }
+
+
+    /*------------------------------------    获取创建版块的申请    --------------------------------------------*/
+    @Override
+    public List<BoardApply> getAllApplyNewBoard() throws Exception {
+        List<BoardApply> applyList = boardApplyDao.getAllApplyNewBoard();
+        Map<Integer, User> userMap = userDao.getUserMap();
+        for (BoardApply apply : applyList) {
+            User user = userMap.get(apply.getHostId());
+            apply.setGrade(user.getGrade());
+            apply.setHostAvatar(user.getAvatar());
+            apply.setHostName(user.getName());
+        }
+        return applyList;
+    }
+
 
     /*-----------------------------------------    取消关注版块    --------------------------------------------*/
     @Override
     public List<Board> getAllBoardOrderById() throws Exception {
         return boardDao.getAllBoardOrderById();
     }
-
 
 
     /*-----------------------------------------    取消关注版块    --------------------------------------------*/

@@ -1,12 +1,22 @@
 package service;
 
 import pojo.Board;
+import pojo.BoardApply;
 import pojo.Report;
 
 import java.sql.SQLException;
 import java.util.List;
 
 public interface BoardService {
+
+    /*------------------------------------    拒绝创建版块的申请    --------------------------------------------*/
+    void refuseApplyNewBoard(Integer applyId) throws Exception;
+
+    /*------------------------------------    拒绝创建版块的申请    --------------------------------------------*/
+    void agreeApplyNewBoard(Integer applyId) throws Exception;
+
+    /*------------------------------------    获取创建版块的申请    --------------------------------------------*/
+    List<BoardApply> getAllApplyNewBoard() throws Exception;
 
     /*-----------------------------------------    取消关注版块    --------------------------------------------*/
     List<Board> getAllBoardOrderById() throws Exception;

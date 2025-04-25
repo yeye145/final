@@ -44,6 +44,7 @@ CREATE TABLE board_apply
     title   VARCHAR(255) NOT NULL COMMENT '标题',
     type    VARCHAR(255) NOT NULL COMMENT '类型',
     notice  TEXT         NOT NULL COMMENT '公告',
+    if_deal BOOLEAN NOT NULL DEFAULT 0,
     FOREIGN KEY (host_id) REFERENCES user (id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
