@@ -20,13 +20,12 @@ public class ReportController extends BaseServlet {
     private ReportService reportService = new ReportServiceImpl();
 
 
-    /*--------------------------------    清空所有已处理的举报    ---------------------------------------------*/
-    public void deleteAllDealReport(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    /*------------------------------------    管理员清空所有已处理的举报    --------------------------------------*/
+    public void deleteAllDealUserReport(HttpServletRequest request, HttpServletResponse response) throws Exception {
         try {
-            Integer boardId = Integer.parseInt(request.getParameter("boardId"));
-            System.out.println("ReportController.deleteAllDealReport，清空所有已处理的举报，版块id" + boardId);
+            System.out.println("ReportController.deleteAllDealUserReport，《管理员》清空所有已处理的举报");
 
-            reportService.deleteAllDealReport(boardId);
+            reportService.deleteAllDealUserReport();
             response.getWriter().write(
                     JSON.toJSONString(
                             ResponseResult.success("清空所有已处理的举报")
@@ -34,10 +33,46 @@ public class ReportController extends BaseServlet {
             );
             System.out.println("-->清空所有已处理的举报成功！--" );
         } catch (Exception e) {
-            System.err.println("ReportController.deleteAllDealReport发送错误：" + e.getMessage());
+            System.err.println("ReportController.deleteAllDealUserReport发生错误：" + e.getMessage());
         }
     }
 
+
+    /*--------------------------------    版主清空所有已处理的举报    --------------------------------------------*/
+    public void deleteAllDealBoardReport(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        try {
+            Integer boardId = Integer.parseInt(request.getParameter("boardId"));
+            System.out.println("ReportController.deleteAllDealBoardReport，清空所有已处理的举报，版块id" + boardId);
+
+            reportService.deleteAllDealBoardReport(boardId);
+            response.getWriter().write(
+                    JSON.toJSONString(
+                            ResponseResult.success("清空所有已处理的举报")
+                    )
+            );
+            System.out.println("-->清空所有已处理的举报成功！--" );
+        } catch (Exception e) {
+            System.err.println("ReportController.deleteAllDealBoardReport发生错误：" + e.getMessage());
+        }
+    }
+
+
+    /*---------------------------------    管理员获取用户的举报信息    ------------------------------------------*/
+    public void getReportUserToAdmin(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        try {
+            System.out.println("ReportController，管理员获取用户的举报信息");
+
+            response.getWriter().write(
+                    JSON.toJSONString(
+                            ResponseResult.success(reportService.getReportUserToAdmin())
+                    )
+            );
+
+            System.out.println("-->管理员获取用户的举报信息！--" );
+        } catch (Exception e) {
+            System.err.println("ReportController.getReportUserToAdmin发生错误：" + e.getMessage());
+        }
+    }
 
 
     /*------------------------------    获取我的版块下的举报帖子信息    ------------------------------------------*/
@@ -115,7 +150,7 @@ public class ReportController extends BaseServlet {
     }
 
 
-    /*-----------------------------------    举报属实，已确认处理    ------------------------------------------*/
+    /*-----------------------------------    举报属实，版主已确认处理    ----------------------------------------*/
     public void dealThisReport(HttpServletRequest request, HttpServletResponse response) throws Exception {
         Integer reportId = Integer.parseInt(request.getParameter("reportId"));
         System.out.println("ReportController.dealThisReport，举报属实");
@@ -134,10 +169,10 @@ public class ReportController extends BaseServlet {
 
 
 
-    /*-----------------------------------    举报不属实，拒绝处理    ------------------------------------------*/
+    /*-----------------------------------    举报不属实，版主拒绝处理    ----------------------------------------*/
     public void refuseThisReport(HttpServletRequest request, HttpServletResponse response) throws Exception {
         Integer reportId = Integer.parseInt(request.getParameter("reportId"));
-        System.out.println("ReportController.dealThisReport，举报不属实");
+        System.out.println("ReportController.refuseThisReport，举报不属实");
 
         // 给举报者发送处理完毕的通知
         reportService.refuseThisReport(reportId);
@@ -150,4 +185,43 @@ public class ReportController extends BaseServlet {
 
         System.out.println("-->举报不属实，拒绝处理！--" );
     }
+
+
+    /*----------------------------------    举报属实，管理员已确认处理    ----------------------------------------*/
+    public void adminDealThisReport(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        Integer reportId = Integer.parseInt(request.getParameter("reportId"));
+        System.out.println("ReportController.adminDealThisReport，举报属实");
+
+        // 给举报者发送处理完毕的通知
+        reportService.adminDealThisReport(reportId);
+
+        response.getWriter().write(
+                JSON.toJSONString(
+                        ResponseResult.success("举报属实，已处理！")
+                )
+        );
+
+        System.out.println("-->举报属实，已处理！--" );
+    }
+
+
+
+    /*---------------------------------    举报不属实，管理员拒绝处理    -----------------------------------------*/
+    public void adminRefuseThisReport(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        Integer reportId = Integer.parseInt(request.getParameter("reportId"));
+        System.out.println("ReportController.adminRefuseThisReport，举报不属实");
+
+        // 给举报者发送处理完毕的通知
+        reportService.adminRefuseThisReport(reportId);
+
+        response.getWriter().write(
+                JSON.toJSONString(
+                        ResponseResult.success("举报不属实，拒绝处理！")
+                )
+        );
+
+        System.out.println("-->举报不属实，拒绝处理！--" );
+    }
+
+
 }

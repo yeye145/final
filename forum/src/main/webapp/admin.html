@@ -33,6 +33,9 @@
         <div class="nav-item" @click="turnAllBoardApply">🔔 创建版块申请
             <div v-if="ifHadNewMessage" class="left-column-notification-badge"></div>
         </div>
+        <div class="nav-item" @click="turnReportUserToAdmin"> ⚠  处理举报信息
+            <div v-if="ifHadNewReport" class="left-column-notification-badge"></div>
+        </div>
         <hr>
         <div class="nav-item" @click="exitLogin">🚪 退出登录</div>
     </div>
@@ -216,6 +219,46 @@
         </div>
 
 
+        <div  v-if="ifReportUserToAdmin" class="board-section">
+            <h2>处理：用户举报信息</h2>
+            <button @click="deleteAllDealReport" class="delete-post-btn">
+                删除所有已处理的举报
+            </button>
+            <hr>
+            <br>
+            <div class="post-list">
+                <div class="post-list">
+                    <!--渲染向我举报的信息-->
+                    <div v-for="report in allReportUserToAdmin"
+                         :key="report.id"
+                         class="post-card">
+                        <span v-if="!report.ifDeal" class="notification-badge"></span>
+                        <div>
+                            <div class="post-meta">
+                                <span class="author">举报者id： {{ report.userId }}</span>
+                                <span class="time">举报时间： {{ report.time }}</span>
+                            </div>
+                            <h4 class="post-title" @click="turnThisPost(report.postId, '查看被举报的帖子')">
+                                举报的帖子id： {{ report.postId }}(👉点我跳转)
+                            </h4>
+                            <div class="post-stats">
+                                <span>举报原因： {{ report.reason }}</span>
+                            </div>
+                        </div>
+                        <div>
+                            <button v-if="!report.ifDeal"
+                                    @click="adminDealThisReport(report.id)"
+                                    class="follow-btn">举报属实，确认处理
+                            </button>
+                            <button v-if="!report.ifDeal"
+                                    @click="adminRefuseThisReport(report.id)"
+                                    class="delete-post-btn">证据不足，拒绝处理
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
 </div>
@@ -287,7 +330,9 @@
             ifThisPost: false,                  // 显示该帖子
             ifBoardNotice: false,               // 显示版块公告
             ifHadNewMessage: false,             // 控制红点显示
-            ifAllBoardApply: false,                 // 是否显示我的通知信息
+            ifAllBoardApply: false,             // 是否显示版块申请消息
+            ifReportUserToAdmin: false,         // 是否显示举报给管理员的信息
+            ifHadNewReport: false,              // 是否有新的举报
 
 
             showHistoryModal: false,            // 是否显示历史公告弹窗
@@ -317,7 +362,7 @@
 
             currentCommentId: '',               // 当前评论的id
             allBoardApply: [],                      // 我的通知消息
-            allReportPostToMe: [],              // 向我举报的信息
+            allReportUserToAdmin: [],              // 向我举报的信息
         },
         mounted() {
 
@@ -345,6 +390,7 @@
             // 初始高亮
             this.highlightAll();
 
+            this.turnReportUserToAdmin();
             this.turnAllBoardApply();
             this.turnNothing();
             this.ifHomePage = true;
@@ -388,15 +434,11 @@
             },
             // 清空所有已处理的举报
             deleteAllDealReport() {
-                axios.post('/report/deleteAllDealReport', {
-                    boardId: this.currentBoardId,
-                }, {
-                    headers: {'Content-Type': 'application/x-www-form-urlencoded'}
-                }).then(response => {
+                axios.post('/report/deleteAllDealUserReport').then(response => {
                     if (response.data.code === 200) {
                         console.log(response.data);
                         alert('清空所有已处理的举报');
-                        this.turnReportPostToMe();
+                        this.turnReportUserToAdmin();
                     } else {
                         alert(response.data.message);
                         console.error(response.data.code + ' ' + response.data.message);
@@ -404,8 +446,8 @@
                 });
             },
             // 拒绝处理举报
-            refuseThisReport(reportId) {
-                axios.post('/report/refuseThisReport', {
+            adminRefuseThisReport(reportId) {
+                axios.post('/report/adminRefuseThisReport', {
                     reportId: reportId,
                 }, {
                     headers: {'Content-Type': 'application/x-www-form-urlencoded'}
@@ -413,7 +455,7 @@
                     if (response.data.code === 200) {
                         console.log(response.data);
                         alert('已拒绝处理');
-                        this.turnReportPostToMe();
+                        this.turnReportUserToAdmin();
                     } else {
                         alert(response.data.message);
                         console.error(response.data.code + ' ' + response.data.message);
@@ -421,8 +463,8 @@
                 });
             },
             // 确认处理举报
-            dealThisReport(reportId) {
-                axios.post('/report/dealThisReport', {
+            adminDealThisReport(reportId) {
+                axios.post('/report/adminDealThisReport', {
                     reportId: reportId,
                 }, {
                     headers: {'Content-Type': 'application/x-www-form-urlencoded'}
@@ -430,36 +472,33 @@
                     if (response.data.code === 200) {
                         console.log(response.data);
                         alert('已确认处理');
-                        this.turnReportPostToMe();
+                        this.turnReportUserToAdmin();
                     } else {
                         alert(response.data.message);
                         console.error(response.data.code + ' ' + response.data.message);
                     }
                 });
             },
-            // 显示用户举报给版主的所有信息
-            turnReportPostToMe() {
-                this.ifMyBoard = true;
-                this.ifAllPostInMyBoard = false;
-                this.ifReportPostToMe = true;
-                this.fetchReportPostToMe();
+            // 显示用户举报给管理员的所有信息
+            turnReportUserToAdmin() {
+                this.turnNothing();
+                this.ifReportUserToAdmin = true;
+                this.fetchReportPostToAdmin();
             },
             // 获取用户举报给版主的所有信息
-            fetchReportPostToMe() {
-                axios.post('/report/getReportPostToMe', {
-                    boardId: this.currentBoardId,
-                }, {
-                    headers: {'Content-Type': 'application/x-www-form-urlencoded'}
-                })
+            fetchReportPostToAdmin() {
+                axios.post('/report/getReportUserToAdmin')
                     .then(response => {
                         if (response.data.code === 200) {
-                            this.allReportPostToMe = response.data.data;
+                            this.allReportUserToAdmin = response.data.data;
+                            // 判断是否有未处理的举报
+                            this.ifHadNewReport = this.allReportUserToAdmin.some(report => !report.ifDeal);
                         } else {
-                            console.error('获取我的版块下的举报信息失败:', response.data.message);
+                            console.error('获取举报用户的信息失败:', response.data.message);
                         }
                     })
             },
-            // 删除所有已读信息
+            // 删除所有已读版块申请
             deleteAllDealApply() {
                 axios.post('/board/deleteAllDealApply')
                     .then(response => {
@@ -483,6 +522,7 @@
             },
             // 全都不显示
             turnNothing() {
+                this.ifReportUserToAdmin = false;
                 this.ifBoardNotice = false;
                 this.ifHomePage = false;
                 this.ifAllBoard = false;

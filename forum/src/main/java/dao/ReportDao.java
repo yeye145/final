@@ -20,6 +20,12 @@ public interface ReportDao {
     /*-----------------------------------------     举报已读    --------------------------------------------*/
     void hadKnowReport(Integer reportId) throws Exception;
 
-    /*--------------------------------    清空所有已处理的举报    ---------------------------------------------*/
-    void deleteAllDealReport(Integer boardId) throws Exception;
+    /*--------------------------------    版主清空所有已处理的举报    -----------------------------------------*/
+    void deleteAllDealBoardReport(Integer boardId) throws Exception;
+
+    /*--------------------------------    管理员清空所有已处理的举报    ----------------------------------------*/
+    void deleteAllDealUserReport() throws Exception;
+
+    /*-----------------------------------    获取版块下所有举报帖子的信息    --------------------------------------*/
+    List<Report> getReportUserToAdmin() throws Exception;
 }

@@ -63,7 +63,7 @@ public class ReportServiceImpl implements ReportService {
     }
 
 
-    /*-------------------------------------    确认已处理对帖子的举报    -----------------------------------------*/
+    /*-------------------------------------    版主和确认已处理对帖子的举报    ------------------------------------*/
     @Override
     public void dealThisReport(Integer reportId) throws Exception {
         Report report = reportDao.getReportById(reportId);
@@ -75,7 +75,7 @@ public class ReportServiceImpl implements ReportService {
 
 
 
-    /*--------------------------------------    拒绝处理对帖子的举报    -----------------------------------------*/
+    /*--------------------------------------    版主拒绝处理对帖子的举报    --------------------------------------*/
     @Override
     public void refuseThisReport(Integer reportId) throws Exception {
         Report report = reportDao.getReportById(reportId);
@@ -86,10 +86,46 @@ public class ReportServiceImpl implements ReportService {
     }
 
 
-    /*--------------------------------    清空所有已处理的举报    ---------------------------------------------*/
+    /*------------------------------------   管理员确认已处理对帖子的举报    --------------------------------------*/
     @Override
-    public void deleteAllDealReport(Integer boardId) throws Exception {
-        reportDao.deleteAllDealReport(boardId);
+    public void adminDealThisReport(Integer reportId) throws Exception {
+        Report report = reportDao.getReportById(reportId);
+        messageDao.creatMessage("您对id为" + report.getReportedThisUserId()
+                        + "的用户举报情况属实，管理员已处理相关违规行为！"
+                ,report.getUserId(),null,"举报结果通知");
+        reportDao.hadKnowReport(reportId);
+    }
+
+
+    /*-----------------------------------    管理员拒绝处理对帖子的举报    ----------------------------------------*/
+    @Override
+    public void adminRefuseThisReport(Integer reportId) throws Exception {
+        Report report = reportDao.getReportById(reportId);
+        messageDao.creatMessage("您对id为" + report.getReportedThisUserId()
+                        + "的用户举报情况不属实，证据不足，管理员拒绝了对被举报用户的处理"
+                ,report.getUserId(),null,"举报结果通知");
+        reportDao.hadKnowReport(reportId);
+    }
+
+
+    /*--------------------------------    版主清空所有已处理的举报    -------------------------------------------*/
+    @Override
+    public void deleteAllDealBoardReport(Integer boardId) throws Exception {
+        reportDao.deleteAllDealBoardReport(boardId);
+    }
+
+
+    /*-------------------------------    管理员清空所有已处理的举报    -------------------------------------------*/
+    @Override
+    public void deleteAllDealUserReport() throws Exception {
+        reportDao.deleteAllDealUserReport();
+    }
+
+
+    /*-------------------------------------   管理员获取用户的举报信息     ---------------------------------------*/
+    @Override
+    public List<Report> getReportUserToAdmin() throws Exception {
+        return reportDao.getReportUserToAdmin();
     }
 
 }

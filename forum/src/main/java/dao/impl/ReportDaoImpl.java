@@ -60,11 +60,33 @@ public class ReportDaoImpl implements ReportDao {
     }
 
 
-    /*--------------------------------    清空所有已处理的举报    ---------------------------------------------*/
+    /*--------------------------------    版主清空所有已处理的举报    -----------------------------------------*/
     @Override
-    public void deleteAllDealReport(Integer boardId) throws Exception {
+    public void deleteAllDealBoardReport(Integer boardId) throws Exception {
         MyUpdate.update("DELETE FROM `forum`.`report`" +
                 " WHERE board_id = ? AND if_deal = 1", boardId);
+    }
+
+
+    /*--------------------------------    管理员清空所有已处理的举报    ----------------------------------------*/
+    @Override
+    public void deleteAllDealUserReport() throws Exception {
+        MyUpdate.update("DELETE FROM `forum`.`report`" +
+                " WHERE judge = 'admin' AND if_deal = 1");
+    }
+
+
+
+    /*-----------------------------------    获取版块下所有举报帖子的信息    --------------------------------------*/
+    @Override
+    public List<Report> getReportUserToAdmin() throws Exception {
+        return MySearch.searchToList("SELECT id, judge, reason, time" +
+                ", if_deal AS ifDeal" +
+                ", user_id AS userId" +
+                ", board_id AS boardId" +
+                ", post_id AS postId" +
+                ", reported_this_user_id AS reportedThisUserId" +
+                " FROM `forum`.`report` WHERE judge = 'admin'", Report.class);
     }
 
 

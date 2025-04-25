@@ -885,6 +885,7 @@
             // 配置marked
             marked.setOptions({
                 breaks: true,
+                sanitize: true,
                 highlight: function (code, lang) {
                     if (lang && hljs.getLanguage(lang)) {
                         try {
@@ -903,7 +904,7 @@
         methods: {
             // 清空所有已处理的举报
             deleteAllDealReport() {
-                axios.post('/report/deleteAllDealReport', {
+                axios.post('/report/deleteAllDealBoardReport', {
                     boardId: this.currentBoardId,
                 }, {
                     headers: {'Content-Type': 'application/x-www-form-urlencoded'}

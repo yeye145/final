@@ -20,6 +20,18 @@ public interface ReportService {
     /*--------------------------------------    拒绝处理对帖子的举报    -----------------------------------------*/
     void refuseThisReport(Integer reportId) throws Exception;
 
-    /*--------------------------------    清空所有已处理的举报    ---------------------------------------------*/
-    void deleteAllDealReport(Integer boardId) throws Exception;
+    /*------------------------------------   管理员确认已处理对帖子的举报    --------------------------------------*/
+    void adminDealThisReport(Integer reportId) throws Exception;
+
+    /*-----------------------------------    管理员拒绝处理对帖子的举报    ----------------------------------------*/
+    void adminRefuseThisReport(Integer reportId) throws Exception;
+
+    /*---------------------------------    版主清空所有已处理的举报    -------------------------------------------*/
+    void deleteAllDealBoardReport(Integer boardId) throws Exception;
+
+    /*-------------------------------    管理员清空所有已处理的举报    -------------------------------------------*/
+    void deleteAllDealUserReport() throws Exception;
+
+    /*-------------------------------------   管理员获取用户的举报信息     ---------------------------------------*/
+    List<Report> getReportUserToAdmin() throws Exception;
 }
