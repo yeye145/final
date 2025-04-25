@@ -26,6 +26,42 @@ public class LoginController extends BaseServlet {
     private LoginService loginService = new LoginServiceImpl();
 
 
+    /*--------------------------------------------    是否登录    --------------------------------------------*/
+    public void userCheck(HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+        System.out.println("LoginController.userCheck，验证是否登录");
+
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            // 返回登录失败信息
+            String json = JSON.toJSONString(ResponseResult.error(Constants.RESPONSE_CODE_FORBIDDEN, "未登录"));
+            response.getWriter().write(json);
+        } else {
+            response.getWriter().write(JSON.toJSONString(ResponseResult.success("已登录")));
+        }
+
+    }
+
+
+    /*---------------------------------------    管理员权限确认    --------------------------------------------*/
+    public void adminCheck(HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+        System.out.println("LoginController.adminCheck，验证是否为管理员");
+
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
+        if (user == null || !user.getIsAdmin()) {
+            // 返回登录失败信息
+            String json = JSON.toJSONString(ResponseResult.error(Constants.RESPONSE_CODE_FORBIDDEN, "权限不足"));
+            response.getWriter().write(json);
+        } else {
+            response.getWriter().write(JSON.toJSONString(ResponseResult.success("权限正常")));
+        }
+
+    }
+
+
     /*--------------------------------------------    登录验证    --------------------------------------------*/
     public void login(HttpServletRequest request, HttpServletResponse response) throws Exception {
         // 获取参数

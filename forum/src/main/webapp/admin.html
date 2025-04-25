@@ -362,6 +362,7 @@
             allReportUserToAdmin: [],              // 向我举报的信息
         },
         mounted() {
+            this.loginCheck();
 
             // 确保库已加载
             if (typeof hljs === 'undefined' || typeof marked === 'undefined') {
@@ -393,6 +394,15 @@
             this.ifHomePage = true;
         },
         methods: {
+            // 登录验证
+            loginCheck() {
+                axios.post('/login/adminCheck').then(response => {
+                    if (response.data.code !== 200) {
+                        alert(response.data.message);
+                        window.location.href = '/login.html';
+                    }
+                });
+            },
             // 同意版块申请
             agreeThisApply(apply) {
                 axios.post('/board/agreeThisApply', {

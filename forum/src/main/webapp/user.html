@@ -870,6 +870,7 @@
 
         },
         created() {
+            this.loginCheck();
             // 页面加载时自动获取用户头像
             this.fetchUserAvatar();
             this.fetchUserInformation();
@@ -902,6 +903,15 @@
             this.highlightAll();
         },
         methods: {
+            // 登录验证
+            loginCheck() {
+                axios.post('/login/userCheck').then(response => {
+                    if (response.data.code !== 200) {
+                        alert(response.data.message);
+                        window.location.href = '/login.html';
+                    }
+                });
+            },
             // 清空所有已处理的举报
             deleteAllDealReport() {
                 axios.post('/report/deleteAllDealBoardReport', {
