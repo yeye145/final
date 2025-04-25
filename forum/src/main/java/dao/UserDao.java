@@ -9,6 +9,8 @@ import java.util.Set;
 public interface UserDao {
 
 
+    void banUser(Integer userId) throws Exception;
+
     void receiveOneLike(Integer useId) throws Exception;
 
     void lossOneSubscription(Integer useId) throws Exception;

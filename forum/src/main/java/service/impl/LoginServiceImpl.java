@@ -1,10 +1,13 @@
 package service.impl;
 
 import dao.UserDao;
+
 import dao.impl.UserDaoImpl;
+
 import pojo.User;
 import service.LoginService;
 import service.utils.HashSaltUtil;
+
 
 import java.util.Set;
 
@@ -12,7 +15,6 @@ public class LoginServiceImpl implements LoginService {
 
     /*--------------------------------------------    私有变量    --------------------------------------------*/
     private UserDao userDao = new UserDaoImpl();
-
 
     @Override
     public User loginCheck(String account, String password) throws Exception {

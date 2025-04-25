@@ -48,13 +48,19 @@ public class LoginController extends BaseServlet {
         HttpSession session = request.getSession();
         session.setAttribute("user", user);
 
-        if (user != null) {
+        if (user != null && !user.getIfBanLogin()) {
             System.out.println("用户：" + user.getName() + ",登录成功！" +
                     "\n_____________________________________________________________");
             // 返回登录成功信息
             String json = JSON.toJSONString(ResponseResult.success(user.getIsAdmin() ? "admin" : "user"));
             response.getWriter().write(json);
-        } else {
+        }
+        if (user != null && user.getIfBanLogin()) {
+            // 返回登录失败信息
+            String json = JSON.toJSONString(ResponseResult.error(Constants.RESPONSE_CODE_FORBIDDEN, "\n账号被封禁\n"));
+            response.getWriter().write(json);
+        }
+        if (user == null) {
             // 返回登录失败信息
             String json = JSON.toJSONString(ResponseResult.error(Constants.RESPONSE_CODE_UNAUTHORIZED, "账号或密码错误"));
             response.getWriter().write(json);

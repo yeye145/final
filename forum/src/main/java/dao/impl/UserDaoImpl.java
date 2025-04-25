@@ -11,6 +11,12 @@ import java.util.Set;
 
 public class UserDaoImpl implements UserDao {
 
+    @Override
+    public void banUser(Integer userId) throws Exception {
+        MyUpdate.update("UPDATE `forum`.`User` SET if_ban_login = 1 " +
+                "WHERE (`id` = ?);", userId);
+    }
+
 
     @Override
     public void receiveOneLike(Integer useId) throws Exception {
@@ -32,7 +38,7 @@ public class UserDaoImpl implements UserDao {
         return MySearch.searchToMap("SELECT id, email, phone, password" +
                 ", is_admin AS isAdmin" +
                 ", name, grade, avatar" +
-                ", if_receive_like AS ifReceiveLike" +
+                ", if_ban_login AS ifBanLogin" +
                 ", receive_like_count AS receiveLikeCount" +
                 ", fans_count AS fansCount" +
                 ", post_count AS postCount" +
@@ -50,7 +56,7 @@ public class UserDaoImpl implements UserDao {
                 "SELECT id, email, phone, password" +
                         ", is_admin AS isAdmin" +
                         ", name, grade, avatar" +
-                        ", if_receive_like AS ifReceiveLike" +
+                        ", if_ban_login AS ifBanLogin" +
                         ", receive_like_count AS receiveLikeCount" +
                         ", fans_count AS fansCount" +
                         ", post_count AS postCount" +
@@ -70,7 +76,7 @@ public class UserDaoImpl implements UserDao {
                 "SELECT id, email, phone, password" +
                         ", is_admin AS isAdmin" +
                         ", name, grade, avatar" +
-                        ", if_receive_like AS ifReceiveLike" +
+                        ", if_ban_login AS ifBanLogin" +
                         ", receive_like_count AS receiveLikeCount" +
                         ", fans_count AS fansCount" +
                         ", post_count AS postCount" +

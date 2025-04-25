@@ -10,7 +10,7 @@ public class User {
     private Integer userType;
     private Integer grade;              // 用户等级
     private String avatar;              // 用户头像
-    private Boolean ifReceiveLike;      // 是否接收点赞通知
+    private Boolean ifBanLogin;
     private String name;
     private Integer receiveLikeCount;
     private Integer receiveReadCount;
@@ -24,7 +24,7 @@ public class User {
     public User() {
     }
 
-    public User(Integer id, String phone, String password, Boolean isAdmin, String email, Integer userType, Integer grade, String avatar, Boolean ifReceiveLike, String name, Integer receiveLikeCount, Integer receiveReadCount, Integer fansCount, Integer postCount, Integer mySubscribeCount, Integer myCollectCount, Integer myBoardCount) {
+    public User(Integer id, String phone, String password, Boolean isAdmin, String email, Integer userType, Integer grade, String avatar, Boolean ifBanLogin, String name, Integer receiveLikeCount, Integer receiveReadCount, Integer fansCount, Integer postCount, Integer mySubscribeCount, Integer myCollectCount, Integer myBoardCount) {
         this.id = id;
         this.phone = phone;
         this.password = password;
@@ -33,7 +33,7 @@ public class User {
         this.userType = userType;
         this.grade = grade;
         this.avatar = avatar;
-        this.ifReceiveLike = ifReceiveLike;
+        this.ifBanLogin = ifBanLogin;
         this.name = name;
         this.receiveLikeCount = receiveLikeCount;
         this.receiveReadCount = receiveReadCount;
@@ -174,18 +174,18 @@ public class User {
 
     /**
      * 获取
-     * @return ifReceiveLike
+     * @return ifBanLogin
      */
-    public Boolean getIfReceiveLike() {
-        return ifReceiveLike;
+    public Boolean getIfBanLogin() {
+        return ifBanLogin;
     }
 
     /**
      * 设置
-     * @param ifReceiveLike
+     * @param ifBanLogin
      */
-    public void setIfReceiveLike(Boolean ifReceiveLike) {
-        this.ifReceiveLike = ifReceiveLike;
+    public void setIfBanLogin(Boolean ifBanLogin) {
+        this.ifBanLogin = ifBanLogin;
     }
 
     /**
@@ -317,6 +317,6 @@ public class User {
     }
 
     public String toString() {
-        return "User{id = " + id + ", phone = " + phone + ", password = " + password + ", isAdmin = " + isAdmin + ", email = " + email + ", userType = " + userType + ", grade = " + grade + ", avatar = " + avatar + ", ifReceiveLike = " + ifReceiveLike + ", name = " + name + ", receiveLikeCount = " + receiveLikeCount + ", receiveReadCount = " + receiveReadCount + ", fansCount = " + fansCount + ", postCount = " + postCount + ", mySubscribeCount = " + mySubscribeCount + ", myCollectCount = " + myCollectCount + ", myBoardCount = " + myBoardCount + "}";
+        return "User{id = " + id + ", phone = " + phone + ", password = " + password + ", isAdmin = " + isAdmin + ", email = " + email + ", userType = " + userType + ", grade = " + grade + ", avatar = " + avatar + ", ifBanLogin = " + ifBanLogin + ", name = " + name + ", receiveLikeCount = " + receiveLikeCount + ", receiveReadCount = " + receiveReadCount + ", fansCount = " + fansCount + ", postCount = " + postCount + ", mySubscribeCount = " + mySubscribeCount + ", myCollectCount = " + myCollectCount + ", myBoardCount = " + myBoardCount + "}";
     }
 }

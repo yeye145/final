@@ -1,13 +1,7 @@
 package service.impl;
 
-import dao.MessageDao;
-import dao.PostDao;
-import dao.ReportDao;
-import dao.UserDao;
-import dao.impl.MessageDaoImpl;
-import dao.impl.PostDaoImpl;
-import dao.impl.ReportDaoImpl;
-import dao.impl.UserDaoImpl;
+import dao.*;
+import dao.impl.*;
 import pojo.Post;
 import pojo.Report;
 import pojo.User;
@@ -22,6 +16,7 @@ public class ReportServiceImpl implements ReportService {
     private UserDao userDao = new UserDaoImpl();
     private PostDao postDao = new PostDaoImpl();
     private MessageDao messageDao = new MessageDaoImpl();
+
 
     /*-------------------------------------    获取我的版块的举报信息    ----------------------------------------*/
     @Override
@@ -68,11 +63,10 @@ public class ReportServiceImpl implements ReportService {
     public void dealThisReport(Integer reportId) throws Exception {
         Report report = reportDao.getReportById(reportId);
         messageDao.creatMessage("您对id为" + report.getPostId()
-                + "的帖子举报情况属实，版主已处理相关违规行为！感谢您为维护版块内容健康文明做出的贡献！"
-                ,report.getUserId(),null,"举报结果通知");
+                        + "的帖子举报情况属实，版主已处理相关违规行为！感谢您为维护版块内容健康文明做出的贡献！"
+                , report.getUserId(), null, "举报结果通知");
         reportDao.hadKnowReport(reportId);
     }
-
 
 
     /*--------------------------------------    版主拒绝处理对帖子的举报    --------------------------------------*/
@@ -81,29 +75,30 @@ public class ReportServiceImpl implements ReportService {
         Report report = reportDao.getReportById(reportId);
         messageDao.creatMessage("您对id为" + report.getPostId()
                         + "的帖子举报情况不属实，证据不足，版主拒绝了对相关举报帖子的处理"
-                ,report.getUserId(),null,"举报结果通知");
+                , report.getUserId(), null, "举报结果通知");
         reportDao.hadKnowReport(reportId);
     }
 
 
-    /*------------------------------------   管理员确认已处理对帖子的举报    --------------------------------------*/
+    /*------------------------------------   管理员确认已处理对用户的举报    --------------------------------------*/
     @Override
     public void adminDealThisReport(Integer reportId) throws Exception {
         Report report = reportDao.getReportById(reportId);
         messageDao.creatMessage("您对id为" + report.getReportedThisUserId()
                         + "的用户举报情况属实，管理员已处理相关违规行为！"
-                ,report.getUserId(),null,"举报结果通知");
+                , report.getUserId(), null, "举报结果通知");
+        userDao.banUser(report.getReportedThisUserId());
         reportDao.hadKnowReport(reportId);
     }
 
 
-    /*-----------------------------------    管理员拒绝处理对帖子的举报    ----------------------------------------*/
+    /*-----------------------------------    管理员拒绝处理对用户的举报    ----------------------------------------*/
     @Override
     public void adminRefuseThisReport(Integer reportId) throws Exception {
         Report report = reportDao.getReportById(reportId);
         messageDao.creatMessage("您对id为" + report.getReportedThisUserId()
                         + "的用户举报情况不属实，证据不足，管理员拒绝了对被举报用户的处理"
-                ,report.getUserId(),null,"举报结果通知");
+                , report.getUserId(), null, "举报结果通知");
         reportDao.hadKnowReport(reportId);
     }
 

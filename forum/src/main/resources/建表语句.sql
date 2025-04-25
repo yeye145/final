@@ -17,7 +17,7 @@ CREATE TABLE user
     name            VARCHAR(50)  NOT NULL COMMENT '昵称',
     grade           INT     DEFAULT 1 COMMENT '等级',
     avatar          VARCHAR(255) COMMENT '头像路径' NOT NULL DEFAULT '/images/avatar/initAvatar.jpg',
-    if_receive_like BOOLEAN DEFAULT TRUE COMMENT '接收点赞通知',
+    if_ban_login    BOOLEAN DEFAULT FALSE COMMENT '是否被禁止登录',
     INDEX           idx_email (email),
     INDEX           idx_phone (phone)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -43,7 +43,7 @@ CREATE TABLE board_apply
     time    DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '申请时间',
     title   VARCHAR(255) NOT NULL COMMENT '标题',
     type    VARCHAR(255) NOT NULL COMMENT '类型',
-    notice  TEXT         NOT NULL COMMENT '公告',
+    notice  TEXT         NOT NULL COMMENT '申请理由',
     if_deal BOOLEAN NOT NULL DEFAULT 0,
     FOREIGN KEY (host_id) REFERENCES user (id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -166,7 +166,6 @@ CREATE TABLE log
     user_id   INT          NOT NULL COMMENT '用户ID',
     user_name VARCHAR(50)  NOT NULL COMMENT '用户名',
     action    VARCHAR(255) NOT NULL COMMENT '操作内容',
-    ip        VARCHAR(45)  NOT NULL COMMENT 'IP地址',
     time      DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '操作时间',
     FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -184,9 +183,20 @@ CREATE TABLE subscription
     FOREIGN KEY (subscribe_to_board_id) REFERENCES board (id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+
+-- 登录封禁表
+CREATE TABLE login_ban
+(
+    id         INT PRIMARY KEY AUTO_INCREMENT COMMENT '封禁记录ID',
+    user_id    INT      NOT NULL COMMENT '被封禁用户ID',
+    reason   TEXT NOT NULL COMMENT '封禁原因',
+    FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE,
+    INDEX idx_user_id (user_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户登录封禁记录表';
+
 -- 表列名扩展 -- 开始 ----------------------------------------------------------------------------------
 ALTER TABLE `forum`.`user`
-    ADD COLUMN `receive_like_count` INT NULL DEFAULT '0' AFTER `if_receive_like`,
+    ADD COLUMN `receive_like_count` INT NULL DEFAULT '0' AFTER `if_ban_login`,
 ADD COLUMN `fans_count` INT NULL DEFAULT '0' AFTER `receive_like_count`,
 ADD COLUMN `post_count` INT NULL DEFAULT '0' AFTER `fans_count`,
 ADD COLUMN `receive_read_count` INT NULL DEFAULT '0' AFTER `post_count`,
@@ -338,7 +348,7 @@ DELIMITER ;
 
 -- 触发器 -- 结束 --------------------------------------------------------------------------------------
 
-INSERT INTO `forum`.`user` (`id`, `email`, `phone`, `password`, `is_admin`, `name`, `grade`, `if_receive_like`)
+INSERT INTO `forum`.`user` (`id`, `email`, `phone`, `password`, `is_admin`, `name`, `grade`, `if_ban_login`)
 VALUES ('1', 'y@y.com', '18300000985', 'yyy111', '1', 'Yiiie.', '7', '0');
 
 -- 生成新用户
@@ -365,8 +375,7 @@ VALUES ('3@3.com', '18300003030', 'sss333', '张三', '3'),
 
 INSERT INTO `forum`.`board` (`id`, `host_id`, `title`, `type`, `post_count`, `time`, `host_name`)
 VALUES ('1', '2', '张三学java', 'java', '0', '2025-04-14 15:14:50', '张三');
-INSERT INTO `forum`.`log` (`id`, `user_id`, `user_name`, `action`, `ip`, `time`)
-VALUES ('1', '2', '张三', '新建版块', '127.0.0.1', '2025-04-14 15:14:50');
+
 
 UPDATE `forum`.`user`
 SET `my_board_count` = '1'
@@ -474,6 +483,9 @@ INSERT INTO `forum`.`notice` (`board_id`, `content`) VALUES ('2', 'B站关注我
 INSERT INTO `forum`.`collect` (`user_id`, `post_id`, `remark`) VALUES ('2', '2', '备注');
 INSERT INTO `forum`.`collect` (`user_id`, `post_id`, `remark`) VALUES ('2', '3', '备注3');
 
-
 INSERT INTO `forum`.`message` (`content`, `user_id_receive`, `view_count`, `type`) VALUES ('张三给你点了一个赞', '2', '0', '点赞');
 INSERT INTO `forum`.`message` (`content`, `user_id_receive`, `view_count`, `type`) VALUES ('李四关注了你', '2', '1', '关注');
+
+INSERT INTO `forum`.`board_apply` (`host_id`, `title`, `type`, `notice`, `if_deal`) VALUES ('2', '标题', '类型', '公告', '0');
+INSERT INTO `forum`.`report` (`user_id`, `reported_this_user_id`, `judge`, `reason`, `if_deal`) VALUES ('2', '3', 'admin', '举报李四', '0');
+INSERT INTO `forum`.`report` (`user_id`, `reported_this_user_id`, `judge`, `reason`, `if_deal`) VALUES ('2', '4', 'admin', '举报王五', '0');
