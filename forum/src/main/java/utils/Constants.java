@@ -46,6 +46,7 @@ public class Constants {
     public static final String ACTION_PUBLISH_NOTICE = "在版块：%s中，发布了新的公告：%s";
     public static final String ACTION_POST_COMMENT_ON_POST = "发布了一条新的评论，在id为：%d的帖子之下，内容为：%s";
     public static final String ACTION_POST_COMMENT_ON_COMMENT = "发布了一条新的评论，在评论id：%d 之下，内容为：%s";
+    public static final String ACTION_CLEAN_READ_MESSAGE = "清除了所有已读通知信息";
 
 
 }

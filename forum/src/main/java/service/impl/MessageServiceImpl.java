@@ -1,12 +1,15 @@
 package service.impl;
 
+import dao.LogDao;
 import dao.MessageDao;
 import dao.UserDao;
+import dao.impl.LogDaoImpl;
 import dao.impl.MessageDaoImpl;
 import dao.impl.UserDaoImpl;
 import pojo.Message;
 import pojo.User;
 import service.MessageService;
+import utils.Constants;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -17,6 +20,7 @@ public class MessageServiceImpl implements MessageService {
     /*--------------------------------------------    私有变量    --------------------------------------------*/
     private MessageDao messageDao = new MessageDaoImpl();
     private UserDao userDao = new UserDaoImpl();
+    private LogDao logDao = new LogDaoImpl();
 
 
     /*--------------------------------------    获取我的通知信息    --------------------------------------------*/
@@ -69,8 +73,9 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public void deleteAllReceiveMessage(Integer userId) throws Exception {
         messageDao.deleteAllReceiveMessage(userId);
+        // 记录到日志中
+        logDao.recordThisActionInLog(userId, userDao.getUserById(userId).getName()
+                , Constants.ACTION_CLEAN_READ_MESSAGE);
     }
-
-
 
 }
