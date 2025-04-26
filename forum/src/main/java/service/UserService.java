@@ -1,11 +1,15 @@
 package service;
 
+import pojo.Log;
 import pojo.User;
 
 import javax.servlet.http.Part;
 import java.sql.SQLException;
+import java.util.List;
 
 public interface UserService {
+
+    /*----------------------------------------    管理员获取全部日志    ----------------------------------------*/ List<Log> adminGetAllLog() throws SQLException;
 
     /*--------------------------------------------    更新头像    --------------------------------------------*/
     Boolean uploadAvatar(Part filePart, String savePath, String fileName, Integer userId) throws Exception;

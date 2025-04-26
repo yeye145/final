@@ -33,9 +33,10 @@
         <div class="nav-item" @click="turnAllBoardApply">🔔 创建版块申请
             <div v-if="ifHadNewMessage" class="left-column-notification-badge"></div>
         </div>
-        <div class="nav-item" @click="turnReportUserToAdmin"> ⚠  处理举报信息
+        <div class="nav-item" @click="turnReportUserToAdmin"> ⚠ 处理举报信息
             <div v-if="ifHadNewReport" class="left-column-notification-badge"></div>
         </div>
+        <div class="nav-item" @click="turnAllLog">📕 全部日志</div>
         <hr>
         <div class="nav-item" @click="exitLogin">🚪 退出登录</div>
     </div>
@@ -218,8 +219,8 @@
             </div>
         </div>
 
-
-        <div  v-if="ifReportUserToAdmin" class="board-section">
+        <!--查看所有用户的举报信息-->
+        <div v-if="ifReportUserToAdmin" class="board-section">
             <h2>处理：用户举报信息</h2>
             <button @click="deleteAllDealReport" class="delete-post-btn">
                 删除所有已处理的举报
@@ -251,6 +252,38 @@
                                     @click="adminRefuseThisReport(report.id)"
                                     class="delete-post-btn">证据不足，拒绝处理
                             </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--查看所有日志信息-->
+        <div v-if="ifAllLog" class="board-section">
+            <h2>日志记录</h2>
+            <li>搜索示例：用id搜索请输入id:2，搜索id为2的用户的操作，请使用英文冒号:</li>
+            <li>搜索示例：用时间搜索请输入time:2025-04-26T16:13:44，请使用减号-进行连接、英文冒号:</li>
+            <hr>
+            <div class="search-bar">
+                <input type="text" v-model="logSearchQuery"
+                       placeholder="输入用户id或时间以搜索"
+                       @input="searchLog">
+            </div>
+            <br>
+            <div class="post-list">
+                <div class="post-list">
+                    <div v-for="log in allLog"
+                         :key="log.id"
+                         class="post-card">
+                        <div>
+                            <div class="post-meta">
+                                <span class="author">日志id： {{ log.id }}</span>
+                                <span class="author">用户id： {{ log.userId }} | 用户名： {{ log.userName }}</span>
+                                <span class="time">操作时间： {{ log.time }}</span>
+                            </div>
+                            <div class="post-stats">
+                                <span>操作内容： {{ log.action }}</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -330,18 +363,22 @@
             ifAllBoardApply: false,             // 是否显示版块申请消息
             ifReportUserToAdmin: false,         // 是否显示举报给管理员的信息
             ifHadNewReport: false,              // 是否有新的举报
+            ifAllLog: false,                    // 是否显示所有日志
 
 
             showHistoryModal: false,            // 是否显示历史公告弹窗
             currentBoardId: null,
             allBoard: [],
             allPostInThisBoard: [],
+            allLog: [],
 
             boardSearchQuery: '',               // 版块关键字搜索
             originalAllBoard: [],
             postSearchQuery: '',                // 帖子关键字搜索
+            logSearchQuery: '',
             originalAllPostInThisBoard: [],
             originalAllPostInMyBoard: [],
+            originalAllLog: [],
 
             notice: [],                         // 存储所有公告
             currentNotice: {                    // 当前展示的公告
@@ -394,10 +431,45 @@
             this.ifHomePage = true;
         },
         methods: {
+            // 全部日志中，日志关键字搜索版块
+            searchLog() {
+                if (this.logSearchQuery.trim() === '') {
+                    // 清空搜索时恢复原始数据
+                    this.allLog = this.originalAllLog;
+                    return;
+                }
+                // 将查询的字符串转化为小写
+                const query = this.logSearchQuery.toLowerCase();
+                this.allLog = this.originalAllLog.filter(log =>
+                    // 将名称转化为小写，如果包含用户id或时间，则储存
+                    ('time:' + log.time).toLowerCase().includes(query) ||
+                    ('id:' + log.userId.toString()).toLowerCase().includes(query))
+            },
+            // 查看所有日志
+            turnAllLog() {
+                this.turnNothing();
+                this.ifAllLog = true;
+                this.currentPath = ['QG技术论坛', '查看日志']
+                this.fetchAllLog();
+            },
+            // 抓取所有日志信息
+            fetchAllLog() {
+                axios.post('/user/adminGetAllLog').then(response => {
+                    if (response.data.code === 200) {
+                        this.allLog = response.data.data;
+                        this.originalAllLog = response.data.data;
+                        console.log("获取日志信息成功");
+                    } else {
+                        alert(response.data.message);
+                        console.log(response.data.error);
+                    }
+                });
+            },
             // 登录验证
             loginCheck() {
                 axios.post('/login/adminCheck').then(response => {
                     if (response.data.code !== 200) {
+                        console.log("未登录");
                         alert(response.data.message);
                         window.location.href = '/login.html';
                     }
@@ -490,6 +562,7 @@
             turnReportUserToAdmin() {
                 this.turnNothing();
                 this.ifReportUserToAdmin = true;
+                this.currentPath = ['QG技术论坛', '举报用户处理'];
                 this.fetchReportPostToAdmin();
             },
             // 获取用户举报给版主的所有信息
@@ -529,6 +602,7 @@
             },
             // 全都不显示
             turnNothing() {
+                this.ifAllLog = false;
                 this.ifReportUserToAdmin = false;
                 this.ifBoardNotice = false;
                 this.ifHomePage = false;

@@ -16,8 +16,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.UUID;
 
 @MultipartConfig
@@ -28,8 +26,23 @@ public class UserController extends BaseServlet {
     private UserService userService = new UserServiceImpl();
 
 
+    /*----------------------------------------    管理员获取全部日志    ----------------------------------------*/
+    public void adminGetAllLog(HttpServletRequest request, HttpServletResponse response) {
+        try {
+            System.out.println("======   UserController.adminGetAllLog，管理员获取全部日志    ======");
+            response.getWriter().write(
+                    JSON.toJSONString(
+                            ResponseResult.success(userService.adminGetAllLog())
+                    )
+            );
+        } catch (Exception e) {
+            ControllerToolMethod.fetchException(request, response, e, "管理员获取全部日志时出错");
+        }
+    }
+
+
     /*--------------------------------------------    上传头像    --------------------------------------------*/
-    public void uploadAvatar(HttpServletRequest request, HttpServletResponse response)  {
+    public void uploadAvatar(HttpServletRequest request, HttpServletResponse response) {
 
         try {
             Part filePart = request.getPart("avatar");
@@ -76,7 +89,7 @@ public class UserController extends BaseServlet {
 
 
     /*-------------------------------------------    关注这个作者    ------------------------------------------*/
-    public void subscribeThisUser(HttpServletRequest request, HttpServletResponse response)  {
+    public void subscribeThisUser(HttpServletRequest request, HttpServletResponse response) {
         try {
             Integer userId = ControllerToolMethod.getUserId(request);
             Integer authorId = Integer.parseInt(request.getParameter("authorId"));
@@ -97,7 +110,7 @@ public class UserController extends BaseServlet {
 
 
     /*-----------------------------------------    取消关注这个作者    -----------------------------------------*/
-    public void cancelSubscribeThisUser(HttpServletRequest request, HttpServletResponse response)  {
+    public void cancelSubscribeThisUser(HttpServletRequest request, HttpServletResponse response) {
 
         try {
             Integer userId = ControllerToolMethod.getUserId(request);
@@ -121,7 +134,7 @@ public class UserController extends BaseServlet {
 
 
     /*--------------------------------------    判断用户是否关注该作者    ------------------------------------------*/
-    public void checkIfHadSubscribeThisUser(HttpServletRequest request, HttpServletResponse response)  {
+    public void checkIfHadSubscribeThisUser(HttpServletRequest request, HttpServletResponse response) {
 
         try {
             Integer authorId = Integer.parseInt(request.getParameter("authorId"));
@@ -154,7 +167,7 @@ public class UserController extends BaseServlet {
 
 
     /*--------------------------------------------    获取头像    --------------------------------------------*/
-    public void avatar(HttpServletRequest request, HttpServletResponse response)  {
+    public void avatar(HttpServletRequest request, HttpServletResponse response) {
 
         try {
             System.out.println("UserController.avatar，获取头像：");
@@ -179,7 +192,7 @@ public class UserController extends BaseServlet {
 
 
     /*--------------------------------------------   获取个人信息   --------------------------------------------*/
-    public void information(HttpServletRequest request, HttpServletResponse response)  {
+    public void information(HttpServletRequest request, HttpServletResponse response) {
         try {
             System.out.println("UserController.information，获取个人信息");
             Integer userId = ControllerToolMethod.getUserId(request);
@@ -202,7 +215,7 @@ public class UserController extends BaseServlet {
 
 
     /*--------------------------------------------   更新个人昵称   --------------------------------------------*/
-    public void updateName(HttpServletRequest request, HttpServletResponse response)  {
+    public void updateName(HttpServletRequest request, HttpServletResponse response) {
         try {
             Integer id = Integer.parseInt(request.getParameter("id"));
             String newName = request.getParameter("newName");

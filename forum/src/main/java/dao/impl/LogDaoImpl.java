@@ -22,6 +22,6 @@ public class LogDaoImpl implements LogDao {
     public List<Log> getAllLog() throws SQLException {
         return MySearch.searchToList("SELECT id, action, time" +
                 ", user_id AS userId" +
-                ", user_name AS userName FROM `forum`.`log`", Log.class);
+                ", user_name AS userName FROM `forum`.`log` ORDER BY time DESC", Log.class);
     }
 }

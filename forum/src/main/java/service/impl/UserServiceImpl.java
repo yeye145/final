@@ -3,6 +3,7 @@ package service.impl;
 import dao.*;
 import dao.impl.*;
 
+import pojo.Log;
 import pojo.Subscription;
 import pojo.User;
 import service.UserService;
@@ -25,6 +26,12 @@ public class UserServiceImpl implements UserService {
     private SubscriptionDao subscriptionDao = new SubscriptionDaoImpl();
     private MessageDao messageDao = new MessageDaoImpl();
     private LogDao logDao = new LogDaoImpl();
+
+
+    @Override
+    public List<Log> adminGetAllLog() throws SQLException {
+        return logDao.getAllLog();
+    }
 
 
     /*--------------------------------------------    更新头像    --------------------------------------------*/
