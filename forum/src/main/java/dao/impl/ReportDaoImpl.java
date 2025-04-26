@@ -9,7 +9,7 @@ import java.util.List;
 
 public class ReportDaoImpl implements ReportDao {
 
-    /*-------------------------------------------    举报帖子    ----------------------------------------------*/
+    /*-------------------------------------------    举报帖子    ---------------------------------------------*/
     @Override
     public void reportPost(Integer postId, Integer boardId, Integer userId, String reason) throws Exception {
         MyUpdate.update("INSERT INTO `forum`.`report`" +
@@ -18,7 +18,7 @@ public class ReportDaoImpl implements ReportDao {
     }
 
 
-    /*-------------------------------------------    举报作者    ----------------------------------------------*/
+    /*-------------------------------------------    举报作者    ---------------------------------------------*/
     @Override
     public void reportUser(Integer reportedThisUserId, Integer userId, String reason) throws Exception {
         MyUpdate.update("INSERT INTO `forum`.`report`" +
@@ -27,7 +27,7 @@ public class ReportDaoImpl implements ReportDao {
     }
 
 
-    /*-----------------------------------    获取版块下所有举报帖子的信息    --------------------------------------*/
+    /*-----------------------------------    获取版块下所有举报帖子的信息    -------------------------------------*/
     @Override
     public List<Report> getReportPostToMe(Integer boardId) throws Exception {
         return MySearch.searchToList("SELECT id, judge, reason, time" +
@@ -40,7 +40,7 @@ public class ReportDaoImpl implements ReportDao {
     }
 
 
-    /*-----------------------------------     通过id获取对应的举报内容    --------------------------------------*/
+    /*-----------------------------------     通过id获取对应的举报内容    ---------------------------------------*/
     @Override
     public Report getReportById(Integer reportId) throws Exception{
         return MySearch.searchToOne("SELECT id, judge, reason, time" +
@@ -53,14 +53,14 @@ public class ReportDaoImpl implements ReportDao {
     }
 
 
-    /*-----------------------------------------     举报已读    --------------------------------------------*/
+    /*-----------------------------------------     举报已读    ----------------------------------------------*/
     @Override
     public void hadKnowReport(Integer reportId) throws Exception{
         MyUpdate.update("UPDATE `forum`.`report` SET if_deal = 1 WHERE id = ?", reportId);
     }
 
 
-    /*--------------------------------    版主清空所有已处理的举报    -----------------------------------------*/
+    /*--------------------------------    版主清空所有已处理的举报    -------------------------------------------*/
     @Override
     public void deleteAllDealBoardReport(Integer boardId) throws Exception {
         MyUpdate.update("DELETE FROM `forum`.`report`" +
@@ -68,7 +68,7 @@ public class ReportDaoImpl implements ReportDao {
     }
 
 
-    /*--------------------------------    管理员清空所有已处理的举报    ----------------------------------------*/
+    /*--------------------------------    管理员清空所有已处理的举报    ------------------------------------------*/
     @Override
     public void deleteAllDealUserReport() throws Exception {
         MyUpdate.update("DELETE FROM `forum`.`report`" +

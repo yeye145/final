@@ -10,6 +10,7 @@ import java.util.List;
 
 public class NoticeDaoImpl implements NoticeDao {
 
+    /*---------------------------------    获取一个版块的历史公告    ------------------------------------*/
     @Override
     public List<Notice> getAllNoticeInThisBoard(Integer boardId) throws SQLException {
         return MySearch.searchToList("SELECT id, `time`, content" +
@@ -17,6 +18,8 @@ public class NoticeDaoImpl implements NoticeDao {
                 " FROM `forum`.`notice` WHERE board_id = ? ORDER BY time DESC", Notice.class, boardId);
     }
 
+
+    /*---------------------------------    在该版块下发布一个新公告    ----------------------------------*/
     @Override
     public void publishNewNotice(Integer boardId, String content) throws Exception {
         MyUpdate.update("INSERT INTO `forum`.`notice`" +

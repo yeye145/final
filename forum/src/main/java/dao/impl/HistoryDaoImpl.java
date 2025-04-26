@@ -10,7 +10,7 @@ import java.util.List;
 
 public class HistoryDaoImpl implements HistoryDao {
 
-
+    /*----------------------------    浏览帖子时记录到历史记录中  ---------------------------------------*/
     @Override
     public void recordHistory(Integer postId, Integer userId) throws Exception {
         MyUpdate.update("INSERT INTO history (user_id, post_id, time) " +
@@ -19,6 +19,7 @@ public class HistoryDaoImpl implements HistoryDao {
     }
 
 
+    /*----------------------------    获取我的历史记录（帖子内容未填充）  ---------------------------------*/
     @Override
     public List<History> getHistoryWithNullPostInformation(Integer userId) throws Exception {
         // 获取历史记录列表

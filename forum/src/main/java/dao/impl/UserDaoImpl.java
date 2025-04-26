@@ -11,6 +11,7 @@ import java.util.Set;
 
 public class UserDaoImpl implements UserDao {
 
+    /*-----------------------------    管理员封禁某个用户（通过用户ID）    -----------------------------------*/
     @Override
     public void banUser(Integer userId) throws Exception {
         MyUpdate.update("UPDATE `forum`.`User` SET if_ban_login = 1 " +
@@ -18,21 +19,23 @@ public class UserDaoImpl implements UserDao {
     }
 
 
+    /*-----------------------------    用户收到一个点赞（通过用户ID）    --------------------------------------*/
     @Override
-    public void receiveOneLike(Integer useId) throws Exception {
+    public void receiveOneLike(Integer userId) throws Exception {
         MyUpdate.update("UPDATE `forum`.`User` SET receive_like_count = receive_like_count + 1 " +
-                "WHERE (`id` = ?);", useId);
+                "WHERE (`id` = ?);", userId);
     }
 
 
-
+    /*-----------------------------    用户失去一个粉丝（通过用户ID）    --------------------------------------*/
     @Override
-    public void lossOneSubscription(Integer useId) throws Exception {
+    public void lossOneSubscription(Integer userId) throws Exception {
         MyUpdate.update("UPDATE `forum`.`User` SET fans_count = fans_count - 1 " +
-                "WHERE (`id` = ?);", useId);
+                "WHERE (`id` = ?);", userId);
     }
 
 
+    /*-----------------------------    获取所有用户的Map集合（键为用户ID）    --------------------------------*/
     @Override
     public Map<Integer, User> getUserMap() throws SQLException {
         return MySearch.searchToMap("SELECT id, email, phone, password" +
@@ -46,10 +49,11 @@ public class UserDaoImpl implements UserDao {
                 ", my_subscribe_count AS mySubscribeCount" +
                 ", my_collect_count AS myCollectCount" +
                 ", my_board_count AS myBoardCount" +
-                " FROM `forum`.`User`", User.class,"id");
+                " FROM `forum`.`User`", User.class, "id");
     }
 
 
+    /*-----------------------------    通过用户ID查询单个用户    --------------------------------------------*/
     @Override
     public User getUserById(Integer userId) throws SQLException {
         return MySearch.searchToOne(
@@ -69,7 +73,7 @@ public class UserDaoImpl implements UserDao {
     }
 
 
-    // 获取新的sql.User信息，用于操作
+    /*-----------------------------    获取所有用户的Set集合    --------------------------------------------*/
     @Override
     public Set<User> getUserSet() throws SQLException {
         return MySearch.searchToSet(
@@ -89,6 +93,7 @@ public class UserDaoImpl implements UserDao {
     }
 
 
+    /*-----------------------------    创建新用户（通过手机号、邮箱和密码）    --------------------------------*/
     @Override
     public void insertUser(String phone, String email, String password) throws Exception {
         MyUpdate.update("INSERT INTO `forum`.`User` (`phone`, `password`," +
@@ -96,25 +101,24 @@ public class UserDaoImpl implements UserDao {
     }
 
 
+    /*-----------------------------    修改用户密码（通过用户ID和新密码）    --------------------------------*/
     @Override
     public void updatePassword(String password, Integer id) throws Exception {
-        MyUpdate.update("UPDATE `forum`.`User` SET `password` = ? WHERE (`id` = ?);"
-                , password, id);
+        MyUpdate.update("UPDATE `forum`.`User` SET `password` = ? WHERE (`id` = ?);", password, id);
     }
 
 
+    /*-----------------------------    更新用户头像（通过用户ID和文件名）    --------------------------------*/
     @Override
     public void updateAvatar(Integer userId, String fileName) throws Exception {
-        MyUpdate.update("UPDATE `forum`.`User` SET `avatar` = ? WHERE (`id` = ?);"
-                , "/images/avatar/" + fileName, userId);
+        MyUpdate.update("UPDATE `forum`.`User` SET `avatar` = ? WHERE (`id` = ?);",
+                "/images/avatar/" + fileName, userId);
     }
 
+
+    /*-----------------------------    修改用户昵称（通过用户ID和新名称）    --------------------------------*/
     @Override
     public void updateName(Integer userId, String newName) throws Exception {
-        MyUpdate.update("UPDATE `forum`.`User` SET `name` = ? WHERE (`id` = ?);"
-                , newName, userId);
+        MyUpdate.update("UPDATE `forum`.`User` SET `name` = ? WHERE (`id` = ?);", newName, userId);
     }
 }
-
-
-    

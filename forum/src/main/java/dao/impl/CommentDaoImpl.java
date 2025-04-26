@@ -11,6 +11,7 @@ import java.util.List;
 
 public class CommentDaoImpl implements CommentDao {
 
+    /*----------------------------    通过id获取指定评论  --------------------------------------------*/
     @Override
     public Comment getCommentById(Integer commentId) throws SQLException {
         return MySearch.searchToOne("SELECT id, content, time" +
@@ -21,6 +22,7 @@ public class CommentDaoImpl implements CommentDao {
     }
 
 
+    /*----------------------------    获取该帖子下所有评论  -------------------------------------------*/
     @Override
     public List<Comment> getAllCommentInThisPost(Integer postId) throws SQLException {
         return MySearch.searchToList("SELECT id, content, time" +
@@ -32,12 +34,15 @@ public class CommentDaoImpl implements CommentDao {
     }
 
 
+    /*----------------------------    为某条评论点1个赞  ---------------------------------------------*/
     @Override
     public void plusOneLikeCount(Integer commentId) throws Exception {
         MyUpdate.update("UPDATE `forum`.`comment`" +
                 " SET like_count = like_count + 1 WHERE (`id` = ?)", commentId);
     }
 
+
+    /*----------------------------    在某条帖子发布一条评论  -----------------------------------------*/
     @Override
     public void creatCommentOnPost(Integer postId, User user, String content) throws Exception {
         MyUpdate.update("INSERT INTO `forum`.`comment`" +
@@ -46,6 +51,7 @@ public class CommentDaoImpl implements CommentDao {
     }
 
 
+    /*----------------------------    在某条评论下进行跟评  -------------------------------------------*/
     @Override
     public void creatCommentOnComment(Integer postId, Integer parentId, User user, String content) throws Exception {
         MyUpdate.update("INSERT INTO `forum`.`comment`" +

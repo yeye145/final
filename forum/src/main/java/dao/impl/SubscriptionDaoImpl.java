@@ -10,6 +10,7 @@ import java.util.List;
 
 public class SubscriptionDaoImpl implements SubscriptionDao {
 
+    /*-----------------------------    获取某个用户的关注List集合    -----------------------------------------*/
     @Override
     public List<Subscription> getOneSubscriptionList(Integer userId) throws SQLException {
         return MySearch.searchToList("SELECT id" +
@@ -20,6 +21,7 @@ public class SubscriptionDaoImpl implements SubscriptionDao {
     }
 
 
+    /*-----------------------------    用户关注这个版块    --------------------------------------------------*/
     @Override
     public void subscribeThisBoard(Integer boardId, Integer userId) throws Exception {
         MyUpdate.update("INSERT INTO `forum`.`subscription`" +
@@ -28,6 +30,8 @@ public class SubscriptionDaoImpl implements SubscriptionDao {
 
     }
 
+
+    /*-----------------------------    用户关注这个作者    --------------------------------------------------*/
     @Override
     public void subscribeThisAuthor(Integer authorId, Integer userId) throws Exception {
         MyUpdate.update("INSERT INTO `forum`.`subscription`" +
@@ -35,6 +39,8 @@ public class SubscriptionDaoImpl implements SubscriptionDao {
 
     }
 
+
+    /*-----------------------------    用户取消关注这个版块    -----------------------------------------------*/
     @Override
     public void cancelSubscribeThisBoard(Integer boardId, Integer userId) throws Exception {
         MyUpdate.update("DELETE FROM `forum`.`subscription`" +
@@ -42,6 +48,7 @@ public class SubscriptionDaoImpl implements SubscriptionDao {
     }
 
 
+    /*-----------------------------    用户取消关注这个作者    -----------------------------------------------*/
     @Override
     public void cancelSubscribeThisUser(Integer authorId, Integer userId) throws Exception {
         MyUpdate.update("DELETE FROM `forum`.`subscription`" +
