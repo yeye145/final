@@ -26,14 +26,15 @@ public class CommentServiceImpl implements CommentService {
 
     /*-----------------------------------------    在该评论下发表评论    --------------------------------------*/
     @Override
-    public boolean creatCommentOnComment(Integer postId, Integer boardId, Integer parentId, Integer userId, String content) throws Exception {
+    public boolean creatCommentOnComment(Integer postId, Integer parentId, Integer userId, String content) throws Exception {
 
         System.out.println("CommentServiceImpl.creatCommentOnComment，发布评论的跟评，父评论id：" + parentId);
 
         // 判断用户是否被禁止发言
         Set<BoardBan> allBanUserSet = boardBanDao.getAllBanUserSet();
+        Post post = postDao.getThisPostById(postId);
         for (BoardBan boardBan : allBanUserSet) {
-            if (Objects.equals(boardBan.getBanId(), userId) && boardBan.getBoardId().equals(boardId)) {
+            if (Objects.equals(boardBan.getBanId(), userId) && boardBan.getBoardId().equals(post.getBoardId())) {
                 System.out.println("--X>发布失败，用户已在该版块被禁止发言");
                 return false;
             }

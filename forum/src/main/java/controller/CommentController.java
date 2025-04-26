@@ -122,13 +122,12 @@ public class CommentController extends BaseServlet {
             Integer postId = Integer.parseInt(request.getParameter("postId"));
             Integer userId = ControllerToolMethod.getUserId(request);
             Integer parentId = Integer.parseInt(request.getParameter("parentId"));
-            Integer boardId = Integer.parseInt(request.getParameter("boardId"));
             String content = request.getParameter("content");
 
 
             System.out.println("CommentController.creatCommentOnComment，对评论进行评论，父评论id：" + parentId);
 
-            if (commentService.creatCommentOnComment(postId, boardId, parentId, userId, content)) {
+            if (commentService.creatCommentOnComment(postId, parentId, userId, content)) {
                 response.getWriter().write(
                         JSON.toJSONString(
                                 ResponseResult.success("发表评论成功！")
@@ -144,7 +143,7 @@ public class CommentController extends BaseServlet {
                 System.out.println("--X>发表评论失败");
             }
         } catch (Exception e) {
-            ControllerToolMethod.fetchException(request, response, e, "对评论进行评论时出错");
+            ControllerToolMethod.fetchException(request, response, e, "对评论进行评论时出错,");
         }
 
 

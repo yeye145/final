@@ -7,8 +7,9 @@ import java.util.List;
 
 public interface CommentService {
 
+
     /*-----------------------------------------    在该评论下发表评论    --------------------------------------*/
-    boolean creatCommentOnComment(Integer postId, Integer boardId, Integer parentId, Integer userId, String content) throws Exception;
+    boolean creatCommentOnComment(Integer postId, Integer parentId, Integer userId, String content) throws Exception;
 
     /*-----------------------------------------    在该帖子下发表评论    --------------------------------------*/
     boolean creatCommentOnPost(Integer postId, Integer boardId, Integer userId, String content) throws Exception;
