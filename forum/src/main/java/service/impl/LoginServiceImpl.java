@@ -27,6 +27,28 @@ public class LoginServiceImpl implements LoginService {
     }
 
 
+    /*-----------------------------------      注册新的账号       -------------------------------------------*/
+    @Override
+    public Boolean register(String phone, String email, String password) throws Exception {
+
+        Integer uid = 1;
+        Set<User> userSet = userDao.getUserSet();
+
+        for (User user : userSet) {
+            uid++;
+            if (user.getPhone().equals(phone) || user.getEmail().equals(email)) {
+                return false;
+            }
+        }
+        userDao.insertUser(phone, email, password);
+
+        // 记录到日志中
+        logDao.recordThisActionInLog(uid, "用户" + phone, Constants.ACTION_REGISTER);
+        return true;
+
+    }
+
+
     /*-----------------------------------       忘记密码，重设密码       -------------------------------------*/
     @Override
     public Boolean forgetPassword(String account, String password) throws Exception {

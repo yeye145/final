@@ -27,6 +27,36 @@ public class LoginController extends BaseServlet {
     private LoginService loginService = new LoginServiceImpl();
 
 
+    /*--------------------------------------------    注册验证    --------------------------------------------*/
+    public void register(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        // 获取参数
+        String phone = request.getParameter("phone");
+        String email = request.getParameter("email");
+
+        // 后端正则验证
+        if (!phone.matches(Constants.PHONE_REGEX) || !email.matches(Constants.EMAIL_REGEX)) {
+            String json = JSON.toJSONString(
+                    ResponseResult.error(Constants.RESPONSE_CODE_UNAUTHORIZED, "手机号或邮箱格式无效")
+            );
+            response.getWriter().write(json);
+        }
+
+        String password = HashSaltUtil.creatHashPassword(request.getParameter("password"));
+
+        String hashPassword = HashSaltUtil.creatHashPassword(password);
+
+
+        if (loginService.register(phone, email, hashPassword)) {
+            System.out.println("RegisterController.register,注册成功！手机号：" + phone);
+            String json = JSON.toJSONString(ResponseResult.success("手机号：" + phone + "，注册成功"));
+            response.getWriter().write(json);
+        } else {
+            String json = JSON.toJSONString(ResponseResult.error(Constants.RESPONSE_CODE_UNAUTHORIZED, "注册失败"));
+            response.getWriter().write(json);
+        }
+    }
+
+
     /*--------------------------------------------    是否登录    --------------------------------------------*/
     public void userCheck(HttpServletRequest request, HttpServletResponse response) throws Exception {
 

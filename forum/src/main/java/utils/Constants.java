@@ -13,7 +13,7 @@ public class Constants {
 
     // 过滤器白名单
     public static final String[] FREE_URLS = {"/login.html", ".css", ".png", ".js", ".images",
-            "/login", "/user", "/admin", "/verify", "/report", "/register",
+            "/login", "/user", "/admin", "/verify", "/report",
             "/avatar", "/user", "/board", "/post", "/comment", "/message"};
 
     public static final String HOT = "view_count";

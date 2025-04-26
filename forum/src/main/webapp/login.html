@@ -278,7 +278,7 @@
                 let that = this;
                 try {
                     if (this.ifRegister) {
-                        const response = await axios.post('/register/register', new URLSearchParams({
+                        const response = await axios.post('/login/register', new URLSearchParams({
                             phone: that.setPhone,
                             email: that.setEmail,
                             password: that.setPassword,
