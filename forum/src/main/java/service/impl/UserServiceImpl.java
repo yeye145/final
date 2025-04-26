@@ -9,6 +9,7 @@ import service.UserService;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Set;
 
 public class UserServiceImpl implements UserService {
 
@@ -16,6 +17,22 @@ public class UserServiceImpl implements UserService {
     private UserDao userDao = new UserDaoImpl();
     private SubscriptionDao subscriptionDao = new SubscriptionDaoImpl();
     private MessageDao messageDao = new MessageDaoImpl();
+
+
+    /*-------------------------------------------    更改昵称    ----------------------------------------------*/
+    @Override
+    public boolean updateName(Integer id, String newName) throws Exception {
+
+        Set<User> userSet = userDao.getUserSet();
+        for (User user : userSet) {
+            if(user.getName().equals(newName)) {
+                System.out.println("--UpdateServiceImpl，昵称已存在");
+                return false;
+            }
+        }
+        userDao.updateName(id, newName);
+        return true;
+    }
 
 
     /*-------------------------------------------    订阅作者    ----------------------------------------------*/

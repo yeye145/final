@@ -6,6 +6,9 @@ import java.sql.SQLException;
 
 public interface UserService {
 
+    /*-------------------------------------------    更改昵称    ----------------------------------------------*/
+    boolean updateName(Integer id, String newName) throws Exception;
+
     /*-------------------------------------------    订阅作者    ----------------------------------------------*/
     void subscribeThisUser(Integer authorId, Integer userId) throws Exception;
 

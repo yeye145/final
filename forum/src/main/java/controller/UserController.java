@@ -6,11 +6,7 @@ import controller.utils.ControllerToolMethod;
 import pojo.ResponseResult;
 import pojo.User;
 
-import service.ReportService;
-import service.UpdateService;
 import service.UserService;
-import service.impl.ReportServiceImpl;
-import service.impl.UpdateServiceImpl;
 import service.impl.UserServiceImpl;
 import utils.Constants;
 
@@ -24,7 +20,6 @@ public class UserController extends BaseServlet {
 
     /*--------------------------------------------    私有变量    --------------------------------------------*/
     private UserService userService = new UserServiceImpl();
-    private UpdateService updateService = new UpdateServiceImpl();
 
 
     /*-------------------------------------------    关注这个作者    ------------------------------------------*/
@@ -138,7 +133,7 @@ public class UserController extends BaseServlet {
         Integer id = Integer.parseInt(request.getParameter("id"));
         String newName = request.getParameter("newName");
         System.out.println("用户id：" + id + "，准备更换昵称：" + newName);
-        if (updateService.updateName(id, newName)) {
+        if (userService.updateName(id, newName)) {
             response.getWriter().write(JSON.toJSONString(ResponseResult.success("昵称更改成功！")));
         } else {
             String json = JSON.toJSONString(ResponseResult.error(Constants.RESPONSE_CODE_CONFLICT, "昵称已存在"));
