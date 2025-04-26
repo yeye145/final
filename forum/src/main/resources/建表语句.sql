@@ -339,7 +339,7 @@ DELIMITER ;
 -- 触发器 -- 结束 --------------------------------------------------------------------------------------
 
 INSERT INTO `forum`.`user` (`id`, `email`, `phone`, `password`, `is_admin`, `name`, `grade`, `if_ban_login`)
-VALUES ('1', 'y@y.com', '18300000985', 'yyy111', '1', 'Yiiie.', '7', '0');
+VALUES ('1', 'y@y.com', '18300000985', 'yyy111', '1', '管理员', '7', '0');
 
 -- 生成新用户
 INSERT INTO `forum`.`user` (`email`, `phone`, `password`, `name`, `grade`)
