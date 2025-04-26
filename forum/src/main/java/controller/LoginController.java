@@ -44,7 +44,7 @@ public class LoginController extends BaseServlet {
     }
 
 
-    /*---------------------------------------    管理员权限确认    --------------------------------------------*/
+    /*------------------------------------------    管理员权限确认    -----------------------------------------*/
     public void adminCheck(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
         System.out.println("LoginController.adminCheck，验证是否为管理员");
@@ -106,8 +106,7 @@ public class LoginController extends BaseServlet {
 
 
     /*--------------------------------------------    退出登录    --------------------------------------------*/
-    public void exitLogin(HttpServletRequest request, HttpServletResponse response) throws
-            ServletException, IOException {
+    public void exitLogin(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
         session.setAttribute("user", null);
     }

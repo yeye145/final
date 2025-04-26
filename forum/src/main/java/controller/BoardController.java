@@ -328,7 +328,7 @@ public class BoardController extends BaseServlet {
 
 
     /*-------------------------------------------     版块封禁用户    -----------------------------------------*/
-    public void banUserInThisBoard(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException {
+    public void banUserInThisBoard(HttpServletRequest request, HttpServletResponse response) throws Exception {
         System.out.println("BoardController，版块封禁用户，版主id：" + ControllerToolMethod.getUserId(request));
         Integer boardId = Integer.parseInt(request.getParameter("boardId"));
         String reason = request.getParameter("reason");

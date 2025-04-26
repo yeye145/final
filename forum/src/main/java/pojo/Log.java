@@ -7,19 +7,17 @@ public class Log {
     private Integer userId;
     private String userName;
     private String action;          // 进行了什么操作
-    private String ip;
     private LocalDateTime time;
 
 
     public Log() {
     }
 
-    public Log(Integer id, Integer userId, String userName, String action, String ip, LocalDateTime time) {
+    public Log(Integer id, Integer userId, String userName, String action, LocalDateTime time) {
         this.id = id;
         this.userId = userId;
         this.userName = userName;
         this.action = action;
-        this.ip = ip;
         this.time = time;
     }
 
@@ -89,22 +87,6 @@ public class Log {
 
     /**
      * 获取
-     * @return ip
-     */
-    public String getIp() {
-        return ip;
-    }
-
-    /**
-     * 设置
-     * @param ip
-     */
-    public void setIp(String ip) {
-        this.ip = ip;
-    }
-
-    /**
-     * 获取
      * @return time
      */
     public LocalDateTime getTime() {
@@ -120,6 +102,6 @@ public class Log {
     }
 
     public String toString() {
-        return "Log{id = " + id + ", userId = " + userId + ", userName = " + userName + ", action = " + action + ", ip = " + ip + ", time = " + time + "}";
+        return "Log{id = " + id + ", userId = " + userId + ", userName = " + userName + ", action = " + action + ", time = " + time + "}";
     }
 }
