@@ -12,7 +12,7 @@ public interface CommentService {
     boolean creatCommentOnComment(Integer postId, Integer parentId, Integer userId, String content) throws Exception;
 
     /*-----------------------------------------    在该帖子下发表评论    --------------------------------------*/
-    boolean creatCommentOnPost(Integer postId, Integer boardId, Integer userId, String content) throws Exception;
+    boolean creatCommentOnPost(Integer postId, Integer userId, String content) throws Exception;
 
     /*-----------------------------------------    获取帖子下所有评论    --------------------------------------*/
     List<Comment> getAllCommentInThisPost(Integer postId) throws SQLException;

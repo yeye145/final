@@ -97,6 +97,15 @@ public class PostDaoImpl implements PostDao {
     }
 
 
+    /*---------------------------------    发布评论时增加一个评论数    ----------------------------------*/
+    @Override
+    public void plusOneCommentCount(Integer postId) throws Exception {
+        MyUpdate.update("UPDATE `forum`.`post`" +
+                " SET comment_count = comment_count + 1" +
+                " WHERE id = ?", postId);
+    }
+
+
     /*---------------------------------    获取某个id范围下的所有帖子Map集合    --------------------------*/
     @Override
     public Map<Integer, Post> getPostMapIn(String inClause) throws Exception {

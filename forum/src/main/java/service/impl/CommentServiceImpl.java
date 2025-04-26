@@ -46,6 +46,7 @@ public class CommentServiceImpl implements CommentService {
 
         // 执行数据库相关操作
         commentDao.creatCommentOnComment(postId, parentId, user, content);
+        postDao.plusOneCommentCount(postId);
 
         // 为被评论者发送一条消息
         messageDao.creatMessage("用户：" + user.getName()
@@ -61,23 +62,22 @@ public class CommentServiceImpl implements CommentService {
 
     /*-----------------------------------------    在该帖子下发表评论    --------------------------------------*/
     @Override
-    public boolean creatCommentOnPost(Integer postId, Integer boardId, Integer userId, String content) throws Exception {
+    public boolean creatCommentOnPost(Integer postId, Integer userId, String content) throws Exception {
 
         System.out.println("CommentServiceImpl.creatCommentOnPost，发布帖子评论，帖子id：" + postId);
-
+        Post post = postDao.getThisPostById(postId);
         // 判断用户是否被禁止发言
         Set<BoardBan> allBanUserSet = boardBanDao.getAllBanUserSet();
         for (BoardBan boardBan : allBanUserSet) {
-            if (Objects.equals(boardBan.getBanId(), userId) && boardBan.getBoardId().equals(boardId)) {
+            if (Objects.equals(boardBan.getBanId(), userId) && boardBan.getBoardId().equals(post.getBoardId())) {
                 System.out.println("--X>发布失败，用户已在该版块被禁止发言");
                 return false;
             }
         }
         // 执行数据库相关操作
         commentDao.creatCommentOnPost(postId, userDao.getUserById(userId), content);
+        postDao.plusOneCommentCount(postId);
 
-        // 为帖子作者发送信息
-        Post post = postDao.getThisPostById(postId);
         messageDao.creatMessage("用户：" + userDao.getUserById(userId).getName()
                         + " 给您的帖子“" + post.getTitle() + "”发布了一条评论，内容如下：\n" + content
                 , post.getAuthorId(), null, "帖子回复");

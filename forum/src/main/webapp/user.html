@@ -1195,7 +1195,6 @@
             saveComment() {
                 axios.post('/comment/creatCommentOnComment', new URLSearchParams({
                     postId: this.thisPost.id,
-                    boardId: this.currentBoardId,
                     parentId: this.currentCommentId,
                     content: this.newCommentOnComment,
                 }), {
@@ -1588,7 +1587,6 @@
                 axios.post('/comment/creatCommentOnPost', new URLSearchParams({
                     postId: this.thisPost.id,
                     content: this.newComment,
-                    boardId: this.currentBoardId,
                 }), {
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded'

@@ -88,12 +88,11 @@ public class CommentController extends BaseServlet {
         try {
             Integer postId = Integer.parseInt(request.getParameter("postId"));
             Integer userId = ControllerToolMethod.getUserId(request);
-            Integer boardId = Integer.parseInt(request.getParameter("boardId"));
             String content = request.getParameter("content");
 
             System.out.println("CommentController.creatCommentOnPost，为帖子评论，帖子id：" + postId);
 
-            if (commentService.creatCommentOnPost(postId, boardId, userId, content)) {
+            if (commentService.creatCommentOnPost(postId, userId, content)) {
                 response.getWriter().write(
                         JSON.toJSONString(
                                 ResponseResult.success("发表评论成功！")

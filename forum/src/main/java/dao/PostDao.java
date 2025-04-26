@@ -28,6 +28,9 @@ public interface PostDao {
     /*---------------------------------    浏览帖子时增加一个浏览数    ----------------------------------*/
     void plusOneViewCount(Integer postId) throws Exception;
 
+    /*---------------------------------    发布评论时增加一个评论数    ----------------------------------*/
+    void plusOneCommentCount(Integer postId) throws Exception;
+
     /*---------------------------------    获取某个id范围下的所有帖子Map集合    --------------------------*/
     Map<Integer, Post> getPostMapIn(String inClause) throws Exception;
 
