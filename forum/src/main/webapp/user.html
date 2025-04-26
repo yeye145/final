@@ -68,13 +68,38 @@
     <!-- 右侧内容区域 -->
     <div class="right-column">
 
-        <!-- 主页内容 -->
+        <!-- 主页公告 -->
         <div v-if="ifHomePage" class="content-section">
             <div>
                 <h3>📌 最新公告</h3>
                 <p>欢迎来到QG技术论坛！这里有最新技术动态和深度讨论。</p>
             </div>
-
+        </div>
+        <!--主页推送帖子，按等级排序-->
+        <div class="board-section" v-if="ifHomePage">
+            <div class="post-list">
+                <!--渲染全部帖子信息，点击帖子切换到对应帖子内容-->
+                <div v-for="post in homePagePost"
+                     v-if="post.title && post.title.trim()!== ''"
+                     :key="post.id"
+                     class="post-card"
+                     @click="turnThisPost(post.id, post.title)">
+                    <!--显示帖子信息-->
+                    <div class="post-meta">
+                        <img :src="post.authorAvatar" class="author-avatar">
+                        <span class="author">👤 {{ post.authorName }}
+                            | 用户id: {{ post.authorId }}
+                            | 用户等级: {{ post.authorGrade }}</span>
+                        <span class="time">📅 {{ post.time }}</span>
+                    </div>
+                    <h4 class="post-title">帖子id: {{ post.id }} | {{ post.title }}</h4>
+                    <div class="post-stats">
+                        <span>❤️ {{ post.likeCount }}</span>
+                        <span>💬 {{ post.commentCount }}</span>
+                        <span>👀 {{ post.viewCount }}</span>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- 版块公告内容 -->
@@ -915,6 +940,9 @@
 
             // 初始高亮
             this.highlightAll();
+
+            this.turnNothing();
+            this.backHomePage();
         },
         methods: {
             // 抓取主页推送帖子
