@@ -17,6 +17,23 @@ public class LoginServiceImpl implements LoginService {
     private UserDao userDao = new UserDaoImpl();
 
     @Override
+    public Boolean forgetPassword(String account, String password) throws Exception {
+        // 初始化用户
+        Set<User> userSet = userDao.getUserSet();
+
+        for (User user : userSet) {
+            if (user.getPhone().equals(account) || user.getEmail().equals(account)) {
+                // 找得到该用户
+                userDao.updatePassword(password, user.getId());
+                return true;
+            }
+        }
+        // 用户不存在
+        return false;
+    }
+
+
+    @Override
     public User loginCheck(String account, String password) throws Exception {
 
         Set<User> userSet = userDao.getUserSet();

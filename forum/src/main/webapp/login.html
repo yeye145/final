@@ -344,7 +344,7 @@
 
                 if (ifSuccess) {
                     try {
-                        const response = await axios.post('/forget/forget', new URLSearchParams({
+                        const response = await axios.post('/login/forget', new URLSearchParams({
                             account: that.forgotAccount,
                             password: that.newPassword,
                         }));

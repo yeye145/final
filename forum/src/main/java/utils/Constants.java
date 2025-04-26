@@ -13,8 +13,8 @@ public class Constants {
 
     // 过滤器白名单
     public static final String[] FREE_URLS = {"/login.html", ".css", ".png", ".js", ".images",
-            "/login", "/user", "/admin", "/verify", "/forget", "/register",
-            "/avatar", "/user", "/board", "/post", "/comment", "/message", "/report"};
+            "/login", "/user", "/admin", "/verify", "/report", "/register",
+            "/avatar", "/user", "/board", "/post", "/comment", "/message"};
 
     public static final String HOT = "view_count";
     public static final String NEW = "time";
@@ -36,7 +36,6 @@ public class Constants {
     public static final String ACTION_UPDATE_NAME_TO = "更改了自己的昵称，新的昵称为：%s";
     public static final String ACTION_APPLY_NEW_BOARD = "申请创建一个新的版块，版块名为：%s";
     public static final String ACTION_PUBLISH_POST_TITLE= "发布了新的帖子，帖子标题为：%s";
-    public static final String ACTION_POST_COMMENT_ON = "发布了一条新的评论，在：%s";
     public static final String ACTION_REPORT_POST_TITLE = "举报了一条帖子，帖子标题为：%s";
     public static final String ACTION_REPORT_USER = "举报了一个用户，用户id为：%d";
     public static final String ACTION_DELETE_ALL_DEAL_BOARD_APPLY = "删除了所有已经处理的版块申请";
@@ -45,7 +44,8 @@ public class Constants {
     public static final String ACTION_CANCEL_SUBSCRIBE_BOARD = "取消关注版块，版块的名称为：%s";
     public static final String ACTION_BAN_USER_IN_BOARD = "在版块：%s中，封禁了id为：%d，叫：%s的用户";
     public static final String ACTION_PUBLISH_NOTICE = "在版块：%s中，发布了新的公告：%s";
-
+    public static final String ACTION_POST_COMMENT_ON_POST = "发布了一条新的评论，在id为：%d的帖子之下，内容为：%s";
+    public static final String ACTION_POST_COMMENT_ON_COMMENT = "发布了一条新的评论，在评论id：%d 之下，内容为：%s";
 
 
 }
