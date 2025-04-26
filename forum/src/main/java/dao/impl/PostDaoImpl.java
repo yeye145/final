@@ -19,6 +19,7 @@ public class PostDaoImpl implements PostDao {
                 ", author_id AS authorId" +
                 ", author_name AS authorName" +
                 ", author_avatar AS authorAvatar" +
+                ", author_grade AS authorGrade" +
                 ", board_id AS boardId" +
                 ", view_count AS viewCount" +
                 ", like_count AS likeCount" +
@@ -31,11 +32,11 @@ public class PostDaoImpl implements PostDao {
     @Override
     public void creatPost(Integer boardId, String title, String content, User user) throws Exception {
         MyUpdate.update("INSERT INTO `forum`.`post` (`title`, `content`, `author_id`" +
-                        ", `author_name`, `board_id`, `author_avatar`)" +
-                        " VALUES (?, ?, ?, ?, ?, ?)"
+                        ", `author_name`, `board_id`, `author_avatar`, `author_grade`)" +
+                        " VALUES (?, ?, ?, ?, ?, ?, ?)"
                 , title, content
                 , user.getId(), user.getName()
-                , boardId, user.getAvatar());
+                , boardId, user.getAvatar(), user.getGrade());
     }
 
 
@@ -46,6 +47,7 @@ public class PostDaoImpl implements PostDao {
                 ", author_id AS authorId" +
                 ", author_name AS authorName" +
                 ", author_avatar AS authorAvatar" +
+                ", author_grade AS authorGrade" +
                 ", board_id AS boardId" +
                 ", view_count AS viewCount" +
                 ", like_count AS likeCount" +
@@ -61,6 +63,7 @@ public class PostDaoImpl implements PostDao {
                 ", author_id AS authorId" +
                 ", author_name AS authorName" +
                 ", author_avatar AS authorAvatar" +
+                ", author_grade AS authorGrade" +
                 ", board_id AS boardId" +
                 ", view_count AS viewCount" +
                 ", like_count AS likeCount" +
@@ -86,6 +89,7 @@ public class PostDaoImpl implements PostDao {
                         ", author_id AS authorId" +
                         ", author_name AS authorName" +
                         ", author_avatar AS authorAvatar" +
+                        ", author_grade AS authorGrade" +
                         ", board_id AS boardId" +
                         ", view_count AS viewCount" +
                         ", like_count AS likeCount" +

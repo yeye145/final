@@ -79,7 +79,7 @@ public class PostServiceImpl implements PostService {
         // 获取收藏记录列表
         List<Collect> collectList = collectDao.getCollectWithNullPostInformation(userId);
         for (Collect collect : collectList) {
-            if (collect.getPostId() == (postId)) {
+            if (Objects.equals(collect.getPostId(), postId)) {
                 return true;
             }
         }

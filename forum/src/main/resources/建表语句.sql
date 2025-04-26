@@ -55,6 +55,7 @@ CREATE TABLE post
     title         VARCHAR(255) NOT NULL COMMENT '标题',
     content       TEXT         NOT NULL COMMENT '内容',
     author_id     INT          NOT NULL COMMENT '作者ID',
+    author_grade  INT     DEFAULT 1 COMMENT '等级',
     board_id      INT          NOT NULL COMMENT '版块ID',
     view_count    INT      DEFAULT 0 COMMENT '浏览次数',
     like_count    INT      DEFAULT 0 COMMENT '点赞数',
@@ -221,6 +222,15 @@ ALTER TABLE `forum`.`board`
 
 DELIMITER //
 
+CREATE TRIGGER before_insert_post
+    BEFORE INSERT ON post
+    FOR EACH ROW
+BEGIN
+    -- 插入时自动从 user 表获取 author_grade
+    SET NEW.author_grade = (SELECT grade FROM user WHERE id = NEW.author_id);
+END //
+
+
 CREATE TRIGGER before_insert_comment
     BEFORE INSERT ON comment
     FOR EACH ROW
@@ -288,30 +298,21 @@ CREATE TRIGGER after_user_update
     AFTER UPDATE ON `forum`.`user`
     FOR EACH ROW
 BEGIN
-    -- 如果昵称被更新，同步更新 board 表中的 host_name
+    -- 同步用户昵称到 board 和 post 表
     IF NEW.name != OLD.name THEN
-    UPDATE `forum`.`board`
-    SET host_name = NEW.name
-    WHERE host_id = NEW.id;
+    UPDATE board SET host_name = NEW.name WHERE host_id = NEW.id;
+    UPDATE post SET author_name = NEW.name WHERE author_id = NEW.id;
 END IF;
 
--- 如果头像被更新，同步更新 board 表中的 host_avatar
+-- 同步用户头像到 board 和 post 表
 IF NEW.avatar != OLD.avatar THEN
-UPDATE `forum`.`board`
-SET host_avatar = NEW.avatar
-WHERE host_id = NEW.id;
-
--- 同时更新 post 表中的 author_avatar
-UPDATE `forum`.`post`
-SET author_avatar = NEW.avatar
-WHERE author_id = NEW.id;
+UPDATE board SET host_avatar = NEW.avatar WHERE host_id = NEW.id;
+UPDATE post SET author_avatar = NEW.avatar WHERE author_id = NEW.id;
 END IF;
 
-    -- 如果昵称被更新，同步更新 post 表中的 author_name
-    IF NEW.name != OLD.name THEN
-UPDATE `forum`.`post`
-SET author_name = NEW.name
-WHERE author_id = NEW.id;
+    -- 同步用户等级到 post 表
+    IF NEW.grade != OLD.grade THEN
+UPDATE post SET author_grade = NEW.grade WHERE author_id = NEW.id;
 END IF;
 END //
 
@@ -343,9 +344,9 @@ VALUES ('1', 'y@y.com', '18300000985', 'yyy111', '1', '管理员', '7', '0');
 
 -- 生成新用户
 INSERT INTO `forum`.`user` (`email`, `phone`, `password`, `name`, `grade`)
-VALUES ('3@3.com', '18300003030', 'sss333', '张三', '3'),
-       ('4@4.com', '18400001234', 'lll444', '李四', '4'),
-       ('user4@test.com', '18511110001', 'password123', '王五', 2),
+VALUES ('3@3.com', '18300003030', 'sss333', '张三', '6'),
+       ('4@4.com', '18400001234', 'lll444', '李四', '5'),
+       ('user4@test.com', '18511110001', 'password123', '王五', 5),
        ('user5@test.com', '18511110002', 'password123', '赵六', 3),
        ('user6@test.com', '18511110003', 'password123', '陈七', 1),
        ('user7@test.com', '18511110004', 'password123', '林八', 4),

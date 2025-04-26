@@ -10,23 +10,24 @@ public class Post {
     private Integer authorId;
     private String authorName;
     private String authorAvatar;
+    private Integer authorGrade;
     private Integer boardId;
     private Integer viewCount;                  // 浏览次数
     private Integer likeCount;                  // 点赞数量
     private Integer commentCount;               // 评论条数
     private LocalDateTime time;
 
-
     public Post() {
     }
 
-    public Post(Integer id, String title, String content, Integer authorId, String authorName, String authorAvatar, Integer boardId, Integer viewCount, Integer likeCount, Integer commentCount, LocalDateTime time) {
+    public Post(Integer id, String title, String content, Integer authorId, String authorName, String authorAvatar, Integer authorGrade, Integer boardId, Integer viewCount, Integer likeCount, Integer commentCount, LocalDateTime time) {
         this.id = id;
         this.title = title;
         this.content = content;
         this.authorId = authorId;
         this.authorName = authorName;
         this.authorAvatar = authorAvatar;
+        this.authorGrade = authorGrade;
         this.boardId = boardId;
         this.viewCount = viewCount;
         this.likeCount = likeCount;
@@ -132,6 +133,22 @@ public class Post {
 
     /**
      * 获取
+     * @return authorGrade
+     */
+    public Integer getAuthorGrade() {
+        return authorGrade;
+    }
+
+    /**
+     * 设置
+     * @param authorGrade
+     */
+    public void setAuthorGrade(Integer authorGrade) {
+        this.authorGrade = authorGrade;
+    }
+
+    /**
+     * 获取
      * @return boardId
      */
     public Integer getBoardId() {
@@ -211,6 +228,6 @@ public class Post {
     }
 
     public String toString() {
-        return "Post{id = " + id + ", title = " + title + ", content = " + content + ", authorId = " + authorId + ", authorName = " + authorName + ", authorAvatar = " + authorAvatar + ", boardId = " + boardId + ", viewCount = " + viewCount + ", likeCount = " + likeCount + ", commentCount = " + commentCount + ", time = " + time + "}";
+        return "Post{id = " + id + ", title = " + title + ", content = " + content + ", authorId = " + authorId + ", authorName = " + authorName + ", authorAvatar = " + authorAvatar + ", authorGrade = " + authorGrade + ", boardId = " + boardId + ", viewCount = " + viewCount + ", likeCount = " + likeCount + ", commentCount = " + commentCount + ", time = " + time + "}";
     }
 }
