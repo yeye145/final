@@ -2,6 +2,7 @@ package controller;
 
 import com.alibaba.fastjson.JSON;
 import controller.utils.BaseServlet;
+import controller.utils.ControllerToolMethod;
 import pojo.ResponseResult;
 import utils.Constants;
 
@@ -74,9 +75,7 @@ public class PostEditImageUploadController extends BaseServlet {
                     ResponseResult.success(imageUrl)));
 
         } catch (Exception e) {
-            e.printStackTrace();
-            response.getWriter().write(JSON.toJSONString(
-                    ResponseResult.error(Constants.RESPONSE_CODE_SERVER_ERROR, "服务器处理错误")));
+            ControllerToolMethod.fetchException(request, response, e, "帖子图片上传时出错");
         }
     }
 
