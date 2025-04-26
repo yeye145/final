@@ -5,6 +5,7 @@ import dao.impl.*;
 
 import pojo.*;
 import service.PostService;
+import utils.Constants;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -21,6 +22,7 @@ public class PostServiceImpl implements PostService {
     private UserDao userDao = new UserDaoImpl();
     private BoardBanDao boardBanDao = new BoardBanDaoImpl();
     private MessageDao messageDao = new MessageDaoImpl();
+    private LogDao logDao = new LogDaoImpl();
 
 
     /*------------------------------    获取该版块的所有帖子，优先显示晚新发布的------------------------------------*/
@@ -45,14 +47,18 @@ public class PostServiceImpl implements PostService {
 
         // 查看用户是否被禁止发帖
         for (BoardBan boardBan : allBanUserSet) {
-            if (boardBan.getBanId() == userId && boardBan.getBoardId().equals(boardId)) {
+            if (Objects.equals(boardBan.getBanId(), userId) && boardBan.getBoardId().equals(boardId)) {
                 return false;
             }
         }
 
         User user = userDao.getUserById(userId);
+        // 执行数据库相关操作
         postDao.creatPost(boardId, title, content, user);
 
+        // 记录到日志中
+        logDao.recordThisActionInLog(userId, user.getName()
+                , String.format(Constants.ACTION_PUBLISH_POST_TITLE, title));
         return true;
     }
 
@@ -61,10 +67,13 @@ public class PostServiceImpl implements PostService {
     @Override
     public void cancelCollectThisPost(Integer postId, Integer userId) throws Exception {
         collectDao.cancelCollectThisPost(postId, userId);
+        // 记录到日志中
+        logDao.recordThisActionInLog(userId, userDao.getUserById(userId).getName()
+                , String.format(Constants.ACTION_CANCEL_COLLECT, postId));
     }
 
 
-    /*-----------------------------------------    获得收藏记录    --------------------------------------------*/
+    /*-----------------------------------------    检查是否已收藏    ------------------------------------------*/
     @Override
     public boolean checkIfCollect(Integer postId, Integer userId) throws Exception {
         // 获取收藏记录列表
@@ -117,9 +126,14 @@ public class PostServiceImpl implements PostService {
         collectDao.collectThisPost(postId, userId, remark);
         // 帖子被收藏，发出通知
         Post post = postDao.getThisPostById(postId);
+        // 向帖子作者发送一条消息
         messageDao.creatMessage("您的帖子《" + post.getTitle() +
                         "》被用户“" + userDao.getUserById(userId).getName() + "”收藏了！", post.getAuthorId()
                 , null, "帖子被收藏");
+
+        // 记录到日志中
+        logDao.recordThisActionInLog(userId, userDao.getUserById(userId).getName()
+                , String.format(Constants.ACTION_COLLECT, postId));
         return true;
     }
 
@@ -264,6 +278,10 @@ public class PostServiceImpl implements PostService {
                 , post.getAuthorId(), null, "帖子被点赞");
         // 作者点赞数加一
         userDao.receiveOneLike(post.getAuthorId());
+
+        // 记录到日志中
+        logDao.recordThisActionInLog(userId, user.getName()
+                , String.format(Constants.ACTION_LIKE_POST, postId));
         return true;
     }
 

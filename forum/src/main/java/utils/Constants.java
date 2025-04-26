@@ -35,8 +35,6 @@ public class Constants {
     public static final String ACTION_UPDATE_PASSWORD = "更改了自己的账号密码";
     public static final String ACTION_UPDATE_NAME_TO = "更改了自己的昵称，新的昵称为：%s";
     public static final String ACTION_APPLY_NEW_BOARD = "申请创建一个新的版块，版块名为：%s";
-    public static final String ACTION_PUBLISH_POST_TITLE= "发布了新的帖子，帖子标题为：%s";
-    public static final String ACTION_REPORT_POST_TITLE = "举报了一条帖子，帖子标题为：%s";
     public static final String ACTION_REPORT_USER = "举报了一个用户，用户id为：%d";
     public static final String ACTION_DELETE_ALL_DEAL_BOARD_APPLY = "删除了所有已经处理的版块申请";
     public static final String ACTION_REFUSE_BOARD_APPLY = "拒绝了版块申请，版块的名称为：%s";
@@ -47,6 +45,11 @@ public class Constants {
     public static final String ACTION_POST_COMMENT_ON_POST = "发布了一条新的评论，在id为：%d的帖子之下，内容为：%s";
     public static final String ACTION_POST_COMMENT_ON_COMMENT = "发布了一条新的评论，在评论id：%d 之下，内容为：%s";
     public static final String ACTION_CLEAN_READ_MESSAGE = "清除了所有已读通知信息";
+    public static final String ACTION_PUBLISH_POST_TITLE= "发布了新的帖子，帖子标题为：%s";
+    public static final String ACTION_REPORT_POST_TITLE = "举报了一条帖子，帖子标题为：%s";
+    public static final String ACTION_COLLECT= "收藏了帖子，帖子id为：%d";
+    public static final String ACTION_CANCEL_COLLECT= "取消收藏帖子，帖子id为：%d";
+    public static final String ACTION_LIKE_POST= "点赞了帖子，帖子id为：%d";
 
 
 }
