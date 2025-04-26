@@ -56,7 +56,8 @@ public class Constants {
     public static final String ACTION_REFUSE_USER_REPORT = "管理员拒绝处理举报用户，用户id为：%d";
     public static final String ACTION_CLEAR_BOARD_REPORT = "版主清空了版块id为%d下的所有已处理举报信息";
     public static final String ACTION_CLEAR_USER_REPORT = "管理员清空了所有已处理的用户举报信息";
-
+    public static final String ACTION_SUBSCRIBE_AUTHOR = "订阅了一名作者，作者id为%d";
+    public static final String ACTION_CANCEL_SUBSCRIBE_AUTHOR = "取消对作者的订阅，作者id为%d";
 
 
 }
