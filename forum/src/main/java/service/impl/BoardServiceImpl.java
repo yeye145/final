@@ -23,6 +23,13 @@ public class BoardServiceImpl implements BoardService {
     private LogDao logDao = new LogDaoImpl();
 
 
+    /*------------------------------    获取该版块下的历史公告    ---------------------------------------*/
+    @Override
+    public List<Notice> getAllNoticeInThisBoard(Integer boardId) throws SQLException {
+        return noticeDao.getAllNoticeInThisBoard(boardId);
+    }
+
+
     /*------------------------------    删除所有已处理的版块申请    -------------------------------------*/
     @Override
     public void deleteAllDealApply() throws Exception {

@@ -7,14 +7,9 @@ import pojo.Board;
 import pojo.Notice;
 import pojo.ResponseResult;
 import service.BoardService;
-import service.NoticeService;
-import service.ReportService;
 import service.impl.BoardServiceImpl;
-import service.impl.NoticeServiceImpl;
-import service.impl.ReportServiceImpl;
 import utils.Constants;
 
-import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,7 +22,6 @@ public class BoardController extends BaseServlet {
 
     /*--------------------------------------------    私有变量    --------------------------------------------*/
     private BoardService boardService = new BoardServiceImpl();
-    private NoticeService noticeService = new NoticeServiceImpl();
 
 
     /*--------------------------------------    删除所有已处理的版块申请    -------------------------------------*/
@@ -293,7 +287,7 @@ public class BoardController extends BaseServlet {
         Integer boardId = Integer.parseInt(request.getParameter("boardId"));
         System.out.println("BoardController，获取全部公告版块，版块id" + boardId);
 
-        List<Notice> allNoticeInThisBoard = noticeService.getAllNoticeInThisBoard(boardId);
+        List<Notice> allNoticeInThisBoard = boardService.getAllNoticeInThisBoard(boardId);
         // 获取版块信息
         response.getWriter().write(
                 JSON.toJSONString(

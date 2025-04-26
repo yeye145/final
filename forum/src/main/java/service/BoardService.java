@@ -2,12 +2,16 @@ package service;
 
 import pojo.Board;
 import pojo.BoardApply;
+import pojo.Notice;
 import pojo.Report;
 
 import java.sql.SQLException;
 import java.util.List;
 
 public interface BoardService {
+
+    /*------------------------------    获取该版块下的历史公告    ---------------------------------------*/
+    List<Notice> getAllNoticeInThisBoard(Integer boardId) throws SQLException;
 
     /*------------------------------    删除所有已处理的版块申请    -------------------------------------*/
     void deleteAllDealApply() throws Exception;
