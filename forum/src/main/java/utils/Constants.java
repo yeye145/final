@@ -35,7 +35,6 @@ public class Constants {
     public static final String ACTION_UPDATE_PASSWORD = "更改了自己的账号密码";
     public static final String ACTION_UPDATE_NAME_TO = "更改了自己的昵称，新的昵称为：%s";
     public static final String ACTION_APPLY_NEW_BOARD = "申请创建一个新的版块，版块名为：%s";
-    public static final String ACTION_REPORT_USER = "举报了一个用户，用户id为：%d";
     public static final String ACTION_DELETE_ALL_DEAL_BOARD_APPLY = "删除了所有已经处理的版块申请";
     public static final String ACTION_REFUSE_BOARD_APPLY = "拒绝了版块申请，版块的名称为：%s";
     public static final String ACTION_AGREE_BOARD_APPLY = "同意了版块申请，版块的名称为：%s";
@@ -46,10 +45,18 @@ public class Constants {
     public static final String ACTION_POST_COMMENT_ON_COMMENT = "发布了一条新的评论，在评论id：%d 之下，内容为：%s";
     public static final String ACTION_CLEAN_READ_MESSAGE = "清除了所有已读通知信息";
     public static final String ACTION_PUBLISH_POST_TITLE= "发布了新的帖子，帖子标题为：%s";
-    public static final String ACTION_REPORT_POST_TITLE = "举报了一条帖子，帖子标题为：%s";
     public static final String ACTION_COLLECT= "收藏了帖子，帖子id为：%d";
     public static final String ACTION_CANCEL_COLLECT= "取消收藏帖子，帖子id为：%d";
     public static final String ACTION_LIKE_POST= "点赞了帖子，帖子id为：%d";
+    public static final String ACTION_REPORT_USER = "举报了一个用户，用户id为：%d";
+    public static final String ACTION_REPORT_POST = "举报了一条帖子，帖子id为：%d";
+    public static final String ACTION_DEAL_POST_REPORT = "版主同意处理举报帖子，帖子id为：%d";
+    public static final String ACTION_REFUSE_POST_REPORT = "版主拒绝处理举报帖子，帖子id为：%d";
+    public static final String ACTION_DEAL_USER_REPORT = "管理员同意处理举报用户，用户id为：%d";
+    public static final String ACTION_REFUSE_USER_REPORT = "管理员拒绝处理举报用户，用户id为：%d";
+    public static final String ACTION_CLEAR_BOARD_REPORT = "版主清空了版块id为%d下的所有已处理举报信息";
+    public static final String ACTION_CLEAR_USER_REPORT = "管理员清空了所有已处理的用户举报信息";
+
 
 
 }
