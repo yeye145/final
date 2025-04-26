@@ -29,6 +29,26 @@ public class PostController extends BaseServlet {
     private PostService postService = new PostServiceImpl();
 
 
+    /*------------------------------------------    获取主页推送帖子   -----------------------------------------*/
+    public void getHomePagePost(HttpServletRequest request, HttpServletResponse response) {
+        try {
+
+            System.out.println("PostController.getHomePagePost，获取主页推送的帖子");
+
+            // 返回成功响应
+            response.getWriter().write(
+                    JSON.toJSONString(
+                            ResponseResult.success(postService.getHomePagePost())
+                    )
+            );
+
+            System.out.println("-->获取主页推送帖子成功！");
+        } catch (Exception e) {
+            ControllerToolMethod.fetchException(request, response, e, "获取主页推送帖子时出错");
+        }
+    }
+
+
     /*---------------------------------    获取该版块的所有帖子，优先显示晚新发布的   -------------------------------*/
     public void getAllPostInThisBoardOrderByTimeDesc(HttpServletRequest request, HttpServletResponse response) {
         try {

@@ -33,12 +33,8 @@ public class BaseServlet extends HttpServlet {
 
             // 执行方法，this指方法的调用者，即子类实例
             method.invoke(this, request, response);
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        } catch (InvocationTargetException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            ControllerToolMethod.fetchException(request, response, e, "BaseServlet出现异常");
         }
 
 

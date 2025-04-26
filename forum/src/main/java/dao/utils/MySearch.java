@@ -1,5 +1,7 @@
 package dao.utils;
 
+import controller.utils.ControllerToolMethod;
+
 import java.lang.reflect.Field;
 import java.sql.*;
 import java.util.*;
@@ -55,7 +57,7 @@ public class MySearch {
 
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            ControllerToolMethod.fetchException(e, ",MySearch.SearchToList方法出错,");
         } finally {
             preparedStatement.close();
             connection.close();
@@ -112,7 +114,7 @@ public class MySearch {
 
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            ControllerToolMethod.fetchException(e, ",MySearch.SearchToSet方法出错,");
         } finally {
             preparedStatement.close();
             connection.close();
@@ -171,7 +173,7 @@ public class MySearch {
                 System.out.println("检测到多个结果，但本方法只能返回一个，若要全部返回，请更换searchToList或searchToSet方法");
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            ControllerToolMethod.fetchException(e, ",MySearch.SearchToOne方法出错,");
         } finally {
             preparedStatement.close();
             connection.close();
@@ -218,7 +220,7 @@ public class MySearch {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            ControllerToolMethod.fetchException(e, ",MySearch.SearchToMap方法出错,");
         } finally {
             if (preparedStatement != null) preparedStatement.close();
             if (connection != null) connection.close();

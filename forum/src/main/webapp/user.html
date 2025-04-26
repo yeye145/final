@@ -70,8 +70,11 @@
 
         <!-- 主页内容 -->
         <div v-if="ifHomePage" class="content-section">
-            <h3>📌 最新公告</h3>
-            <p>欢迎来到QG技术论坛！这里有最新技术动态和深度讨论。</p>
+            <div>
+                <h3>📌 最新公告</h3>
+                <p>欢迎来到QG技术论坛！这里有最新技术动态和深度讨论。</p>
+            </div>
+
         </div>
 
         <!-- 版块公告内容 -->
@@ -148,7 +151,7 @@
                         <img :src="board.hostAvatar" class="host-avatar">
                         <h4>{{ board.title }}</h4>
                         <p>类型: {{ board.type }} | 帖子数: {{ board.postCount }} | 浏览数: {{ board.viewCount }}</p>
-                        <p>版主: {{ board.hostName }} | 版主id: {{ board.hostId }}  | 创建时间：{{ board.time }}</p>
+                        <p>版主: {{ board.hostName }} | 版主id: {{ board.hostId }} | 创建时间：{{ board.time }}</p>
                     </div>
                 </div>
             </div>
@@ -293,7 +296,7 @@
                                class="name-input">
                     </div>
                     <!--其他信息展示-->
-                    <div class="user-level">等级：Lv{{ userInformation.grade }} | 我的id: {{ userInformation.id }} </div>
+                    <div class="user-level">等级：Lv{{ userInformation.grade }} | 我的id: {{ userInformation.id }}</div>
                     <div class="profile-stats">
                         <span>❤️ {{ userInformation.receiveLikeCount }} 收获点赞</span>
                         <span>👀 {{ userInformation.receiveReadCount }} 被阅读数</span>
@@ -407,7 +410,8 @@
                             | 用户等级: {{ post.authorGrade }}</span>
                         <span class="time">📅 {{ post.time }}</span>
                     </div>
-                    <h4 class="post-title" @click="turnThisPost(post.id, post.title)">帖子id: {{ post.id }} | {{ post.title }}</h4>
+                    <h4 class="post-title" @click="turnThisPost(post.id, post.title)">帖子id: {{ post.id }} |
+                        {{ post.title }}</h4>
                     <div class="post-stats">
                         <span>❤️ {{ post.likeCount }}</span>
                         <span>💬 {{ post.commentCount }}</span>
@@ -877,7 +881,7 @@
             myMessage: [],                      // 我的通知消息
             allReportPostToMe: [],              // 向我举报的信息
 
-
+            homePagePost: [],                   // 主页推送帖子
         },
         created() {
             this.loginCheck();
@@ -913,6 +917,17 @@
             this.highlightAll();
         },
         methods: {
+            // 抓取主页推送帖子
+            fetchHomePagePost() {
+                axios.post('/post/getHomePagePost').then(response => {
+                    if (response.data.code === 200) {
+                        this.homePagePost = response.data.data;
+                        console.log("获取主页推送帖子成功");
+                    } else {
+                        console.error(response.data.message);
+                    }
+                });
+            },
             // 登录验证
             loginCheck() {
                 axios.post('/login/userCheck').then(response => {
@@ -1692,6 +1707,7 @@
             backHomePage() {
                 this.turnNothing();
                 this.ifHomePage = true;
+                this.fetchHomePagePost();
                 this.currentPath = ['QG技术论坛', '主页'];
             },
             // 切换该版块下所有帖子

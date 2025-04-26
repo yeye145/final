@@ -12,6 +12,22 @@ import java.util.Map;
 
 public class PostDaoImpl implements PostDao {
 
+    /*---------------------------------    获取所有帖子（根据用户等级排序）    --------------------------*/
+    @Override
+    public List<Post> getAllPostOrderByGrade() throws SQLException {
+        return MySearch.searchToList("SELECT id, title, content, time" +
+                ", author_id AS authorId" +
+                ", author_name AS authorName" +
+                ", author_avatar AS authorAvatar" +
+                ", author_grade AS authorGrade" +
+                ", board_id AS boardId" +
+                ", view_count AS viewCount" +
+                ", like_count AS likeCount" +
+                ", comment_count AS commentCount " +
+                "FROM `forum`.`post` ORDER BY author_grade DESC", Post.class);
+    }
+
+
     /*---------------------------------    获取我的所有帖子    ----------------------------------------*/
     @Override
     public List<Post> getMyPost(Integer userId) throws SQLException {

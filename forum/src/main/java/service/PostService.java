@@ -8,6 +8,9 @@ import java.util.List;
 
 public interface PostService {
 
+    /*-------------------------------------    获取主页推送的帖子    ------------------------------------------*/
+    List<Post> getHomePagePost() throws Exception;
+
     /*------------------------------    获取该版块的所有帖子，优先显示晚新发布的------------------------------------*/
     List<Post> getAllPostInThisBoardOrderByTimeDesc(Integer boardId) throws Exception;
 

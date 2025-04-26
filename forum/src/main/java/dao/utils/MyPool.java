@@ -1,5 +1,7 @@
 package dao.utils;
 
+import controller.utils.ControllerToolMethod;
+
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -36,7 +38,7 @@ public class MyPool {
                 pool.add(connection);
             }
         } catch (Exception e) {
-            throw new RuntimeException("连接池初始化失败", e);
+            ControllerToolMethod.fetchException(e, ",连接池初始化失败,");
         }
     }
 
@@ -58,7 +60,8 @@ public class MyPool {
                 }
             }
         } catch (Exception e) {
-            throw new RuntimeException("获取连接失败", e);
+            ControllerToolMethod.fetchException(e, ",获取连接失败,");
+            return null;
         }
     }
 

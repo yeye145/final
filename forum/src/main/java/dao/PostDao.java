@@ -10,6 +10,9 @@ import java.util.Map;
 
 public interface PostDao {
 
+    /*---------------------------------    获取所有帖子（根据用户等级排序）    --------------------------*/
+    List<Post> getAllPostOrderByGrade() throws SQLException;
+
     /*---------------------------------    获取我的所有帖子    ----------------------------------------*/
     List<Post> getMyPost(Integer userId) throws SQLException;
 

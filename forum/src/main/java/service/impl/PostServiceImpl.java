@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 public class PostServiceImpl implements PostService {
 
 
-    /*--------------------------------------------    私有变量    --------------------------------------------*/
+    /*----------------------------------------    私有变量    -----------------------------------------------*/
     private PostDao postDao = new PostDaoImpl();
     private BoardDao boardDao = new BoardDaoImpl();
     private SubscriptionDao subscriptionDao = new SubscriptionDaoImpl();
@@ -23,6 +23,14 @@ public class PostServiceImpl implements PostService {
     private BoardBanDao boardBanDao = new BoardBanDaoImpl();
     private MessageDao messageDao = new MessageDaoImpl();
     private LogDao logDao = new LogDaoImpl();
+
+
+    /*-------------------------------------    获取主页推送的帖子    ------------------------------------------*/
+    @Override
+    public List<Post> getHomePagePost() throws Exception {
+        // 获取版块下所有帖子，按用户等级倒序排列
+        return postDao.getAllPostOrderByGrade();
+    }
 
 
     /*------------------------------    获取该版块的所有帖子，优先显示晚新发布的------------------------------------*/

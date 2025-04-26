@@ -1,5 +1,7 @@
 package dao.utils;
 
+import controller.utils.ControllerToolMethod;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -27,7 +29,7 @@ public class MyUpdate {
 
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            ControllerToolMethod.fetchException(e, "，MyUpdate.update方法中出错，");
         } finally {
             if (preparedStatement != null) {
                 preparedStatement.close();
