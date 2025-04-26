@@ -346,7 +346,7 @@ VALUES ('1', 'y@y.com', '18300000985', 'yyy111', '1', '管理员', '7', '0');
 INSERT INTO `forum`.`user` (`email`, `phone`, `password`, `name`, `grade`)
 VALUES ('3@3.com', '18300003030', 'sss333', '张三', '6'),
        ('4@4.com', '18400001234', 'lll444', '李四', '5'),
-       ('user4@test.com', '18511110001', 'password123', '王五', 5),
+       ('user4@test.com', '18511110001', 'password123', '王五', 6),
        ('user5@test.com', '18511110002', 'password123', '赵六', 3),
        ('user6@test.com', '18511110003', 'password123', '陈七', 1),
        ('user7@test.com', '18511110004', 'password123', '林八', 4),
@@ -384,13 +384,28 @@ VALUES (3, 'Python学习交流', 'Python', "李四"),
 INSERT INTO `forum`.`post` (`title`, `content`, `author_id`, `board_id`, `author_name`)
 VALUES
 -- 版块1（Java）
-('Java入门指南', '`Java`**基础语法**
+('Stream流的简介（示例帖子，其他为空帖子）', '
+**Stream**流的作用
+![图片](/images/post_images/85f5762a-dd9d-4713-8f50-07c221c5c432.jpg)
 
+* 成员方法
+  * *filter*
+  * ~limit~
 ```java
-System.out.println("Hello! Highlight and markdown!");
-System.out.println("2025/04/19/17/53");
+    /*-------------------------------------------    获取个人信息    -------------------------------------------*/
+    @Override
+    public User getInformation(Integer userId) throws SQLException {
+        return userDao
+                .getUserSet()
+                .stream()
+                .filter(user -> Objects.equals(user.getId(), userId))
+                .findFirst()
+                .get();
+    }
 ```
-* 这是俩个简单的打印语句
+![图片](/images/post_images/d0f36331-14a1-49ab-bc84-a1f97bb466db.jpg)
+
+还可以结合`lambda`表达式使用
 ', 2, 1, '张三'),
 ('Spring框架实战', '*Spring Boot*快速入门教程...', 3, 1, '李四'),
 ('MySQL索引优化', '`B+`树原理与索引设计...', 8, 1, '周九'),
@@ -480,3 +495,13 @@ INSERT INTO `forum`.`message` (`content`, `user_id_receive`, `view_count`, `type
 INSERT INTO `forum`.`board_apply` (`host_id`, `title`, `type`, `notice`, `if_deal`) VALUES ('2', '标题', '类型', '公告', '0');
 INSERT INTO `forum`.`report` (`user_id`, `reported_this_user_id`, `judge`, `reason`, `if_deal`) VALUES ('2', '3', 'admin', '举报李四', '0');
 INSERT INTO `forum`.`report` (`user_id`, `reported_this_user_id`, `judge`, `reason`, `if_deal`) VALUES ('2', '4', 'admin', '举报王五', '0');
+
+UPDATE `forum`.`user` SET `fans_count` = 1, `avatar` = '/images/avatar/de58542d-f218-4d09-8b60-7c50df8f08e0.jpg' WHERE (`id` = '2');
+UPDATE `forum`.`user` SET `avatar` = '/images/avatar/3e606fa2-81dd-462a-be3b-dda52fd09513.jpg' WHERE (`id` = '3');
+UPDATE `forum`.`user` SET `avatar` = '/images/avatar/f83af204-d60f-45a9-95e4-e4729e17a6af.jpg' WHERE (`id` = '4');
+
+UPDATE `forum`.`post` SET `like_count` = '6', `view_count` = '10', `comment_count` = '5' WHERE (`id` = '1');
+UPDATE `forum`.`post` SET `comment_count` = '1' WHERE (`id` = '2');
+UPDATE `forum`.`post` SET `view_count` = '2', `comment_count` = '1' WHERE (`id` = '15');
+UPDATE `forum`.`post` SET `view_count` = '2', `comment_count` = '1' WHERE (`id` = '3');
+UPDATE `forum`.`post` SET `like_count` = '3', `view_count` = '5' WHERE (`id` = '6');
