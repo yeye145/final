@@ -1829,7 +1829,7 @@
                 const formData = new FormData();
                 formData.append('avatar', file);
 
-                axios.post('/avatar/upload', formData, {
+                axios.post('/user/uploadAvatar', formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     }

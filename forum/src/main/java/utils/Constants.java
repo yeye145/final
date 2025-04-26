@@ -14,7 +14,7 @@ public class Constants {
     // 过滤器白名单
     public static final String[] FREE_URLS = {"/login.html", ".css", ".png", ".js", ".images",
             "/login", "/user", "/admin", "/verify", "/report",
-            "/avatar", "/user", "/board", "/post", "/comment", "/message"};
+            "/user", "/board", "/post", "/comment", "/message"};
 
     public static final String HOT = "view_count";
     public static final String NEW = "time";
@@ -32,6 +32,7 @@ public class Constants {
 
     public static final String ACTION_LOGIN = "登录自己的账号";
     public static final String ACTION_REGISTER = "注册了账号";
+    public static final String ACTION_UPDATE_AVATAR = "更改了自己的头像";
     public static final String ACTION_UPDATE_PASSWORD = "更改了自己的账号密码";
     public static final String ACTION_UPDATE_NAME_TO = "更改了自己的昵称，新的昵称为：%s";
     public static final String ACTION_APPLY_NEW_BOARD = "申请创建一个新的版块，版块名为：%s";

@@ -2,9 +2,13 @@ package service;
 
 import pojo.User;
 
+import javax.servlet.http.Part;
 import java.sql.SQLException;
 
 public interface UserService {
+
+    /*--------------------------------------------    更新头像    --------------------------------------------*/
+    Boolean uploadAvatar(Part filePart, String savePath, String fileName, Integer userId) throws Exception;
 
     /*-------------------------------------------    更改昵称    ----------------------------------------------*/
     boolean updateName(Integer id, String newName) throws Exception;

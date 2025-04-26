@@ -8,6 +8,11 @@ import pojo.User;
 import service.UserService;
 import utils.Constants;
 
+import javax.servlet.http.Part;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Objects;
@@ -20,6 +25,41 @@ public class UserServiceImpl implements UserService {
     private SubscriptionDao subscriptionDao = new SubscriptionDaoImpl();
     private MessageDao messageDao = new MessageDaoImpl();
     private LogDao logDao = new LogDaoImpl();
+
+
+    /*--------------------------------------------    更新头像    --------------------------------------------*/
+    @Override
+    public Boolean uploadAvatar(Part filePart, String savePath, String fileName, Integer userId) throws Exception {
+
+        // 确保目录存在
+        java.nio.file.Path path = Paths.get(savePath).getParent();
+        if (!Files.exists(path)) {
+            Files.createDirectories(path);
+        }
+
+        // 获取输入流in
+        try (InputStream in = filePart.getInputStream();
+             OutputStream out = Files.newOutputStream(Paths.get(savePath))) {
+
+            // 缓冲区
+            byte[] buffer = new byte[4096];
+            int bytesRead;
+
+            // 当输入流没有结束
+            while ((bytesRead = in.read(buffer)) != -1) {
+                out.write(buffer, 0, bytesRead);    //将读取到的数据写入到输出流中
+            }
+        }
+        // 更新数据库
+        userDao.updateAvatar(userId, fileName);
+
+        // 记录到日志中
+        logDao.recordThisActionInLog(userId, userDao.getUserById(userId).getName()
+                , Constants.ACTION_UPDATE_AVATAR);
+        System.out.println("=头像保存成功，数据库更新完成");
+
+        return true;
+    }
 
 
     /*-------------------------------------------    更改昵称    ----------------------------------------------*/
